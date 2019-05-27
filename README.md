@@ -199,3 +199,17 @@ Command 	Key
 
 `C-<SPC>` Set the mark at point, and activate it (set-mark-command).
 `C-@`   The same. 
+
+## Case Conversion Commands
+
+Emacs has commands for converting either a single word or any arbitrary range of text to upper case or to lower case.
+
+`M-l` Convert following word to lower case (downcase-word).
+`M-u` Convert following word to upper case (upcase-word).
+`M-c` Capitalize the following word (capitalize-word).
+`C-x C-l` Convert region to lower case (downcase-region).
+`C-x C-u` Convert region to upper case (upcase-region). 
+
+### I-edit
+
+`C-;` mark all the marked words

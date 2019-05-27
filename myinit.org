@@ -608,7 +608,6 @@
 		    (join-line -1)))
 #+END_SRC
 
-
 * Rename File in Current buffer
 #+BEGIN_SRC emacs-lisp
   (defun rename-current-buffer-file ()
@@ -659,6 +658,10 @@
 * Parantasis/brackets
 ** Highlight matching pair
 #+BEGIN_SRC emacs-lisp
+;; Complete pair
+;; auto close bracket insertion. New in emacs 24
+(electric-pair-mode 1)
+
 ;; turn on highlight matching brackets when cursor is on one
 (show-paren-mode 1)
 
@@ -671,3 +674,59 @@
 ;; highlight brackets if visible, else entire expression
 ;;(setq show-paren-style 'mixed)
 #+END_SRC
+
+* string-inflection for string manipulation
+#+BEGIN_SRC emacs-lisp
+  (use-package string-inflection
+    :ensure t
+    :bind (("C-c i" . string-inflection-all-cycle))
+    )
+
+  ;; for java
+  (add-hook 'java-mode-hook
+	    '(lambda ()
+	       (local-set-key (kbd "C-c i") 'string-inflection-java-style-cycle)))
+
+  ;; for python
+  (add-hook 'python-mode-hook
+	    '(lambda ()
+	       (local-set-key (kbd "C-c i") 'string-inflection-python-style-cycle)))
+#+END_SRC
+
+* iedit and narrow / widen dwim
+  #+BEGIN_SRC emacs-lisp
+    ; mark and edit all copies of the marked region simultaniously.
+
+    (use-package iedit
+      :ensure t)
+
+    ; if you're windened, narrow to the region, if you're narrowed, widen
+    ; bound to C-x n
+    (defun narrow-or-widen-dwim (p)
+    "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
+    Intelligently means: region, org-src-block, org-subtree, or defun,
+    whichever applies first.
+    Narrowing to org-src-block actually calls `org-edit-src-code'.
+
+    With prefix P, don't widen, just narrow even if buffer is already
+    narrowed."
+      (interactive "P")
+      (declare (interactive-only))
+      (cond ((and (buffer-narrowed-p) (not p)) (widen))
+	    ((region-active-p)
+	     (narrow-to-region (region-beginning) (region-end)))
+	    ((derived-mode-p 'org-mode)
+	     ;; `org-edit-src-code' is not a real narrowing command.
+	     ;; Remove this first conditional if you don't want it.
+	     (cond ((ignore-errors (org-edit-src-code))
+		    (delete-other-windows))
+		   ((org-at-block-p)
+		    (org-narrow-to-block))
+		   (t (org-narrow-to-subtree))))
+	    (t (narrow-to-defun))))
+
+    ;; (define-key endless/toggle-map "n" #'narrow-or-widen-dwim)
+    ;; This line actually replaces Emacs' entire narrowing keymap, that's
+    ;; how much I like this command. Only copy it if that's what you want.
+    (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+  #+END_SRC
