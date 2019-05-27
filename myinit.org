@@ -38,6 +38,7 @@
   ;; https://github.com/dakrone/eos/blob/master/eos.org
   (setq save-interprogram-paste-before-kill t)
 
+  (setq tramp-default-method "ssh")
 #+END_SRC
 
 * Isearch Current word on the cursor
@@ -230,6 +231,7 @@
       (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
       (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
       ))
+
 #+END_SRC
 
 * Avy
@@ -336,6 +338,13 @@
     :ensure t
     :config
     (elpy-enable))
+
+  (use-package virtualenvwrapper
+    :ensure t
+    :config
+    (venv-initialize-interactive-shells)
+    (venv-initialize-eshell))
+
 #+END_SRC
 
 * Insert-Date_time

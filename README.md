@@ -19,6 +19,7 @@
 ctrl+shift+backspace ;;delete the line
 C-x +/ C-x - ;;Change font size
 ```
+`M-x M-p` to cycle through previous commands in `M-x`
 
 Keys 	Description
 `C-a` 	Move to beginning of line.
