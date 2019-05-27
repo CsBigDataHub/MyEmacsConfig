@@ -1,5 +1,9 @@
 # Emacs CheatSheet
 
+## To get Emacs Running Faster
+
+`emacsclient -a "" -c`
+
 ```elisp
 `C-h` ;;Help
 `C-x C-c` ;;Exit

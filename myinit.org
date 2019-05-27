@@ -13,24 +13,30 @@
 
 #+BEGIN_SRC emacs-lisp
 
-(setq inhibit-startup-message t)
-;;(tool-bar-mode -1)
-(fset 'yes-or-no-p 'y-or-n-p)
-(global-set-key (kbd "<f5>") 'revert-buffer)
+  (setq inhibit-startup-message t)
+  ;;(tool-bar-mode -1)
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (global-auto-revert-mode 1)
+  (global-set-key (kbd "<f5>") 'revert-buffer)
 
-;; using swiper so ido no longer needed
+  ;; using swiper so ido no longer needed
 
-(winner-mode 1) 
-;;to remember window config
-;;(setq ido-enable-flex-matching t)
-;;(setq ido-everywhere t)
-;;(ido-mode 1)
+  (winner-mode 1) 
+  ;;to remember window config
+  ;;(setq ido-enable-flex-matching t)
+  ;;(setq ido-everywhere t)
+  ;;(ido-mode 1)
 
-;;(windmove-default-keybindings) ;;uses shift + arrow keys to move around the windows.
+  ;;(windmove-default-keybindings) ;;uses shift + arrow keys to move around the windows.
 
-;;(defalias 'list-buffers 'ibuffer) ; make ibuffer default
+  ;;(defalias 'list-buffers 'ibuffer) ; make ibuffer default
 
-(defalias 'list-buffers 'ibuffer-other-window) ; make ibuffer default
+  (defalias 'list-buffers 'ibuffer-other-window) ; make ibuffer default
+
+  ;; Save whatever’s in the current (system) clipboard before
+  ;; replacing it with the Emacs’ text.
+  ;; https://github.com/dakrone/eos/blob/master/eos.org
+  (setq save-interprogram-paste-before-kill t)
 
 #+END_SRC
 
@@ -38,7 +44,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (defun xah-search-current-word ()
-    ;;"Call `isearch' on current word or text selection.
+    "Call `isearch' on current word or text selection."
     ;;“word” here is A to Z, a to z, and hyphen 「-」 and underline 「_」, independent of syntax table.
     ;;URL `http://ergoemacs.org/emacs/modernization_isearch.html'
     ;;Version 2015-04-09"
@@ -71,10 +77,13 @@
 ;;  :ensure t
 ;;  :config (load-theme 'monokai t))
 
-(use-package zenburn-theme
-  :ensure t
-  :config (load-theme 'zenburn t))
+;;(use-package zenburn-theme
+;;  :ensure t
+;;  :config (load-theme 'zenburn t))
 
+(use-package spacemacs-theme
+  :ensure t
+  :config (load-theme 'spacemacs-dark t))
 #+END_SRC
 
 * Try
@@ -176,6 +185,10 @@
   ;; it looks like counsel is a requirement for swiper
   (use-package counsel
     :ensure t
+    :bind
+    (("M-y" . counsel-yank-pop)
+     :map ivy-minibuffer-map
+     ("M-y" . ivy-next-line))
     )
 
   (use-package ivy
@@ -323,16 +336,17 @@
     :config
     (elpy-enable))
 #+END_SRC
+
 * Insert-Date_time
 #+BEGIN_SRC emacs-lisp
   (defun xah-insert-date-time ()
-  ;;"Insert current date time.
-  ;;Insert date in this format: yyyy-mm-dd.
-  ;;When called with `universal-argument', prompt for a format to use.
-  ;;If there's text selection, delete it first.
-  ;;
-  ;;URL `http://ergoemacs.org/emacs/elisp_insert-date-time.html'
-  ;;version 2018-07-03"
+  "Insert current date time.
+  Insert date in this format: yyyy-mm-dd.
+  When called with `universal-argument', prompt for a format to use.
+  If there's text selection, delete it first.
+  
+  URL `http://ergoemacs.org/emacs/elisp_insert-date-time.html'
+  version 2018-07-03"
     (interactive)
     (let (($style
 	   (if current-prefix-arg
@@ -401,8 +415,8 @@
  
 #+BEGIN_SRC emacs-lisp
   (defun xah-paste-or-paste-previous ()
-    ;;"Paste. When called repeatedly, paste previous.
-    ;;This command calls `yank', and if repeated, call `yank-pop'.
+    "Paste. When called repeatedly, paste previous.
+    This command calls `yank', and if repeated, call `yank-pop'."
     ;;
     ;;When `universal-argument' is called first with a number arg, paste that many times.
     ;;
@@ -437,11 +451,11 @@
   ;;
   ;;Here's a command xah-shrink-whitespaces that combine most of them into one.
 
-  defun xah-delete-blank-lines ()
-  ;;"Delete all newline around cursor.
-  ;;
-  ;;URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-  ;;Version 2018-04-02"
+  (defun xah-delete-blank-lines ()
+  "Delete all newline around cursor.
+  
+  URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+  Version 2018-04-02"
   (interactive)
   (let ($p3 $p4)
     (skip-chars-backward "\n")
@@ -451,15 +465,15 @@
     (delete-region $p3 $p4)))
 
   (defun xah-shrink-whitespaces ()
-    ;;"Remove whitespaces around cursor to just one, or none.
-    ;;
-    ;;Shrink any neighboring space tab newline characters to 1 or none.
-    ;;If cursor neighbor has space/tab, toggle between 1 or 0 space.
-    ;;If cursor neighbor are newline, shrink them to just 1.
-    ;;If already has just 1 whitespace, delete it.
-    ;;
-    ;;URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-    ;;Version 2018-04-02T14:38:04-07:00"
+    "Remove whitespaces around cursor to just one, or none.
+    
+    Shrink any neighboring space tab newline characters to 1 or none.
+    If cursor neighbor has space/tab, toggle between 1 or 0 space.
+    If cursor neighbor are newline, shrink them to just 1.
+    If already has just 1 whitespace, delete it.
+    
+    URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+    Version 2018-04-02T14:38:04-07:00"
     (interactive)
     (let* (
 	   ($eol-count 0)
@@ -508,6 +522,7 @@
        (t (progn
 	    (message "nothing done. logic error 40873. shouldn't reach here" ))))))
 #+END_SRC
+
 * MarkDown mode
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
@@ -518,6 +533,7 @@
 	   ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "multimarkdown"))
 #+END_SRC
+
 * Half-Scrolling Similar to VI 
 #+BEGIN_SRC emacs-lisp
   (defun window-half-height ()
@@ -534,9 +550,10 @@
   (global-set-key (kbd "M-u") 'scroll-up-half)
   (global-set-key (kbd "C-u") 'scroll-down-half)
   ;;Scrolling 4 lines without moving the point
-  (global-set-key "\M-n"  (lambda () (interactive) (scroll-up   4)) )
-  (global-set-key "\M-p"  (lambda () (interactive) (scroll-down 4)) )
+  (global-set-key (kbd "M-n")  (lambda () (interactive) (scroll-up   4)) )
+  (global-set-key (kbd "M-p")  (lambda () (interactive) (scroll-down 4)) )
 #+END_SRC
+
 * Undo-tree
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
@@ -559,9 +576,10 @@
     (beacon-mode 1)
 ; this color looks good for the zenburn theme but not for the one
 ; I'm using for the videos
-; (setq beacon-color "#666600")
+(setq beacon-color "#666600")
     )
 #+END_SRC
+
 * Hungy Delete Mode
 #+BEGIN_SRC emacs-lisp
 ; deletes all the whitespace when you hit backspace or delete
@@ -570,6 +588,7 @@
     :config
     (global-hungry-delete-mode))
 #+END_SRC
+
 * Expand Region
   #+BEGIN_SRC emacs-lisp
 ; expand the marked region in semantic increments (negative prefix to reduce region)
@@ -589,6 +608,7 @@
     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 #+END_SRC
+
 * smart-forward
 #+BEGIN_SRC emacs-lisp
   (use-package smart-forward
@@ -730,3 +750,35 @@
     ;; how much I like this command. Only copy it if that's what you want.
     (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
   #+END_SRC
+
+* File-Exists Function
+#+BEGIN_SRC emacs-lisp
+    (defun load-if-exists(f)
+      "load the elip file only if it exits"
+      (if (file-readable-p f)
+	  (load-file f)))
+  ;; You can also use below
+  ;;(when (file-readable-p f) (load-file p))
+#+END_SRC
+
+* Dump-Keys
+#+BEGIN_SRC emacs-lisp
+  (load-if-exists "./custom-el-scripts/dump-keys.el")
+#+END_SRC
+
+* Web-Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (setq web-mode-engines-alist
+	  '(("django"    . "\\.html\\'")))
+    (setq web-mode-ac-sources-alist
+	  '(("css" . (ac-source-css-property))
+	    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+
+    (setq web-mode-enable-auto-closing t)
+    (setq web-mode-enable-auto-quoting t))
+#+END_SRC
+
