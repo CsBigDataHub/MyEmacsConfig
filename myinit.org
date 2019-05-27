@@ -73,6 +73,10 @@
 
 #+BEGIN_SRC emacs-lisp
 
+(use-package spacemacs-theme
+  :defer t
+  :init (load-theme 'spacemacs-dark t))
+
 ;;(use-package monokai-theme
 ;;  :ensure t
 ;;  :config (load-theme 'monokai t))
@@ -81,9 +85,6 @@
 ;;  :ensure t
 ;;  :config (load-theme 'zenburn t))
 
-(use-package spacemacs-theme
-  :ensure t
-  :config (load-theme 'spacemacs-dark t))
 #+END_SRC
 
 * Try
