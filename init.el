@@ -19,7 +19,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (spacemacs-theme web-mode iedit string-inflection smart-forward multiple-cursors expand-region hungry-delete beacon undo-tree markdown-mode virtualenvwrapper elpy jedi flycheck htmlize ox-reveal auto-complete counsel ace-window tabbar format-all linum-relative org-bullets which-key try zenburn-theme use-package))))
+    (doom-modeline posframe spacemacs-theme web-mode iedit string-inflection smart-forward multiple-cursors expand-region hungry-delete beacon undo-tree markdown-mode virtualenvwrapper elpy jedi flycheck htmlize ox-reveal auto-complete counsel ace-window tabbar format-all linum-relative org-bullets which-key try zenburn-theme use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

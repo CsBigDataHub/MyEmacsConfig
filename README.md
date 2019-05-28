@@ -17,7 +17,7 @@
 `M-f` ;;Forward one word.
 `M-b` ;;Backward one word.
 ctrl+shift+backspace ;;delete the line
-C-x +/ C-x - ;;Change font size
+C-x C-+/ C-x C--(thats' ctrl minus) ;;Change font size
 ```
 `M-x M-p` to cycle through previous commands in `M-x`
 
