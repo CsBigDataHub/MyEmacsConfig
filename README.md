@@ -21,6 +21,8 @@ C-x C-+/ C-x C--(thats' ctrl minus) ;;Change font size
 ```
 `M-x M-p` to cycle through previous commands in `M-x`
 
+
+```
 Keys 	Description
 `C-a` 	Move to beginning of line.
 `M-m` 	Move to first non-whitespace character on the line.
@@ -34,7 +36,11 @@ Keys 	Description
 `M-<` 	Move to beginning of buffer.
 `M->` 	Move to end of buffer.
 `M-g g` 	Go to line. 
+```
 
+
+
+```
 Keys 	Description
 `C-w` 	Kill region.
 `M-w` 	Copy region to kill ring.
@@ -42,13 +48,19 @@ Keys 	Description
 `M-y` 	Cycle through kill ring after yanking.
 `M-d` 	Kill word.
 `C-k` 	Kill line. 
+```
+
+```
 
 Keys 	Description
 Tab 	Indent line.
 `C-j` 	New line and indent, equivalent to enter followed by tab.
 `M-/` 	Hippie expand; cycles through possible expansions of the text before point.
 `M-\` 	Delete all spaces and tabs around point. (I use this one a lot.)
+```
 
+
+```
 
 Keys 	Description
 `C-x o` 	Switch cursor to another window. Try this now to switch between your Clojure file and the REPL.
@@ -56,10 +68,15 @@ Keys 	Description
 `C-x 2` 	Split frame above and below.
 `C-x 3` 	Split frame side by side.
 `C-x 0` 	Delete current window. 
+```
+
 
 
 ### Movement
 
+
+
+```
 `C-n` Next line
 `C-p` Previous line
 `C-f` Move cursor forward one character
@@ -73,6 +90,8 @@ Keys 	Description
 `M-<` Go to the beginning of the file
 `M->` Go to the end of the file
 `M-g` g N Go to line N
+
+```
 
 To perform this function             | Use these keys
 -------------------------------------|---------------------------------
@@ -136,23 +155,28 @@ C-u {num} {command} Repeat {command} {num} times
 
 ### Legend
 
+```
 M-x means “press and release the Escape key and then press the x key. “
 C-x means “press and hold the Control key and then press and release the x key.”
 C-<char> Ctrl while pressing <char>.
 M-<char> "Meta" key (alt key) while pressing <char>.
 M-<char> Esc, then type <char>
 
+```
 ### To relaod Buffer
 
 M-x revert-buffer
 
 
+```
 key 	what it does
 `C-x 2` 	split-window-below (vertically)
 `C-x 3` 	split-window-right (horizontally)
 `C-x 0` 	delete-window (this one)
 `C-x 1` 	delete-other-windows
 `C-x o` 	other-window (moves foxus to the next window
+
+```
 
 ###   In Org-Mode to Write Code
 
@@ -172,6 +196,7 @@ With just a few keystrokes, Org’s easy templates inserts empty pairs of struct
 
 #+END_EXPORT
 
+```
 Org comes with these pre-defined easy templates:
 s	#+BEGIN_SRC ... #+END_SRC
 e	#+BEGIN_EXAMPLE ... #+END_EXAMPLE
@@ -188,6 +213,7 @@ A	#+ASCII:
 i	#+INDEX: line
 I	#+INCLUDE: line
 
+```
 More templates can added by customizing the variable org-structure-template-alist, whose docstring has additional details. 
 
 
