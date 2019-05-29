@@ -22,7 +22,7 @@
     (global-auto-revert-mode 1) ;; you might not want this
     (setq auto-revert-verbose nil) ;; or thiS
     ;; using swiper so ido no longer needed
-
+    (tool-bar-mode -1)
     (winner-mode 1)
     ;;to remember window config
     ;;(setq ido-enable-flex-matching t)
