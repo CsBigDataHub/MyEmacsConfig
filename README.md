@@ -112,32 +112,43 @@ Moving to the end of the file        | M-> (Alt + Shift + ">")
 
 ### Searching
 
+```
 `C-s` Start a forward search.
 `C-r` Start a reverse search.
+```
 
 ### Deleting Text
 
+```
 `C-d` Delete a character
 `M-d` Delete a word
+```
 
 ### Copy/Paste
 
+```
 `C-k` Kill (cut) the rest of the current line of text
 `C-y` Yank (or paste) from the previously killed text
+```
 
 ### Undo
 
+```
 `C-x u` Undo.
 `C-_` Undo.
 `C-/` Undo.
+```
 
 ### Redo
 `C-S-/` Redo. [ctrl+shift+/]
 
 ### Save and Quit
 
+```
 `C-x C-s` Save the file
 `C-x C-c` Exit
+
+```
 
 ### Help
 
@@ -219,6 +230,7 @@ More templates can added by customizing the variable org-structure-template-alis
 
 ## Macro's
 
+```
 Command 	Key
 `kmacro-start-macro-or-insert-counter` 	`F3` or `C-x (`
 `kmacro-end-and-call-macro` 	`F4` or `C-x )`
@@ -226,20 +238,28 @@ Command 	Key
 `kmacro-name-last-macro` 	
 `insert-kbd-macro` 	
 
+```
+
 ## Marks
 
+```
 `C-<SPC>` Set the mark at point, and activate it (set-mark-command).
 `C-@`   The same. 
+
+```
 
 ## Case Conversion Commands
 
 Emacs has commands for converting either a single word or any arbitrary range of text to upper case or to lower case.
 
+```
 `M-l` Convert following word to lower case (downcase-word).
 `M-u` Convert following word to upper case (upcase-word).
 `M-c` Capitalize the following word (capitalize-word).
 `C-x C-l` Convert region to lower case (downcase-region).
 `C-x C-u` Convert region to upper case (upcase-region). 
+
+```
 
 ### I-edit
 
