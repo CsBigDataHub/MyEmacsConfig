@@ -28,7 +28,7 @@
     ;;(setq ido-enable-flex-matching t)
     ;;(setq ido-everywhere t)
     ;;(ido-mode 1)
-    (add-to-list 'default-frame-alist '(font . "Fira Code-15"))
+    (add-to-list 'default-frame-alist '(font . "Fira Code-17"))
     ;;(windmove-default-keybindings) ;;uses shift + arrow keys to move around the windows.
 
     ;;(defalias 'list-buffers 'ibuffer) ; make ibuffer default
@@ -39,7 +39,7 @@
     ;; replacing it with the Emacs’ text.
     ;; https://github.com/dakrone/eos/blob/master/eos.org
     (setq save-interprogram-paste-before-kill t)
-
+    (column-number-mode t)
     (setq tramp-default-method "ssh")
   #+END_SRC
 
@@ -524,87 +524,92 @@
 * White Space and Blank Lines
 
   #+BEGIN_SRC emacs-lisp
-  ;;In emacs, the following commands lets you delete whitespaces around cursor.
-  ;;
-  ;;    delete-blank-lines 【Ctrl+x Ctrl+o】
-  ;;    just-one-space 【Alt+Space】
-  ;;    delete-indentation 【Alt+^】
-  ;;    delete-horizontal-space 【Alt+\】
-  ;;    fixup-whitespace
-  ;;    cycle-spacing (emacs 24.4)
-  ;;
-  ;;Here's a command xah-shrink-whitespaces that combine most of them into one.
+    ;;In emacs, the following commands lets you delete whitespaces around cursor.
+    ;;
+    ;;    delete-blank-lines 【Ctrl+x Ctrl+o】
+    ;;    just-one-space 【Alt+Space】
+    ;;    delete-indentation 【Alt+^】
+    ;;    delete-horizontal-space 【Alt+\】
+    ;;    fixup-whitespace
+    ;;    cycle-spacing (emacs 24.4)
+    ;;
+    ;;Here's a command xah-shrink-whitespaces that combine most of them into one.
 
-  (defun xah-delete-blank-lines ()
-  "Delete all newline around cursor.
+    (defun xah-delete-blank-lines ()
+      "Delete all newline around cursor.
 
-  URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-  Version 2018-04-02"
-  (interactive)
-  (let ($p3 $p4)
-    (skip-chars-backward "\n")
-    (setq $p3 (point))
-    (skip-chars-forward "\n")
-    (setq $p4 (point))
-    (delete-region $p3 $p4)))
+      URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+      Version 2018-04-02"
+      (interactive)
+      (let ($p3 $p4)
+        (skip-chars-backward "\n")
+        (setq $p3 (point))
+        (skip-chars-forward "\n")
+        (setq $p4 (point))
+        (delete-region $p3 $p4)))
 
-  (defun xah-shrink-whitespaces ()
-    "Remove whitespaces around cursor to just one, or none.
+    (defun xah-shrink-whitespaces ()
+      "Remove whitespaces around cursor to just one, or none.
 
-    Shrink any neighboring space tab newline characters to 1 or none.
-    If cursor neighbor has space/tab, toggle between 1 or 0 space.
-    If cursor neighbor are newline, shrink them to just 1.
-    If already has just 1 whitespace, delete it.
+        Shrink any neighboring space tab newline characters to 1 or none.
+        If cursor neighbor has space/tab, toggle between 1 or 0 space.
+        If cursor neighbor are newline, shrink them to just 1.
+        If already has just 1 whitespace, delete it.
 
-    URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
-    Version 2018-04-02T14:38:04-07:00"
-    (interactive)
-    (let* (
-           ($eol-count 0)
-           ($p0 (point))
-           $p1 ; whitespace begin
-           $p2 ; whitespace end
-           ($charBefore (char-before))
-           ($charAfter (char-after ))
-           ($space-neighbor-p (or (eq $charBefore 32) (eq $charBefore 9) (eq $charAfter 32) (eq $charAfter 9)))
-           $just-1-space-p
-)
-      (skip-chars-backward " \n\t")
-      (setq $p1 (point))
-      (goto-char $p0)
-      (skip-chars-forward " \n\t")
-      (setq $p2 (point))
-      (goto-char $p1)
-      (while (search-forward "\n" $p2 t )
-        (setq $eol-count (1+ $eol-count)))
-      (setq $just-1-space-p (eq (- $p2 $p1) 1))
-      (goto-char $p0)
-      (cond
-       ((eq $eol-count 0)
-        (if $just-1-space-p
-            (delete-horizontal-space)
-          (progn (delete-horizontal-space)
-                 (insert " "))))
-       ((eq $eol-count 1)
-        (if $space-neighbor-p
-            (delete-horizontal-space)
-          (progn (xah-delete-blank-lines) (insert " "))))
-       ((eq $eol-count 2)
-        (if $space-neighbor-p
-            (delete-horizontal-space)
-          (progn
-            (xah-delete-blank-lines)
-            (insert "\n"))))
-       ((> $eol-count 2)
-        (if $space-neighbor-p
-            (delete-horizontal-space)
-          (progn
-            (goto-char $p2)
-            (search-backward "\n" )
-            (delete-region $p1 (point))
-            (insert "\n"))))
-       (t (progn
-            (message "nothing done. logic error 40873. shouldn't reach here" ))))))
+        URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
+        Version 2018-04-02T14:38:04-07:00"
+      (interactive)
+      (let* (
+             ($eol-count 0)
+             ($p0 (point))
+             $p1 ; whitespace begin
+             $p2 ; whitespace end
+             ($charBefore (char-before))
+             ($charAfter (char-after ))
+             ($space-neighbor-p (or (eq $charBefore 32) (eq $charBefore 9) (eq $charAfter 32) (eq $charAfter 9)))
+             $just-1-space-p
+             )
+        (skip-chars-backward " \n\t")
+        (setq $p1 (point))
+        (goto-char $p0)
+        (skip-chars-forward " \n\t")
+        (setq $p2 (point))
+        (goto-char $p1)
+        (while (search-forward "\n" $p2 t )
+          (setq $eol-count (1+ $eol-count)))
+        (setq $just-1-space-p (eq (- $p2 $p1) 1))
+        (goto-char $p0)
+        (cond
+         ((eq $eol-count 0)
+          (if $just-1-space-p
+              (delete-horizontal-space)
+            (progn (delete-horizontal-space)
+                   (insert " "))))
+         ((eq $eol-count 1)
+          (if $space-neighbor-p
+              (delete-horizontal-space)
+            (progn (xah-delete-blank-lines) (insert " "))))
+         ((eq $eol-count 2)
+          (if $space-neighbor-p
+              (delete-horizontal-space)
+            (progn
+              (xah-delete-blank-lines)
+              (insert "\n"))))
+         ((> $eol-count 2)
+          (if $space-neighbor-p
+              (delete-horizontal-space)
+            (progn
+              (goto-char $p2)
+              (search-backward "\n" )
+              (delete-region $p1 (point))
+              (insert "\n"))))
+         (t (progn
+              (message "nothing done. logic error 40873. shouldn't reach here" ))))))
+
+    ;; whitespace cleanup
+    (use-package whitespace-cleanup-mode
+      :diminish whitespace-cleanup-mode
+      :init (global-whitespace-cleanup-mode))
   #+END_SRC
 
 * MarkDown mode
@@ -1092,6 +1097,12 @@
 * Git
 
 #+BEGIN_SRC emacs-lisp
+  (use-package transient
+    :config
+    (setq transient-history-file (concat user-cache-dir "transient/history.el")
+          transient-values-file (concat user-cache-dir "transient/values.el")
+          transient-levels-file (concat user-cache-dir "transient/levels.el")))
+
   (use-package magit
     :ensure t
     :init
@@ -1139,6 +1150,16 @@
                 (sit-for 0.1)
                 (git-gutter:clear))
      :color blue))
+
+  (use-package gitconfig-mode
+    :mode "\\.gitconfig\\'"
+    :mode "\\.git/config\\'"
+    :mode "\\.gitmodules\\'")
+
+  (use-package gitignore-mode
+    :mode "\\.gitignore\\'"
+    :mode "\\.dockerignore\\'"
+    :mode "\\..elpaignore\\'")
 #+END_SRC
 
 * Better Shell
@@ -1427,4 +1448,89 @@
 (require 'sunrise-x-buttons)
 (require 'sunrise-x-modeline)
 (add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
+#+END_SRC
+
+* EditorConfig
+
+#+BEGIN_SRC emacs-lisp
+  (use-package editorconfig
+    :ensure t
+    :config
+    (editorconfig-mode 1))
+#+END_SRC
+
+* Yaml Mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :ensure t
+  )
+#+END_SRC
+
+* Docker-Mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package docker
+    :defer t
+    :init
+    (progn
+      (use-package docker-tramp
+        :defer t)
+
+      (use-package dockerfile-mode
+        :mode "Dockerfile\\'")
+
+      (use-package docker-compose-mode
+        :mode "docker-compose[^/]*\\.yml\\'")))
+#+END_SRC
+
+* EShell-Enhancements
+
+#+BEGIN_SRC emacs-lisp
+  (use-package em-smart
+    :hook (eshell-mode . eshell-smart-initialize)
+    :config
+    (progn
+      (add-to-list 'eshell-smart-display-navigate-list #'counsel-esh-history)))
+
+  (use-package esh-autosuggest
+    :disabled t
+    :hook (eshell-mode . esh-autosuggest-mode))
+
+  (use-package em-cmpl
+    :hook (eshell-mode . eshell-cmpl-initialize)
+    :init
+    (progn
+      (defun my/eshell-bash-completion ()
+        (let ((bash-completion-nospace t))
+          (while (pcomplete-here
+                  (nth 2 (bash-completion-dynamic-complete-nocomint
+                          (save-excursion (eshell-bol) (point))
+                          (point)))))))
+#+END_SRC
+
+* Groovy
+
+#+BEGIN_SRC emacs-lisp
+  (use-package groovy-mode
+    :mode (("\\.groovy" . groovy-mode)
+           ("/Jenkinsfile" . groovy-mode))
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.g\\(?:ant\\|roovy\\|radle\\)\\'" . groovy-mode))
+    (add-to-list 'auto-mode-alist '("Jenkinsfile" . groovy-mode))
+    (add-to-list 'auto-mode-alist '("Jenkinsfile\\'" . groovy-mode)))
+
+  (use-package groovy-imports :ensure t)
+  (use-package flycheck-gradle
+    :ensure t
+    :defer t)
+#+END_SRC
+
+* Duplicate Things
+
+#+BEGIN_SRC emacs-lisp
+  (use-package duplicate-thing
+    ;;:bind ("s-d" . duplicate-thing)
+    :ensure t)
 #+END_SRC
