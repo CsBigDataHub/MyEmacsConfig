@@ -9,7 +9,6 @@
 
   #+END_SRC
 
-
 * File-Exists Function
   #+BEGIN_SRC emacs-lisp
     (defun load-if-exists(f)
@@ -132,7 +131,6 @@
     ;;(use-package doom-themes
     ;;  :ensure t)
   #+END_SRC
-
 
 * All the Icons
 
