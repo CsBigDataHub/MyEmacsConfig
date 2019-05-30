@@ -129,6 +129,12 @@
 (use-package try
   :ensure t)
   #+END_SRC
+  
+* PosFrame
+
+#+BEGIN_SRC emacs-lisp
+(use-package posframe)
+#+END_SRC
 
 * Which key
 
@@ -141,6 +147,20 @@
 
   #+END_SRC
 
+* PowerLine
+
+#+BEGIN_SRC emacs-lisp
+;;  ;; powerline
+;;  (use-package powerline
+;;    :ensure t
+;;    :init
+;;    (powerline-evil-center-color-theme))
+;;  (add-hook 'after-init-hook 'powerline-reset)
+;;
+;;  (use-package powerline-evil
+;;    :ensure t)
+#+END_SRC
+
 * Evil Mode For Vi
 
   #+BEGIN_SRC emacs-lisp
@@ -149,6 +169,15 @@
 (require 'evil)
 (evil-mode 1)
 
+ (use-package evil-matchit             ; vi-% for more than {[""]}
+    :ensure t
+    :init
+    (global-evil-matchit-mode 1))
+ 
+ (use-package evil-surround            ; Exactly like tpopes vim-surround
+    :ensure t
+    :init
+    (global-evil-surround-mode))
   #+END_SRC
 
 * Org Bullets
@@ -240,6 +269,27 @@
       (setq ivy-use-virtual-buffers t)
       (setq ivy-display-style 'fancy))
 
+
+    (load-if-exists "./custom-el-scripts/init-ivy-rich.el")
+
+    ;; Enhance fuzzy matching
+    (use-package flx)
+
+    ;; Enhance M-x
+    (use-package amx)
+
+    ;; Ivy integration for Projectile
+    (use-package counsel-projectile
+      :config (counsel-projectile-mode 1))
+
+    ;; Integration with `projectile'
+    (with-eval-after-load 'projectile
+      (setq projectile-completion-system 'ivy))
+
+    ;; Integration with `magit'
+    (with-eval-after-load 'magit
+      (setq magit-completing-read-function 'ivy-completing-read))
+
     (use-package swiper
       :ensure try
       ;;This also can be used to bind keys
@@ -311,14 +361,100 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package company
-    :ensure t
+    :diminish company-mode
+    :defines
+    (company-dabbrev-ignore-case company-dabbrev-downcase)
+    :bind
+    (:map company-active-map
+          ("C-n" . company-select-next)
+          ("C-p" . company-select-previous)
+          ("<tab>" . company-complete-common-or-cycle)
+          :map company-search-map
+          ("C-p" . company-select-previous)
+          ("C-n" . company-select-next))
+    :custom
+    (company-idle-delay 0)
+    (company-echo-delay 0)
+    (company-minimum-prefix-length 1)
+    :hook
+    (after-init . global-company-mode)
+    (plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
+                                     '((company-yasnippet
+                                        ;; company-dabbrev
+                                        )))))
+    ((go-mode
+      c++-mode
+      c-mode
+      objc-mode) . (lambda () (set (make-local-variable 'company-backends)
+                                   '((company-yasnippet
+                                      company-lsp
+                                      company-files
+                                      ;; company-dabbrev-code
+                                      )))))
     :config
-    (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 3)
+    ;; using child frame
+    (use-package company-posframe
+      :hook (company-mode . company-posframe-mode))
+    ;; Show pretty icons
+    (use-package company-box
+      :diminish
+      :hook (company-mode . company-box-mode)
+      :init (setq company-box-icons-alist 'company-box-icons-all-the-icons)
+      :config
+      (setq company-box-backends-colors nil)
+      (setq company-box-show-single-candidate t)
+      (setq company-box-max-candidates 50)
 
-    (global-company-mode t)
-    )
+      (defun company-box-icons--elisp (candidate)
+        (when (derived-mode-p 'emacs-lisp-mode)
+          (let ((sym (intern candidate)))
+            (cond ((fboundp sym) 'Function)
+                  ((featurep sym) 'Module)
+                  ((facep sym) 'Color)
+                  ((boundp sym) 'Variable)
+                  ((symbolp sym) 'Text)
+                  (t . nil)))))
 
+      (with-eval-after-load 'all-the-icons
+        (declare-function all-the-icons-faicon 'all-the-icons)
+        (declare-function all-the-icons-fileicon 'all-the-icons)
+        (declare-function all-the-icons-material 'all-the-icons)
+        (declare-function all-the-icons-octicon 'all-the-icons)
+        (setq company-box-icons-all-the-icons
+              `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.7 :v-adjust -0.15))
+                (Text . ,(all-the-icons-faicon "book" :height 0.68 :v-adjust -0.15))
+                (Method . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
+                (Function . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
+                (Constructor . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
+                (Field . ,(all-the-icons-faicon "tags" :height 0.65 :v-adjust -0.15 :face 'font-lock-warning-face))
+                (Variable . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face))
+                (Class . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
+                (Interface . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01))
+                (Module . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.15))
+                (Property . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face)) ;; Golang module
+                (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.7 :v-adjust -0.15))
+                (Value . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'font-lock-constant-face))
+                (Enum . ,(all-the-icons-material "storage" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-orange))
+                (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.7 :v-adjust -0.15))
+                (Snippet . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))
+                (Color . ,(all-the-icons-material "palette" :height 0.7 :v-adjust -0.15))
+                (File . ,(all-the-icons-faicon "file-o" :height 0.7 :v-adjust -0.05))
+                (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.7 :v-adjust -0.15))
+                (Folder . ,(all-the-icons-octicon "file-directory" :height 0.7 :v-adjust -0.05))
+                (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-blueb))
+                (Constant . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05))
+                (Struct . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
+                (Event . ,(all-the-icons-faicon "bolt" :height 0.7 :v-adjust -0.05 :face 'all-the-icons-orange))
+                (Operator . ,(all-the-icons-fileicon "typedoc" :height 0.65 :v-adjust 0.05))
+                (TypeParameter . ,(all-the-icons-faicon "hashtag" :height 0.65 :v-adjust 0.07 :face 'font-lock-const-face))
+                (Template . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))))))
+    ;; Show quick tooltip
+    (use-package company-quickhelp
+      :defines company-quickhelp-delay
+      :bind (:map company-active-map
+                  ("M-h" . company-quickhelp-manual-begin))
+      :hook (global-company-mode . company-quickhelp-mode)
+      :custom (company-quickhelp-delay 0.8)))
 
   (defun my/python-mode-hook ()
     (add-to-list 'company-backends 'company-jedi))
@@ -700,13 +836,73 @@
 
 * Multiple Cursors
   #+BEGIN_SRC emacs-lisp
-  (use-package multiple-cursors
-    :ensure t
-    :config
-    (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-    (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-    (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-    (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+    (use-package multiple-cursors
+      :ensure t
+      :config
+      (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+      (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+      (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+      (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+      :bind
+      ("H-M-c" . hydra-multiple-cursors/body)
+      :preface
+      ;; insert specific serial number
+      (defvar ladicle/mc/insert-numbers-hist nil)
+      (defvar ladicle/mc/insert-numbers-inc 1)
+      (defvar ladicle/mc/insert-numbers-pad "%01d")
+
+      (defun ladicle/mc/insert-numbers (start inc pad)
+        "Insert increasing numbers for each cursor specifically."
+        (interactive
+         (list (read-number "Start from: " 0)
+               (read-number "Increment by: " 1)
+               (read-string "Padding (%01d): " nil ladicle/mc/insert-numbers-hist "%01d")))
+        (setq mc--insert-numbers-number start)
+        (setq ladicle/mc/insert-numbers-inc inc)
+        (setq ladicle/mc/insert-numbers-pad pad)
+        (mc/for-each-cursor-ordered
+         (mc/execute-command-for-fake-cursor
+          'ladicle/mc--insert-number-and-increase
+          cursor)))
+
+      (defun ladicle/mc--insert-number-and-increase ()
+        (interactive)
+        (insert (format ladicle/mc/insert-numbers-pad mc--insert-numbers-number))
+        (setq mc--insert-numbers-number (+ mc--insert-numbers-number ladicle/mc/insert-numbers-inc)))
+
+      :config
+      (with-eval-after-load 'hydra
+        (defhydra hydra-multiple-cursors (:color pink :hint nil)
+          "
+                                                                            ╔════════╗
+        Point^^^^^^             Misc^^            Insert                            ║ Cursor ║
+      ──────────────────────────────────────────────────────────────────────╨────────╜
+         _k_    _K_    _M-k_    [_l_] edit lines  [_i_] 0...
+         ^↑^    ^↑^     ^↑^     [_m_] mark all    [_a_] letters
+        mark^^ skip^^^ un-mk^   [_s_] sort        [_n_] numbers
+         ^↓^    ^↓^     ^↓^
+         _j_    _J_    _M-j_
+      ╭──────────────────────────────────────────────────────────────────────────────╯
+                               [_q_]: quit, [Click]: point
+    "
+          ("l" mc/edit-lines :exit t)
+          ("m" mc/mark-all-like-this :exit t)
+          ("j" mc/mark-next-like-this)
+          ("J" mc/skip-to-next-like-this)
+          ("M-j" mc/unmark-next-like-this)
+          ("k" mc/mark-previous-like-this)
+          ("K" mc/skip-to-previous-like-this)
+          ("M-k" mc/unmark-previous-like-this)
+          ("s" mc/mark-all-in-region-regexp :exit t)
+          ("i" mc/insert-numbers :exit t)
+          ("a" mc/insert-letters :exit t)
+          ("n" ladicle/mc/insert-numbers :exit t)
+          ("<mouse-1>" mc/add-cursor-on-click)
+          ;; Help with click recognition in this hydra
+          ("<down-mouse-1>" ignore)
+          ("<drag-mouse-1>" ignore)
+          ("q" nil)))
+      )
   #+END_SRC
 
 * smart-forward
@@ -1190,6 +1386,62 @@
     :mode "\\.gitignore\\'"
     :mode "\\.dockerignore\\'"
     :mode "\\..elpaignore\\'")
+
+  (use-package diffview
+    :commands (diffview-region diffview-current)
+    :preface
+    (defun ladicle/diffview-dwim ()
+      (interactive)
+      (if (region-active-p)
+          (diffview-region)
+        (diffview-current)))
+    :bind ("M-g v" . ladicle/diffview-dwim))
+
+  (use-package smerge-mode
+    :diminish
+    :preface
+    (with-eval-after-load 'hydra
+      (defhydra smerge-hydra
+        (:color pink :hint nil :post (smerge-auto-leave))
+        "
+  ^Move^       ^Keep^               ^Diff^                 ^Other^
+  ^^-----------^^-------------------^^---------------------^^-------
+  _n_ext       _b_ase               _<_: upper/base        _C_ombine
+  _p_rev       _u_pper              _=_: upper/lower       _r_esolve
+  ^^           _l_ower              _>_: base/lower        _k_ill current
+  ^^           _a_ll                _R_efine
+  ^^           _RET_: current       _E_diff
+  "
+        ("n" smerge-next)
+        ("p" smerge-prev)
+        ("b" smerge-keep-base)
+        ("u" smerge-keep-upper)
+        ("l" smerge-keep-lower)
+        ("a" smerge-keep-all)
+        ("RET" smerge-keep-current)
+        ("\C-m" smerge-keep-current)
+        ("<" smerge-diff-base-upper)
+        ("=" smerge-diff-upper-lower)
+        (">" smerge-diff-base-lower)
+        ("R" smerge-refine)
+        ("E" smerge-ediff)
+        ("C" smerge-combine-with-next)
+        ("r" smerge-resolve)
+        ("k" smerge-kill-current)
+        ("ZZ" (lambda ()
+                (interactive)
+                (save-buffer)
+                (bury-buffer))
+         "Save and bury buffer" :color blue)
+        ("q" nil "cancel" :color blue)))
+    :hook ((find-file . (lambda ()
+                          (save-excursion
+                            (goto-char (point-min))
+                            (when (re-search-forward "^<<<<<<< " nil t)
+                              (smerge-mode 1)))))
+           (magit-diff-visit-file . (lambda ()
+                                      (when smerge-mode
+                                        (smerge-hydra/body))))))
 #+END_SRC
 
 * Better Shell
@@ -1561,7 +1813,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package duplicate-thing
-    :bind ("H-d" . duplicate-thing)
+    :bind ("H-C-e d" . duplicate-thing)
     :ensure t)
 #+END_SRC
 
@@ -1645,13 +1897,96 @@
 * AG - The silver searcher
 
 #+BEGIN_SRC emacs-lisp
-(use-package ag
+  (use-package ag
+    :ensure t
+    :custom
+    (ag-highligh-search t)
+    (ag-reuse-buffers t)
+    (ag-reuse-window t)
+    :bind
+    ("H-M-p a" . ag-project)
+    :config
+    (use-package wgrep-ag))
+#+END_SRC
+
+* MWIM
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mwim
+    :ensure t
+    :bind
+    ("H-C-g a" . mwim-beginning-of-code-or-line)
+    ("H-C-g e" . mwim-end-of-code-or-line))
+#+END_SRC
+
+* Google-this
+
+#+BEGIN_SRC emacs-lisp
+  (use-package google-this
+    :ensure t)
+#+END_SRC
+
+* Dashboard
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package dashboard
+  :diminish
+  (dashboard-mode page-break-lines-mode)
   :custom
-  (ag-highligh-search t)
-  (ag-reuse-buffers t)
-  (ag-reuse-window t)
-  :bind
-  ("M-s a" . ag-project)
-  :config
-  (use-package wgrep-ag))
+  (dashboard-center-content t)
+  (dashboard-startup-banner 4)
+  (dashboard-items '((recents . 15)
+                     (projects . 5)
+                     (bookmarks . 5)))
+  :custom-face
+  (dashboard-heading ((t (:foreground "#f1fa8c" :weight bold))))
+  :hook
+  (after-init . dashboard-setup-startup-hook))
+
+#+END_SRC
+
+* Dimmer
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dimmer
+    :disabled
+    :custom
+    (dimmer-fraction 0.5)
+    (dimmer-exclusion-regexp-list
+     '(".*Minibuf.*"
+       ".*which-key.*"
+       ".*Messages.*"
+       ".*Async.*"
+       ".*Warnings.*"
+       ".*LV.*"
+       ".*Ilist.*"))
+    :config
+    (dimmer-mode t))
+#+END_SRC
+
+* Rainbow
+
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :hook
+  (prog-mode . rainbow-delimiters-mode))
+
+#+END_SRC
+
+* Kubernates
+
+#+BEGIN_SRC emacs-lisp
+(use-package kubernetes
+  :ensure t
+  :commands (kubernetes-overview))
+
+;; If you want to pull in the Evil compatibility package.
+(use-package kubernetes-evil
+  :ensure t
+  :after kubernetes)
+  
+(use-package k8s-mode
+  :ensure t
+  :hook (k8s-mode . yas-minor-mode))
 #+END_SRC
