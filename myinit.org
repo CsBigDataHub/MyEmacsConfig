@@ -9,6 +9,17 @@
 
   #+END_SRC
 
+
+* File-Exists Function
+  #+BEGIN_SRC emacs-lisp
+    (defun load-if-exists(f)
+      "load the elip file only if it exits"
+      (if (file-readable-p f)
+          (load-file f)))
+  ;; You can also use below
+  ;;(when (file-readable-p f) (load-file p))
+  #+END_SRC
+
 * interface tweaks
 
   #+BEGIN_SRC emacs-lisp
@@ -81,17 +92,17 @@
 
   #+BEGIN_SRC emacs-lisp
 
-    (use-package spacemacs-theme
-      :defer t
-      :init (load-theme 'spacemacs-dark t))
+    ;;(use-package spacemacs-theme
+    ;;  :defer t
+    ;;  :init (load-theme 'spacemacs-dark t))
 
     ;;(use-package monokai-theme
     ;;  :ensure t
     ;;  :config (load-theme 'monokai t))
 
-    ;;(use-package zenburn-theme
-    ;;  :ensure t
-    ;;  :config (load-theme 'zenburn t))
+    (use-package zenburn-theme
+      :ensure t
+      :config (load-theme 'zenburn t))
 
 
     ;;(use-package color-theme-modern
@@ -122,6 +133,31 @@
     ;;  :ensure t)
   #+END_SRC
 
+
+* All the Icons
+
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t
+    :defer 0.5)
+
+  (use-package all-the-icons-ivy
+    :ensure t
+    :after (all-the-icons ivy)
+    :custom (all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
+    :config
+    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-dired-jump)
+    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-find-library)
+    (all-the-icons-ivy-setup))
+
+
+  (use-package all-the-icons-dired
+    :ensure t
+    )
+
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+#+END_SRC
+
 * Try
 
   #+BEGIN_SRC emacs-lisp
@@ -129,7 +165,7 @@
 (use-package try
   :ensure t)
   #+END_SRC
-  
+
 * PosFrame
 
 #+BEGIN_SRC emacs-lisp
@@ -273,13 +309,16 @@
     (load-if-exists "./custom-el-scripts/init-ivy-rich.el")
 
     ;; Enhance fuzzy matching
-    (use-package flx)
+    (use-package flx
+      :ensure t)
 
     ;; Enhance M-x
-    (use-package amx)
+    (use-package amx
+      :ensure t)
 
     ;; Ivy integration for Projectile
     (use-package counsel-projectile
+      :ensure t
       :config (counsel-projectile-mode 1))
 
     ;; Integration with `projectile'
@@ -291,7 +330,7 @@
       (setq magit-completing-read-function 'ivy-completing-read))
 
     (use-package swiper
-      :ensure try
+      :ensure t
       ;;This also can be used to bind keys
       ;;:bind (("C-s" . swiper)
       ;;	 ("C-r" . swiper)
@@ -321,7 +360,7 @@
         ))
     (use-package prescient
       :ensure t
-      :config (setq prescient-save-file (concat conf:cache-dir "prescient.el")) (prescient-persist-mode))
+      :config (prescient-persist-mode))
 
     (use-package ivy-prescient
       :ensure t
@@ -393,10 +432,12 @@
                                       )))))
     :config
     ;; using child frame
-    (use-package company-posframe
-      :hook (company-mode . company-posframe-mode))
+   (use-package company-posframe
+      :ensure t
+     :hook (company-mode . company-posframe-mode))
     ;; Show pretty icons
     (use-package company-box
+      :ensure t
       :diminish
       :hook (company-mode . company-box-mode)
       :init (setq company-box-icons-alist 'company-box-icons-all-the-icons)
@@ -450,6 +491,7 @@
                 (Template . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))))))
     ;; Show quick tooltip
     (use-package company-quickhelp
+      :ensure t
       :defines company-quickhelp-delay
       :bind (:map company-active-map
                   ("M-h" . company-quickhelp-manual-begin))
@@ -749,6 +791,7 @@
 
     ;; whitespace cleanup
     (use-package whitespace-cleanup-mode
+      :ensure t
       :diminish whitespace-cleanup-mode
       :init (global-whitespace-cleanup-mode))
   #+END_SRC
@@ -1047,15 +1090,6 @@
     (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
   #+END_SRC
 
-* File-Exists Function
-  #+BEGIN_SRC emacs-lisp
-    (defun load-if-exists(f)
-      "load the elip file only if it exits"
-      (if (file-readable-p f)
-          (load-file f)))
-  ;; You can also use below
-  ;;(when (file-readable-p f) (load-file p))
-  #+END_SRC
 
 * Dump-Keys
   #+BEGIN_SRC emacs-lisp
@@ -1324,10 +1358,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package transient
-    :config
-    (setq transient-history-file (concat user-cache-dir "transient/history.el")
-          transient-values-file (concat user-cache-dir "transient/values.el")
-          transient-levels-file (concat user-cache-dir "transient/levels.el")))
+    :ensure t)
 
   (use-package magit
     :ensure t
@@ -1617,30 +1648,6 @@
     )
 #+END_SRC
 
-* All the Icons
-
-#+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons
-    :ensure t
-    :defer 0.5)
-
-  (use-package all-the-icons-ivy
-    :ensure t
-    :after (all-the-icons ivy)
-    :custom (all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
-    :config
-    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-dired-jump)
-    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-find-library)
-    (all-the-icons-ivy-setup))
-
-
-  (use-package all-the-icons-dired
-    :ensure t
-    )
-
-  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-#+END_SRC
-
 * FZF
 
 #+BEGIN_SRC emacs-lisp
@@ -1769,26 +1776,29 @@
 * EShell-Enhancements
 
 #+BEGIN_SRC emacs-lisp
-  (use-package em-smart
-    :hook (eshell-mode . eshell-smart-initialize)
-    :config
-    (progn
-      (add-to-list 'eshell-smart-display-navigate-list #'counsel-esh-history)))
-
-  (use-package esh-autosuggest
-    :disabled t
-    :hook (eshell-mode . esh-autosuggest-mode))
-
-  (use-package em-cmpl
-    :hook (eshell-mode . eshell-cmpl-initialize)
-    :init
-    (progn
-      (defun my/eshell-bash-completion ()
-        (let ((bash-completion-nospace t))
-          (while (pcomplete-here
-                  (nth 2 (bash-completion-dynamic-complete-nocomint
-                          (save-excursion (eshell-bol) (point))
-                          (point)))))))
+  ;;(use-package em-smart
+  ;;  :ensure t
+  ;;  :hook (eshell-mode . eshell-smart-initialize)
+  ;;  :config
+  ;;  (progn
+  ;;    (add-to-list 'eshell-smart-display-navigate-list #'counsel-esh-history)))
+  ;;
+  ;;(use-package esh-autosuggest
+  ;;  :ensure t
+  ;;  :disabled t
+  ;;  :hook (eshell-mode . esh-autosuggest-mode))
+  ;;
+  ;;(use-package em-cmpl
+  ;;  :ensure t
+  ;;  :hook (eshell-mode . eshell-cmpl-initialize)
+  ;;  :init
+  ;;  (progn
+  ;;    (defun my/eshell-bash-completion ()
+  ;;      (let ((bash-completion-nospace t))
+  ;;        (while (pcomplete-here
+  ;;                (nth 2 (bash-completion-dynamic-complete-nocomint
+  ;;                        (save-excursion (eshell-bol) (point))
+  ;;                        (point)))))))
 #+END_SRC
 
 * Groovy
@@ -1828,15 +1838,15 @@
 #+BEGIN_SRC emacs-lisp
   (use-package ensime
     :ensure t
-    :pin melpa-stable)
+    :pin melpa)
 
   (use-package sbt-mode
     :ensure t
-    :pin melpa-stable)
+    :pin melpa)
 
   (use-package scala-mode
     :ensure t
-    :pin melpa-stable)
+    :pin melpa)
 #+END_SRC
 
 * Java
@@ -1931,11 +1941,12 @@
 #+BEGIN_SRC emacs-lisp
 
 (use-package dashboard
+  :ensure t
   :diminish
   (dashboard-mode page-break-lines-mode)
   :custom
   (dashboard-center-content t)
-  (dashboard-startup-banner 4)
+  (dashboard-startup-banner 2)
   (dashboard-items '((recents . 15)
                      (projects . 5)
                      (bookmarks . 5)))
@@ -1950,6 +1961,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package dimmer
+    :ensure t
     :disabled
     :custom
     (dimmer-fraction 0.5)
@@ -1969,6 +1981,7 @@
 
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-delimiters
+  :ensure t
   :hook
   (prog-mode . rainbow-delimiters-mode))
 

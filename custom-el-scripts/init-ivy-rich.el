@@ -1,5 +1,6 @@
 ;; More friendly display transformer for Ivy
 (use-package ivy-rich
+  :ensure t
   :defines (all-the-icons-dir-icon-alist bookmark-alist)
   :functions (all-the-icons-icon-family
               all-the-icons-match-to-alist
