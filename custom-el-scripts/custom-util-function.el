@@ -38,3 +38,24 @@
              (tramp-tramp-file-p file-name))
         (error "Cannot open tramp file")
       (browse-url (concat "file://" file-name)))))
+
+(defun dos2unix (buffer)
+  "Convert BUFFER from DOS file format to UNIX."
+  (interactive "*b")
+  (shell-command (format "dos2unix %s" (file-truename buffer))))
+
+
+;; Never understood why Emacs doesn't have this function, either.
+;;
+(defun move-buffer-file (dir)
+  "Moves both current buffer and file it's visiting to DIR." (interactive "DNew directory: ")
+  (let* ((name (buffer-name))
+         (filename (buffer-file-name))
+         (dir
+          (if (string-match dir "\\(?:/\\|\\\\)$")
+              (substring dir 0 -1) dir))
+         (newname (concat dir "/" name)))
+
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (progn	(copy-file filename newname 1)	(delete-file filename)	(set-visited-file-name nil)))))

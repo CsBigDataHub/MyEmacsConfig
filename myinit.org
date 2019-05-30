@@ -15,7 +15,6 @@
 
     (setq inhibit-startup-message t)
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
-    ;;(tool-bar-mode -1)
     (fset 'yes-or-no-p 'y-or-n-p)
     (global-auto-revert-mode 1)
     (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -41,6 +40,12 @@
     (setq save-interprogram-paste-before-kill t)
     (column-number-mode t)
     (setq tramp-default-method "ssh")
+
+    ;;Keyboard tweaks
+    ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
+    ;;(setq mac-option-modifier 'super) ; make opt key do Super
+    ;;(setq mac-control-modifier 'control) ; make Control key do Control
+    (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
   #+END_SRC
 
 * Isearch Current word on the cursor
@@ -885,9 +890,34 @@
     (display-time-mode +1)
 
     (use-package doom-modeline
-      :ensure t)
+      :ensure t
+      :config
+      (set-cursor-color "cyan")
+      (line-number-mode 0)
+      (column-number-mode 0))
     (require 'doom-modeline)
     (doom-modeline-init)
+    (setq doom-modeline-env-version t)
+    (setq doom-modeline-enable-word-count t)
+    ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
+    (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
+
+    ;; Whether display icons in mode-line or not.
+    (setq doom-modeline-icon t)
+
+    ;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
+    (setq doom-modeline-major-mode-icon t)
+
+    ;; Whether display color icons for `major-mode'. It respects
+    ;; `doom-modeline-icon' and `all-the-icons-color-icons'.
+    (setq doom-modeline-major-mode-color-icon t)
+
+    ;; Whether display icons for buffer states. It respects `doom-modeline-icon'.
+    (setq doom-modeline-buffer-state-icon t)
+
+    ;; Whether display buffer modification icon. It respects `doom-modeline-icon'
+    ;; and `doom-modeline-buffer-state-icon'.
+    (setq doom-modeline-buffer-modification-icon t)
   #+END_SRC
 
 * Uniquify For buffer names
@@ -1531,6 +1561,97 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package duplicate-thing
-    ;;:bind ("s-d" . duplicate-thing)
+    :bind ("H-d" . duplicate-thing)
     :ensure t)
+#+END_SRC
+
+* Custom Utils
+
+#+Begin_SRC emacs-lisp
+ (load-if-exists "./custom-el-scripts/custom-util-function.el")
+#+END_SRC
+
+* Ensime/Scala/Sbt
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ensime
+    :ensure t
+    :pin melpa-stable)
+
+  (use-package sbt-mode
+    :ensure t
+    :pin melpa-stable)
+
+  (use-package scala-mode
+    :ensure t
+    :pin melpa-stable)
+#+END_SRC
+
+* Java
+
+#+BEGIN_SRC emacs-lisp
+ (load-if-exists "./custom-el-scripts/init-java.el")
+#+END_SRC
+
+* Auto-revert
+
+#+BEGIN_SRC emacs-lisp
+;; Automatically reload files was modified by external program
+(use-package autorevert
+  :ensure nil
+  :diminish
+  :hook (after-init . global-auto-revert-mode))
+#+END_SRC
+
+* Save Place/ Recentf
+
+#+BEGIN_SRC emacs-lisp
+;; History
+(use-package saveplace
+  :ensure nil
+  :hook (after-init . save-place-mode))
+
+;; Recent files
+(use-package recentf
+  :ensure nil
+  :hook (after-init . recentf-mode)
+  :custom
+  (recentf-max-saved-items 20000000)
+  (recentf-auto-cleanup 'never)
+  (recentf-exclude '((expand-file-name package-user-dir)
+                     ".cache"
+                     "cache"
+                     "recentf"
+                     "COMMIT_EDITMSG\\'"))
+  :preface
+  (defun ladicle/recentf-save-list-silence ()
+    (interactive)
+    (let ((message-log-max nil))
+      (if (fboundp 'shut-up)
+          (shut-up (recentf-save-list))
+        (recentf-save-list)))
+    (message ""))
+  (defun ladicle/recentf-cleanup-silence ()
+    (interactive)
+    (let ((message-log-max nil))
+      (if shutup-p
+          (shut-up (recentf-cleanup))
+        (recentf-cleanup)))
+    (message ""))
+  :hook
+  (focus-out-hook . (ladicle/recentf-save-list-silence ladicle/recentf-cleanup-silence)))
+#+END_SRC
+
+* AG - The silver searcher
+
+#+BEGIN_SRC emacs-lisp
+(use-package ag
+  :custom
+  (ag-highligh-search t)
+  (ag-reuse-buffers t)
+  (ag-reuse-window t)
+  :bind
+  ("M-s a" . ag-project)
+  :config
+  (use-package wgrep-ag))
 #+END_SRC
