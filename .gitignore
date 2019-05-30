@@ -42,7 +42,6 @@ evil
 elpa
 *.dat
 myinit.el
-myinti.el
 /recentf
 transient/**
 projectile-bookmarks.eld
@@ -52,3 +51,6 @@ projectile-bookmarks.eld
 README.html
 init.el
 transient/history.el
+amx-items
+places
+smex-items
