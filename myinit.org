@@ -2000,3 +2000,25 @@
   :ensure t
   :hook (k8s-mode . yas-minor-mode))
 #+END_SRC
+
+* Json
+
+#+BEGIN_SRC emacs-lisp
+  ;;; Languages
+  (use-package js2-mode                   ; Javascript
+    :ensure t
+    :mode (("\\.jsx?\\'" . js2-mode))
+    :commands (j2-mode))
+
+  (use-package json-mode                  ; JSON
+    :ensure t
+    :mode (("\\.json\\'" . json-mode))
+    :commands (json-mode))
+
+  (use-package json-navigator
+    :ensure t)
+
+  (use-package web-beautify
+    :ensure t)
+    
+#+END_SRC
