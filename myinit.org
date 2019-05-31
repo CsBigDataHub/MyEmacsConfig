@@ -2022,3 +2022,11 @@
     :ensure t)
     
 #+END_SRC
+
+
+* Csv Mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package csv-mode
+    :ensure t)
+#+END_SRC
