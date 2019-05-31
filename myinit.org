@@ -649,69 +649,55 @@
     (use-package multiple-cursors
       :ensure t
       :config
-      (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+      (global-set-key (kbd "C-S-l C-S-l") 'my/hydra-multiple-cursors/body)
       (global-set-key (kbd "C->") 'mc/mark-next-like-this)
       (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
       (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-      :bind
-      ("H-M-c" . hydra-multiple-cursors/body)
+      (global-set-key (kbd "C-S-l C-n") 'mc/mark-next-lines)
       :preface
       ;; insert specific serial number
-      (defvar ladicle/mc/insert-numbers-hist nil)
-      (defvar ladicle/mc/insert-numbers-inc 1)
-      (defvar ladicle/mc/insert-numbers-pad "%01d")
-
-      (defun ladicle/mc/insert-numbers (start inc pad)
+      (defvar my/mc/insert-numbers-hist nil)
+      (defvar my/mc/insert-numbers-inc 1)
+      (defvar my/mc/insert-numbers-pad "%01d")
+      (defun my/mc/insert-numbers (start inc pad)
         "Insert increasing numbers for each cursor specifically."
         (interactive
          (list (read-number "Start from: " 0)
                (read-number "Increment by: " 1)
-               (read-string "Padding (%01d): " nil ladicle/mc/insert-numbers-hist "%01d")))
+               (read-string "Padding (%01d): " nil my/mc/insert-numbers-hist "%01d")))
         (setq mc--insert-numbers-number start)
-        (setq ladicle/mc/insert-numbers-inc inc)
-        (setq ladicle/mc/insert-numbers-pad pad)
+        (setq my/mc/insert-numbers-inc inc)
+        (setq my/mc/insert-numbers-pad pad)
         (mc/for-each-cursor-ordered
          (mc/execute-command-for-fake-cursor
-          'ladicle/mc--insert-number-and-increase
+          'my/mc--insert-number-and-increase
           cursor)))
 
-      (defun ladicle/mc--insert-number-and-increase ()
+      (defun my/mc--insert-number-and-increase ()
         (interactive)
-        (insert (format ladicle/mc/insert-numbers-pad mc--insert-numbers-number))
-        (setq mc--insert-numbers-number (+ mc--insert-numbers-number ladicle/mc/insert-numbers-inc)))
+        (insert (format my/mc/insert-numbers-pad mc--insert-numbers-number))
+        (setq mc--insert-numbers-number (+ mc--insert-numbers-number my/mc/insert-numbers-inc)))
 
-      :config
-      (with-eval-after-load 'hydra
-        (defhydra hydra-multiple-cursors (:color pink :hint nil)
-          "
-                                                                            ╔════════╗
-        Point^^^^^^             Misc^^            Insert                            ║ Cursor ║
-      ──────────────────────────────────────────────────────────────────────╨────────╜
-         _k_    _K_    _M-k_    [_l_] edit lines  [_i_] 0...
-         ^↑^    ^↑^     ^↑^     [_m_] mark all    [_a_] letters
-        mark^^ skip^^^ un-mk^   [_s_] sort        [_n_] numbers
-         ^↓^    ^↓^     ^↓^
-         _j_    _J_    _M-j_
-      ╭──────────────────────────────────────────────────────────────────────────────╯
-                               [_q_]: quit, [Click]: point
-    "
-          ("l" mc/edit-lines :exit t)
-          ("m" mc/mark-all-like-this :exit t)
-          ("j" mc/mark-next-like-this)
-          ("J" mc/skip-to-next-like-this)
-          ("M-j" mc/unmark-next-like-this)
-          ("k" mc/mark-previous-like-this)
-          ("K" mc/skip-to-previous-like-this)
-          ("M-k" mc/unmark-previous-like-this)
-          ("s" mc/mark-all-in-region-regexp :exit t)
-          ("i" mc/insert-numbers :exit t)
-          ("a" mc/insert-letters :exit t)
-          ("n" ladicle/mc/insert-numbers :exit t)
-          ("<mouse-1>" mc/add-cursor-on-click)
-          ;; Help with click recognition in this hydra
-          ("<down-mouse-1>" ignore)
-          ("<drag-mouse-1>" ignore)
-          ("q" nil)))
+      (defhydra my/hydra-multiple-cursors (:hint nil)
+        "
+     Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+    ------------------------------------------------------------------
+     [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
+     [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
+     [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
+     [Click] Cursor at point       [_q_] Quit"
+        ("l" mc/edit-lines :exit t)
+        ("a" mc/mark-all-like-this :exit t)
+        ("n" mc/mark-next-like-this)
+        ("N" mc/skip-to-next-like-this)
+        ("M-n" mc/unmark-next-like-this)
+        ("p" mc/mark-previous-like-this)
+        ("P" mc/skip-to-previous-like-this)
+        ("M-p" mc/unmark-previous-like-this)
+        ("s" mc/mark-all-in-region-regexp :exit t)
+        ("0" mc/insert-numbers :exit t)
+        ("A" mc/insert-letters :exit t)
+        ("q" nil))
       )
   #+END_SRC
 
@@ -1086,12 +1072,12 @@
   (use-package diffview
     :commands (diffview-region diffview-current)
     :preface
-    (defun ladicle/diffview-dwim ()
+    (defun my/diffview-dwim ()
       (interactive)
       (if (region-active-p)
           (diffview-region)
         (diffview-current)))
-    :bind ("M-g v" . ladicle/diffview-dwim))
+    :bind ("M-g v" . my/diffview-dwim))
 
   (use-package smerge-mode
     :diminish
@@ -1559,14 +1545,14 @@
                      "recentf"
                      "COMMIT_EDITMSG\\'"))
   :preface
-  (defun ladicle/recentf-save-list-silence ()
+  (defun my/recentf-save-list-silence ()
     (interactive)
     (let ((message-log-max nil))
       (if (fboundp 'shut-up)
           (shut-up (recentf-save-list))
         (recentf-save-list)))
     (message ""))
-  (defun ladicle/recentf-cleanup-silence ()
+  (defun my/recentf-cleanup-silence ()
     (interactive)
     (let ((message-log-max nil))
       (if shutup-p
@@ -1574,7 +1560,7 @@
         (recentf-cleanup)))
     (message ""))
   :hook
-  (focus-out-hook . (ladicle/recentf-save-list-silence ladicle/recentf-cleanup-silence)))
+  (focus-out-hook . (my/recentf-save-list-silence my/recentf-cleanup-silence)))
 #+END_SRC
 
 * AG - The silver searcher

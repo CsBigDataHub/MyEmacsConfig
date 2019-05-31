@@ -2,6 +2,8 @@
 
 ## To get Emacs Running Faster
 
+- Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`
+
 `emacsclient -a "" -c`
 
 ```elisp
