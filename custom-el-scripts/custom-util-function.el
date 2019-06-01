@@ -400,6 +400,13 @@
 
 ;;(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
+(bind-keys*
+ ("M-m g R" . my/rename-current-buffer-file))
+
+(which-key-add-key-based-replacements
+  "g R" "rename buffer and file")
+
+
 
 (defun my/move-line-down ()
   (interactive)
@@ -477,3 +484,438 @@
 
 (add-hook 'text-mode-hook
           'my/text-formatting-hooks)
+
+
+(defun my/open-config ()
+  "Opens the configuration file from anywhere"
+  (interactive)
+  (find-file (concat user-emacs-directory "config.org")))
+
+
+(defun my/goto-closest-number ()
+  (interactive)
+  (let ((closest-behind (save-excursion (search-backward-regexp "[0-9]" nil t)))
+        (closest-ahead (save-excursion (search-forward-regexp "[0-9]" nil t))))
+    (push-mark)
+    (goto-char
+     (cond
+      ((and (not closest-ahead) (not closest-behind)) (error "No numbers in buffer"))
+      ((and closest-ahead (not closest-behind)) closest-ahead)
+      ((and closest-behind (not closest-ahead)) closest-behind)
+      ((> (- closest-ahead (point)) (- (point) closest-behind)) closest-behind)
+      ((> (- (point) closest-behind) (- closest-ahead (point))) closest-ahead)
+      :else closest-ahead))))
+
+(defun my/split-below-and-move ()
+  (interactive)
+  (split-window-below)
+  (other-window 1))
+(defun my/split-right-and-move ()
+  (interactive)
+  (split-window-right)
+  (other-window 1))
+
+(bind-keys
+ ("C-x 2" . my/split-below-and-move)
+ ("C-x 3" . my/split-right-and-move))
+
+
+(defun my/other-window-down ()
+  "Scrolls down in adjoining window"
+  (interactive)
+  (other-window 1)
+  (scroll-up-command)
+  (other-window 1))
+(defun my/other-window-up ()
+  "Scrolls up in adjoining window"
+  (interactive)
+  (other-window 1)
+  (scroll-down-command)
+  (other-window 1))
+
+(bind-keys*
+ ("M-m g ]" . my/other-window-down)
+ ("M-m g [" . my/other-window-up))
+
+(defun my/smarter-move-beginning-of-line (arg)
+  "Move point back to indentation of beginning of line.
+Move point to the first non-whitespace character on this line.
+If point is already there, move to the beginning of the line.
+Effectively toggle between the first non-whitespace character and
+the beginning of the line.
+If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+point reaches the beginning or end of the buffer, stop there."
+  (interactive "^p")
+  (setq arg (or arg 1))
+  ;; Move lines first
+  (when (/= arg 1)
+    (let ((line-move-visual nil))
+      (forward-line (1- arg))))
+  (let ((orig-point (point)))
+    (back-to-indentation)
+    (when (= orig-point (point))
+      (move-beginning-of-line 1))))
+
+;; remap C-a to `smarter-move-beginning-of-line'
+(global-set-key [remap move-beginning-of-line]
+                'my/smarter-move-beginning-of-line)
+
+
+(defun my/browse-current-file ()
+  "Open the current file as a URL using `browse-url'."
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (if (and (fboundp 'tramp-tramp-file-p)
+             (tramp-tramp-file-p file-name))
+        (error "Cannot open tramp file")
+      (browse-url (concat "file://" file-name)))))
+
+(bind-keys*
+ ("M-m g B" . my/browse-current-file))
+
+
+(defun my/rotate-windows ()
+  "Rotate your windows"
+  (interactive)
+  (cond ((not (> (count-windows)1))
+         (message "You can't rotate a single window!"))
+        (t
+         (setq i 1)
+         (setq numWindows (count-windows))
+         (while  (< i numWindows)
+           (let* (
+                  (w1 (elt (window-list) i))
+                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
+
+                  (b1 (window-buffer w1))
+                  (b2 (window-buffer w2))
+
+                  (s1 (window-start w1))
+                  (s2 (window-start w2))
+                  )
+             (set-window-buffer w1  b2)
+             (set-window-buffer w2 b1)
+             (set-window-start w1 s2)
+             (set-window-start w2 s1)
+             (setq i (1+ i)))))))
+
+(defhydra my/hydra-of-windows (:color red
+                                      :hint nil)
+  "
+ ^Move^    ^Size^    ^Change^                    ^Split^           ^Text^
+ ^^^^^^^^^^^------------------------------------------------------------------
+ ^ ^ _k_ ^ ^   ^ ^ _K_ ^ ^   _u_: winner-undo _o_: rotate  _v_: vertical     _+_: zoom in
+ _h_ ^+^ _l_   _H_ ^+^ _L_   _r_: winner-redo            _s_: horizontal   _-_: zoom out
+ ^ ^ _j_ ^ ^   ^ ^ _J_ ^ ^   _c_: close                  _z_: zoom         _q_: quit
+"
+  ("h" windmove-left)
+  ("j" windmove-down)
+  ("k" windmove-up)
+  ("l" windmove-right)
+  ("H" shrink-window-horizontally)
+  ("K" shrink-window)
+  ("J" enlarge-window)
+  ("L" enlarge-window-horizontally)
+  ("v" my/split-right-and-move)
+  ("s" my/split-below-and-move)
+  ("c" delete-window)
+  ("f" my/toggle-frame-fullscreen-non-native :color blue)
+  ("o" my/rotate-windows)
+  ("z" delete-other-windows)
+  ("u" (progn
+         (winner-undo)
+         (setq this-command 'winner-undo)))
+  ("r" winner-redo)
+  ("+" text-scale-increase)
+  ("-" text-scale-decrease)
+  ("q" nil :color blue))
+
+(bind-keys*
+ ("M-m SPC u" . my/hydra-of-windows/body))
+
+(defhydra my/hydra-bookmarks (:color blue
+                                     :hint nil)
+  "
+ _s_: set  _b_: bookmark   _j_: jump   _d_: delete   _q_: quit
+  "
+  ("s" bookmark-set)
+  ("b" bookmark-save)
+  ("j" bookmark-jump)
+  ("d" bookmark-delete)
+  ("q" nil :color blue))
+
+(bind-keys*
+ ("M-m `" . my/hydra-bookmarks/body))
+
+(defun my/incs (s &optional num)
+  (let* ((inc (or num 1))
+         (new-number (number-to-string (+ inc (string-to-number s))))
+         (zero-padded? (s-starts-with? "0" s)))
+    (if zero-padded?
+        (s-pad-left (length s) "0" new-number)
+      new-number)))
+
+(defun my/change-number-at-point (arg)
+  (interactive "p")
+  (unless (or (looking-at "[0-9]")
+              (looking-back "[0-9]"))
+    (my/goto-closest-number))
+  (save-excursion
+    (while (looking-back "[0-9]")
+      (forward-char -1))
+    (re-search-forward "[0-9]+" nil)
+    (replace-match (my/incs (match-string 0) arg) nil nil)))
+
+(defun my/subtract-number-at-point (arg)
+  (interactive "p")
+  (sk/change-number-at-point (- arg)))
+
+(which-key-add-key-based-replacements
+  "g +" "increase number"
+  "g -" "decrease number")
+
+(defun my/remove-mark ()
+  "Deactivate the region"
+  (interactive)
+  (if (region-active-p)
+      (deactivate-mark)))
+
+(bind-keys*
+ ("M-m E" . my/remove-mark))
+
+(which-key-add-key-based-replacements
+  "E" "deactivate mark")
+
+(defun my/align-whitespace (start end)
+  "Align columns by whitespace"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)\\s-" 1 0 t))
+
+(defun my/align-ampersand (start end)
+  "Align columns by ampersand"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)&" 1 1 t))
+
+(defun my/align-quote-space (start end)
+  "Align columns by quote and space"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\).*\\s-\"" 1 0 t))
+
+(defun my/align-equals (start end)
+  "Align columns by equals sign"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)=" 1 0 t))
+
+(defun my/align-comma (start end)
+  "Align columns by comma"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)," 1 1 t))
+
+(defun my/align-dot (start end)
+  "Align columns by dot"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)\\\." 1 1 t))
+
+(defun my/align-colon (start end)
+  "Align columns by equals sign"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\):" 1 0 t))
+
+(bind-keys*
+ ("M-m g A SPC" . my/align-whitespace)
+ ("M-m g A &"   . my/align-ampersand)
+ ("M-m g A ,"   . my/align-comma)
+ ("M-m g A \""  . my/align-quote-space)
+ ("M-m g A      ." . my/align-dot)
+ ("M-m g A ="   . my/align-equals)
+ ("M-m g A :"   . my/align-colon)
+ ("M-m g A A"   . align-regexp))
+
+(which-key-add-key-based-replacements
+  "M-m g A" "align prefix")
+
+defun my/sk/insert-date (prefix)
+"Insert the current date. With prefix-argument, write out the day and month name."
+(interactive "P")
+(let ((format (cond
+               ((not prefix) "%Y-%m-%d")
+               ((equal prefix '(4)) "%A, %d %B %Y")
+               ((equal prefix '(16)) "%Y-%m-%d %H:%M:%S"))))
+  (insert (format-time-string format))))
+
+(bind-keys*
+ ("M-m g D" . my/sk/insert-date))
+
+(which-key-add-key-based-replacements
+  "g D"   "insert date")
+
+
+(defun my/delete-current-buffer-file ()
+  "Removes file connected to current buffer and kills buffer."
+  (interactive)
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer))
+        (name (buffer-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (ido-kill-buffer)
+      (when (yes-or-no-p "Are you sure you want to remove this file? ")
+        (delete-file filename)
+        (kill-buffer buffer)
+        (message "File '%s' successfully removed" filename)))))
+
+(bind-keys*
+ ("M-m g K" . my/delete-current-buffer-file))
+
+(which-key-add-key-based-replacements
+  "g K" "delete buffer and file")
+
+
+(defun my/copy-current-file-path ()
+  "Add current file path to kill ring. Limits the filename to project root if possible."
+  (interactive)
+  (kill-new buffer-file-name))
+
+(bind-keys*
+ ("M-m g y" . my/copy-current-file-path))
+
+(which-key-add-key-based-replacements
+  "g y" "copy current file path")
+
+;; Transpose words forward
+(defun my/transpose-words-forward ()
+  "Transpose words forward"
+  (interactive)
+  (forward-word 1)
+  (forward-char 1)
+  (transpose-words 1)
+  (backward-word 1))
+;; Transpose words backward
+(defun my/transpose-words-backward ()
+  "Transpose words backward"
+  (interactive)
+  (transpose-words 1)
+  (backward-word 1))
+
+(bind-keys*
+ ("M-m [ w" . my/transpose-words-backward)
+ ("M-m ] w" . my/transpose-words-forward))
+
+(which-key-add-key-based-replacements
+  "[ w" "exchange with prev word"
+  "] w" "exchange with next word")
+
+
+;; Transpose chars forward
+(defun my/transpose-chars-forward ()
+  "Transpose chars forward"
+  (interactive)
+  (forward-char 1)
+  (transpose-chars 1)
+  (backward-char 1))
+;; Transpose chars backward
+(defun my/transpose-chars-backward ()
+  "Transpose chars backward"
+  (interactive)
+  (transpose-chars 1)
+  (backward-char 1))
+
+
+(bind-keys*
+ ("M-m [ c" . my/transpose-chars-backward)
+ ("M-m ] c" . my/transpose-chars-forward))
+
+(which-key-add-key-based-replacements
+  "[ c" "exchange with prev char"
+  "] c" "exchange with next char")
+
+(defun my/duplicate-region (&optional num start end)
+  "Duplicates the region bounded by START and END NUM times.
+If no START and END is provided, the current region-beginning and
+region-end is used."
+  (interactive "p")
+  (save-excursion
+    (let* ((start (or start (region-beginning)))
+           (end (or end (region-end)))
+           (region (buffer-substring start end)))
+      (goto-char end)
+      (dotimes (i num)
+        (insert region)))))
+
+(defun my/duplicate-current-line (&optional num)
+  "Duplicate the current line NUM times."
+  (interactive "p")
+  (save-excursion
+    (when (eq (point-at-eol) (point-max))
+      (goto-char (point-max))
+      (newline)
+      (forward-char -1))
+    (my/duplicate-region num (point-at-bol) (1+ (point-at-eol)))))
+
+(defun my/duplicate-line-or-region (&optional num)
+  "Duplicate the current line or region if active"
+  (interactive "p")
+  (if (region-active-p)
+      (let ((beg (region-beginning))
+            (end (region-end)))
+        (my/duplicate-region num beg end)))
+  (my/duplicate-current-line num))
+
+(bind-keys*
+ ("M-m g d" . my/duplicate-line-or-region))
+
+(which-key-add-key-based-replacements
+  "g d" "duplicate line or region")
+
+(defun my/open-line-above (args)
+  "Insert a new line above the current one or open a new line above for editing"
+  (interactive "P")
+  (if (equal args '(4))
+      (save-excursion
+        (unless (bolp)
+          (beginning-of-line))
+        (newline)
+        (indent-according-to-mode))
+    (unless (bolp)
+      (beginning-of-line))
+    (newline)
+    (forward-line -1)
+    (indent-according-to-mode)
+    (modalka-mode 0)))
+
+(bind-keys*
+ ("M-o" . my/open-line-above))
+
+
+(defun sk/join-line ()
+  "Join the current line with the next line"
+  (interactive)
+  (next-line)
+  (delete-indentation))
+
+(bind-keys
+ ("C-S-j" . sk/join-line))
+
+(defun my/select-inside-line ()
+  "Select the current line"
+  (interactive)
+  (my/smarter-move-beginning-of-line 1)
+  (set-mark (line-end-position))
+  (exchange-point-and-mark))
+
+(defun my/select-around-line ()
+  "Select line including the newline character"
+  (interactive)
+  (my/select-inside-line)
+  (next-line 1)
+  (my/smarter-move-beginning-of-line 1))
+
+(bind-keys*
+ ("M-m i l" . my/select-inside-line)
+ ("M-m a l" . my/select-around-line))

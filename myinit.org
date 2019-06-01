@@ -56,6 +56,44 @@
     ;;(setq mac-option-modifier 'super) ; make opt key do Super
     ;;(setq mac-control-modifier 'control) ; make Control key do Control
     (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+    (setq user-full-name "Chetan Koneru")
+
+    ;;Ediff mode is a UNIX patching tool and my version controlling package uses this to help resolve merge conflicts and having some better defaults will be useful for this.
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain
+          ediff-split-window-function 'split-window-horizontally)
+
+    ;;`'subword-mode`' is a built-in mode that helps moving over camelCase words correctly.
+    (setq sentence-end-double-space nil)
+
+    ;;Recneter screen
+    (setq recenter-positions '(top middle bottom))
+
+    ;;Better wild cards in search
+    ;;The built-in incremental search is pretty good but the most common regex I type is .* which stands for anything. This makes sure space between words acts the same way. It’s much better for me to use it now.
+    (setq search-whitespace-regexp ".*?")
+
+    ;;Persistent history
+    (savehist-mode)
+
+
+    ;;async, s, dash, and cl-lib are libraries for asynchronous processing, string manipulation, list manipulation and backward compatibility respectively.
+    (use-package async
+      :ensure t
+      :commands (async-start))
+
+    (use-package cl-lib
+      :ensure t)
+
+    (use-package dash
+      :ensure t)
+
+    (use-package s
+      :ensure t)
+
+    ;;Restart emacs from emacs
+    (use-package restart-emacs
+      :ensure t
+      :bind* (("C-x M-c" . restart-emacs)))
   #+END_SRC
 
 * Theme
@@ -902,13 +940,44 @@
 * Smart-Parens
 
 #+BEGIN_SRC emacs-lisp
-  (use-package smartparens
-    :ensure t
-    :diminish smartparens-mode
-    :config
-    (progn
-      (require 'smartparens-config)
-      (smartparens-global-mode 1)))
+(use-package smartparens
+  :ensure t
+  :demand t
+  :bind* (("M-m m j" . sp-down-sexp)
+          ("M-m m k" . sp-backward-up-sexp)
+          ("M-m m h" . sp-backward-down-sexp)
+          ("M-m m l" . sp-up-sexp)
+          ("M-m m f" . sp-forward-sexp)
+          ("M-m m b" . sp-backward-sexp)
+          ("M-m m a" . sp-beginning-of-sexp)
+          ("M-m m e" . sp-end-of-sexp)
+          ("M-m m n" . sp-next-sexp)
+          ("M-m m p" . sp-previous-sexp)
+          ("M-m m >" . sp-forward-barf-sexp)
+          ("M-m m <" . sp-backward-barf-sexp)
+          ("M-m m )" . sp-forward-slurp-sexp)
+          ("M-m m (" . sp-backward-slurp-sexp)
+          ("M-m m x" . sp-transpose-sexp)
+          ("M-m m d" . sp-kill-sexp)
+          ("M-m m y" . sp-copy-sexp)
+          ("M-m m u" . sp-unwrap-sexp)
+          ("M-m m U" . sp-backward-unwrap-sexp)
+          ("M-m m C" . sp-convolute-sexp)
+          ("M-m m r" . sp-raise-sexp)
+          ("M-m m s" . sp-split-sexp)
+          ("M-m m S" . sp-splice-sexp)
+          ("M-m m F" . sp-splice-sexp-killing-forward)
+          ("M-m m B" . sp-splice-sexp-killing-backward)
+          ("M-m m A" . sp-splice-sexp-killing-around))
+  :diminish smartparens-mode
+  :diminish smartparens-strict-mode
+  :config
+  (require 'smartparens-config)
+  (smartparens-global-mode)
+  (smartparens-global-strict-mode)
+  (show-smartparens-global-mode)
+  (which-key-add-key-based-replacements
+    "M-m m" "move prefix"))
 #+END_SRC
 
 * Font Scaling
@@ -1140,7 +1209,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package dumb-jump
     :bind (("M-g o" . dumb-jump-go-other-window)
-           ("M-g j" . dumb-jump-go)
+           ("M-g s" . dumb-jump-go)
            ("M-g x" . dumb-jump-go-prefer-external)
            ("M-g z" . dumb-jump-go-prefer-external-other-window))
     :config
@@ -1757,4 +1826,69 @@
 #+BEGIN_SRC emacs-lisp
   (use-package evil-exchange
     :ensure t)
+#+END_SRC
+
+* Goto last change
+
+#+BEGIN_SRC emacs-lisp
+(use-package goto-chg
+  :ensure t
+  :bind* (("M-m g ;" . goto-last-change)
+          ("M-m g ," . goto-last-change-reverse)))
+#+END_SRC
+
+* Ztree 
+
+#+BEGIN_SRC emacs-lisp
+(use-package ztree
+  :ensure t
+  :bind* (("M-m g v" . ztree-dir)
+          ("M-m g V" . ztree-diff))
+  :init
+  (setq ztree-dir-move-focus t))
+#+END_SRC
+
+* GG_Tags
+
+#+BEGIN_SRC emacs-lisp
+(use-package ggtags
+  :ensure t
+  :diminish ggtags-mode
+  :bind* (("M-m T"   . ggtags-find-tag-regexp)
+          ("M-m g t" . ggtags-create-tags)
+          ("M-m g T" . ggtags-update-tags))
+  :init
+  (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
+  :config
+  (add-hook 'prog-mode-hook 'ggtags-mode))
+#+END_SRC
+
+* Dash at point
+
+#+BEGIN_SRC emacs-lisp
+(use-package dash-at-point
+  :ensure t
+  :bind (("C-c I" . dash-at-point))
+  :bind* (("M-m SPC i" . dash-at-point-with-docset)
+          ("M-m SPC I" . dash-at-point)))
+#+END_SRC
+
+* Commenting
+
+#+BEGIN_SRC emacs-lisp
+(use-package comment-dwim-2
+  :ensure t
+  :bind* (("M-m g c" . comment-dwim-2)))
+#+END_SRC
+
+* Cycle-quotes
+
+#+BEGIN_SRC emacs-lisp
+(use-package cycle-quotes
+  :ensure t
+  :bind* (("M-m s q" . cycle-quotes)))
+  
+(which-key-add-key-based-replacements
+  "s q" "switch quotes")
+
 #+END_SRC
