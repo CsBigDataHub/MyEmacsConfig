@@ -696,7 +696,6 @@
       ("r" er/contract-region)
       ("q" nil :color blue))
 
-    Key bindings
     (bind-keys*
      ("M-m a a" . my/hydra-expand/body))
   #+END_SRC
@@ -756,6 +755,18 @@
         ("A" mc/insert-letters :exit t)
         ("q" nil))
       )
+
+    (use-package evil-mc
+      :ensure t
+      :config
+      (global-evil-mc-mode 1))
+
+
+    (use-package evil-mc-extras
+      :ensure t
+      :config
+      (global-evil-mc-extras-mode 1))
+
   #+END_SRC
 
 * smart-forward
@@ -1805,6 +1816,23 @@
     :bind
     (("<f7>r r" . quickrun)
      ("<f7>r c". quickrun-compile-only)))
+
+  (defhydra my/hydra-quickrun (:color blue
+                                      :hint nil)
+    "
+   _s_: quickrun     _a_: with arg    _c_: compile only       _q_: quit
+   _r_: run region   _S_: shell       _R_: replace region
+  "
+    ("s" quickrun)
+    ("r" quickrun-region)
+    ("a" quickrun-with-arg)
+    ("S" quickrun-shell)
+    ("c" quickrun-compile-only)
+    ("R" quickrun-replace-region)
+    ("q" nil :color blue))
+
+  (bind-keys*
+   ("M-m s q" . my/hydra-quickrun/body))
 #+END_SRC
 
 * Auto-update packages
@@ -1910,4 +1938,81 @@
 (which-key-add-key-based-replacements
   "s q" "switch quotes")
 
+#+END_SRC
+
+* Highlight Indentation
+
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-indentation
+  :ensure t
+  :commands (highlight-indentation-mode))
+#+END_SRC
+
+* Region State
+
+#+BEGIN_SRC emacs-lisp
+(use-package region-state
+  :ensure t
+  :config
+  (region-state-mode))
+#+END_SRC
+
+* Google This
+
+#+BEGIN_SRC emacs-lisp
+  (use-package google-this
+    :ensure t
+    :commands (google-this-word
+               google-this-region
+               google-this-symbol
+               google-this-clean-error-string
+               google-this-line
+               google-this-search
+               google-this-cpp-reference))
+
+  (defun my/google-this ()
+    "Google efficiently"
+    (interactive)
+    (if (region-active-p)
+        (google-this-region 1)
+      (google-this-symbol 1)))
+
+  (bind-keys*
+    ("M-m A" . my/google-this))
+
+  (defhydra my/hydra-google (:color blue
+                             :hint nil)
+    "
+   _w_: word   _r_: region    _v_: symbol   _l_: line
+   _g_: google _c_: cpp       _s_: string   _q_: quit
+   "
+    ("w" google-this-word)
+    ("r" google-this-region)
+    ("v" google-this-symbol)
+    ("s" google-this-clean-error-string)
+    ("l" google-this-line)
+    ("g" google-this-search)
+    ("c" google-this-cpp-reference)
+    ("q" nil :color blue))
+
+  (bind-keys*
+    ("M-m g G" . my/hydra-google/body))
+#+END_SRC
+
+* browse-at-remote
+
+#+BEGIN_SRC emacs-lisp
+(use-package browse-at-remote
+  :ensure t
+  :bind* (("M-m g i" . browse-at-remote)
+          ("M-m g I" . browse-at-remote-kill)))
+#+END_SRC
+
+* discover-my-major
+
+#+BEGIN_SRC emacs-lisp
+(use-package discover-my-major
+  :ensure t
+  :bind (("C-h C-m" . discover-my-major)
+         ("C-h M-m" . discover-my-mode)))
 #+END_SRC
