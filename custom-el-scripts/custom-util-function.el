@@ -486,7 +486,7 @@
 (defun my/open-config ()
   "Opens the configuration file from anywhere"
   (interactive)
-  (find-file (concat user-emacs-directory "config.org")))
+  (find-file (concat user-emacs-directory "myinit.org")))
 
 
 (defun my/goto-closest-number ()
