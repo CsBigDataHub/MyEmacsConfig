@@ -108,10 +108,14 @@
     ;;  :ensure t
     ;;  :config (load-theme 'monokai t))
 
-    (use-package zenburn-theme
-      :ensure t
-      :config (load-theme 'zenburn t))
+    ;;(use-package zenburn-theme
+    ;;  :ensure t
+    ;;  :config (load-theme 'zenburn t))
 
+    (use-package dracula-theme
+      :ensure t
+      :demand
+      :config (load-theme 'dracula t))
 
     ;;(use-package color-theme-modern
     ;;  :ensure t)
@@ -675,11 +679,26 @@
 
 * Expand Region
   #+BEGIN_SRC emacs-lisp
-; expand the marked region in semantic increments (negative prefix to reduce region)
+    ;; expand the marked region in semantic increments (negative prefix to reduce region)
     (use-package expand-region
       :ensure t
       :config
       (global-set-key (kbd "C-=") 'er/expand-region))
+
+
+    (defhydra my/hydra-expand (:pre (er/mark-word)
+                                    :color red
+                                    :hint nil)
+      "
+     _a_: add    _r_: reduce   _q_: quit
+     "
+      ("a" er/expand-region)
+      ("r" er/contract-region)
+      ("q" nil :color blue))
+
+    Key bindings
+    (bind-keys*
+     ("M-m a a" . my/hydra-expand/body))
   #+END_SRC
 
 * Multiple Cursors

@@ -403,9 +403,6 @@
 (bind-keys*
  ("M-m g R" . my/rename-current-buffer-file))
 
-(which-key-add-key-based-replacements
-  "g R" "rename buffer and file")
-
 
 
 (defun my/move-line-down ()
@@ -668,11 +665,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 (defun my/subtract-number-at-point (arg)
   (interactive "p")
-  (sk/change-number-at-point (- arg)))
-
-(which-key-add-key-based-replacements
-  "g +" "increase number"
-  "g -" "decrease number")
+  (my/change-number-at-point (- arg)))
 
 (defun my/remove-mark ()
   "Deactivate the region"
@@ -683,8 +676,6 @@ point reaches the beginning or end of the buffer, stop there."
 (bind-keys*
  ("M-m E" . my/remove-mark))
 
-(which-key-add-key-based-replacements
-  "E" "deactivate mark")
 
 (defun my/align-whitespace (start end)
   "Align columns by whitespace"
@@ -738,9 +729,6 @@ point reaches the beginning or end of the buffer, stop there."
  ("M-m g A :"   . my/align-colon)
  ("M-m g A A"   . align-regexp))
 
-(which-key-add-key-based-replacements
-  "M-m g A" "align prefix")
-
 defun my/sk/insert-date (prefix)
 "Insert the current date. With prefix-argument, write out the day and month name."
 (interactive "P")
@@ -752,9 +740,6 @@ defun my/sk/insert-date (prefix)
 
 (bind-keys*
  ("M-m g D" . my/sk/insert-date))
-
-(which-key-add-key-based-replacements
-  "g D"   "insert date")
 
 
 (defun my/delete-current-buffer-file ()
@@ -773,9 +758,6 @@ defun my/sk/insert-date (prefix)
 (bind-keys*
  ("M-m g K" . my/delete-current-buffer-file))
 
-(which-key-add-key-based-replacements
-  "g K" "delete buffer and file")
-
 
 (defun my/copy-current-file-path ()
   "Add current file path to kill ring. Limits the filename to project root if possible."
@@ -784,9 +766,6 @@ defun my/sk/insert-date (prefix)
 
 (bind-keys*
  ("M-m g y" . my/copy-current-file-path))
-
-(which-key-add-key-based-replacements
-  "g y" "copy current file path")
 
 ;; Transpose words forward
 (defun my/transpose-words-forward ()
@@ -806,10 +785,6 @@ defun my/sk/insert-date (prefix)
 (bind-keys*
  ("M-m [ w" . my/transpose-words-backward)
  ("M-m ] w" . my/transpose-words-forward))
-
-(which-key-add-key-based-replacements
-  "[ w" "exchange with prev word"
-  "] w" "exchange with next word")
 
 
 ;; Transpose chars forward
@@ -831,9 +806,6 @@ defun my/sk/insert-date (prefix)
  ("M-m [ c" . my/transpose-chars-backward)
  ("M-m ] c" . my/transpose-chars-forward))
 
-(which-key-add-key-based-replacements
-  "[ c" "exchange with prev char"
-  "] c" "exchange with next char")
 
 (defun my/duplicate-region (&optional num start end)
   "Duplicates the region bounded by START and END NUM times.
@@ -870,8 +842,6 @@ region-end is used."
 (bind-keys*
  ("M-m g d" . my/duplicate-line-or-region))
 
-(which-key-add-key-based-replacements
-  "g d" "duplicate line or region")
 
 (defun my/open-line-above (args)
   "Insert a new line above the current one or open a new line above for editing"
@@ -893,14 +863,14 @@ region-end is used."
  ("M-o" . my/open-line-above))
 
 
-(defun sk/join-line ()
+(defun my/join-line ()
   "Join the current line with the next line"
   (interactive)
   (next-line)
   (delete-indentation))
 
 (bind-keys
- ("C-S-j" . sk/join-line))
+ ("C-S-j" . my/join-line))
 
 (defun my/select-inside-line ()
   "Select the current line"
@@ -919,3 +889,124 @@ region-end is used."
 (bind-keys*
  ("M-m i l" . my/select-inside-line)
  ("M-m a l" . my/select-around-line))
+
+(defun my/move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg)
+          (when (and (eval-when-compile
+                       '(and (>= emacs-major-version 24)
+                             (>= emacs-minor-version 3)))
+                     (< arg 0))
+            (forward-line -1)))
+        (forward-line -1))
+      (move-to-column column t)))))
+
+(defun my/move-text-down (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines down."
+  (interactive "*p")
+  (my/move-text-internal arg))
+(defun my/move-text-up (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines up."
+  (interactive "*p")
+  (my/move-text-internal (- arg)))
+
+(bind-keys*
+ ("M-m [ e" . my/move-text-up)
+ ("M-m ] e" . my/move-text-down))
+
+(defun my/replace-next-underscore-with-camel (arg)
+  (interactive "p")
+  (if (> arg 0)
+      (setq arg (1+ arg))) ; 1-based index to get eternal loop with 0
+  (let ((case-fold-search nil))
+    (while (not (= arg 1))
+      (search-forward-regexp "\\b_[a-z]")
+      (forward-char -2)
+      (delete-char 1)
+      (capitalize-word 1)
+      (setq arg (1- arg)))))
+
+
+(bind-keys*
+ ("M-m g C" . my/replace-next-underscore-with-camel))
+
+(defun my/snakeify-current-word ()
+  (interactive)
+  (er/mark-word)
+  (let* ((beg (region-beginning))
+         (end (region-end))
+         (current-word (buffer-substring-no-properties beg end))
+         (snakified (snake-case current-word)))
+    (replace-string current-word snakified nil beg end)))
+
+(bind-keys*
+ ("M-m g _" . my/snakeify-current-word))
+
+(defhydra myo/hydra-rectangle (:pre (rectangle-mark-mode 1)
+                                    :color pink
+                                    :hint nil)
+  "
+ _p_: paste   _r_: replace  _I_: insert
+ _y_: copy    _o_: open     _V_: reset
+ _d_: kill    _n_: number   _q_: quit
+"
+  ("h" backward-char nil)
+  ("l" forward-char nil)
+  ("k" previous-line nil)
+  ("j" next-line nil)
+  ("y" copy-rectangle-as-kill)
+  ("d" kill-rectangle)
+  ("x" clear-rectangle)
+  ("o" open-rectangle)
+  ("p" yank-rectangle)
+  ("r" string-rectangle)
+  ("n" rectangle-number-lines)
+  ("I" string-insert-rectangle)
+  ("V" (if (region-active-p)
+           (deactivate-mark)
+         (rectangle-mark-mode 1)) nil)
+  ("q" keyboard-quit :color blue))
+
+(bind-keys*
+ ("M-m V" . my/hydra-rectangle/body))
+
+(defhydra my/hydra-of-macros (:color pink
+                                     :hint nil)
+  "
+ _m_: macro  _L_: lossage  _v_: view      _n_: forward    _D_: delete   _q_: quit
+ _M_: prev   _E_: edit     _r_: register  _p_: backward   _K_: key
+  "
+  ("m" kmacro-call-macro)
+  ("M" kmacro-call-ring-2nd)
+  ("L" kmacro-edit-lossage :color blue)
+  ("E" kmacro-edit-macro :color blue)
+  ("v" kmacro-view-macro :color blue)
+  ("r" kmacro-to-register :color blue)
+  ("n" kmacro-cycle-ring-next)
+  ("p" kmacro-cycle-ring-previous)
+  ("D" kmacro-delete-ring-head :color blue)
+  ("K" kmacro-bind-to-key :color blue)
+  ("q" nil :color blue))
+
+
+(bind-keys*
+ ("M-m @" . my/hydra-of-macros/body))
