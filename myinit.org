@@ -794,6 +794,7 @@
 ;; Complete pair
 ;; auto close bracket insertion. New in emacs 24
 (electric-pair-mode 1)
+(setq electric-pair-preserve-balance nil)
 
 ;; turn on highlight matching brackets when cursor is on one
 (show-paren-mode 1)
