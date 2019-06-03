@@ -58,6 +58,12 @@
     (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
     (setq user-full-name "Chetan Koneru")
 
+    ;; Default to 16MB for garbage collection
+    (defvar mu-gc-cons-threshold 16777216)
+
+    ;; Temporary value for garbage collection is 512MB
+    (defvar mu-gc-cons-upper-limit 536870912)
+
     ;;Ediff mode is a UNIX patching tool and my version controlling package uses this to help resolve merge conflicts and having some better defaults will be useful for this.
     (setq ediff-window-setup-function 'ediff-setup-windows-plain
           ediff-split-window-function 'split-window-horizontally)
@@ -1791,7 +1797,9 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package csv-mode
-    :ensure t)
+    :ensure t
+    :mode "\\.[Cc][Ss][Vv]\\'"
+    :config (setq csv-separators '("," ";" "|" " ")))
 #+END_SRC
 
 * Indentation-tools
@@ -2018,4 +2026,36 @@
   :ensure t
   :bind (("C-h C-m" . discover-my-major)
          ("C-h M-m" . discover-my-mode)))
+#+END_SRC
+
+* Memory usage
+
+#+BEGIN_SRC emacs-lisp
+  (use-package memory-usage               ; Analyse the memory usage of Emacs
+    :ensure t
+    :commands (memory-usage))
+#+END_SRC
+
+* FAPP
+
+#+BEGIN_SRC emacs-lisp
+(use-package ffap                       ; Find files at point
+  :bind ("C-c f p" . ffap)
+  :config (setq ffap-machine-p-known 'reject))
+#+END_SRC
+
+* No-Littering
+
+#+BEGIN_SRC emacs-lisp
+  (use-package no-littering               ; Keep .emacs.d clean
+    :ensure t
+    :config (progn
+              (require 'recentf)
+              (add-to-list 'recentf-exclude no-littering-etc-directory)
+              (add-to-list 'recentf-exclude no-littering-var-directory)
+              (setq create-lockfiles nil
+                    delete-old-versions t
+                    kept-new-versions 6
+                    kept-old-versions 2
+                    version-control t)))
 #+END_SRC
