@@ -292,7 +292,7 @@
 ;;
 ;;Here's a command xah-shrink-whitespaces that combine most of them into one.
 
-(defun xah-delete-blank-lines ()
+(defun my/xah-delete-blank-lines ()
   "Delete all newline around cursor.
 
       URL `http://ergoemacs.org/emacs/emacs_shrink_whitespace.html'
@@ -374,8 +374,8 @@
   (interactive)
   (scroll-down (window-half-height)))
 
-(global-set-key (kbd "M-u") 'scroll-up-half)
-(global-set-key (kbd "C-u") 'scroll-down-half)
+(global-set-key (kbd "H-u") 'scroll-up-half)
+(global-set-key (kbd "H-d") 'scroll-down-half)
 ;;Scrolling 4 lines without moving the point
 (global-set-key (kbd "M-n")  (lambda () (interactive) (scroll-up   4)) )
 (global-set-key (kbd "M-p")  (lambda () (interactive) (scroll-down 4)) )

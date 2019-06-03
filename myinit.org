@@ -317,7 +317,7 @@
       (setq ivy-display-style 'fancy))
 
 
-    (load-if-exists "./custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-ivy-rich.el")
 
     ;; Enhance fuzzy matching
     (use-package flx
@@ -838,7 +838,7 @@
 
 * Dump-Keys
   #+BEGIN_SRC emacs-lisp
-  (load-if-exists "./custom-el-scripts/dump-keys.el")
+  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/dump-keys.el")
   #+END_SRC
 
 * Web-Mode
@@ -1589,7 +1589,9 @@
 * Custom Utils
 
 #+Begin_SRC emacs-lisp
- (load-if-exists "./custom-el-scripts/custom-util-function.el")
+  (setq custom-file "/Users/ckoneru/.emacs.d/custom-el-scripts/custom-util-function.el")
+  (when (file-exists-p custom-file)
+    (load custom-file))
 #+END_SRC
 
 * Ensime/Scala/Sbt
@@ -1611,7 +1613,7 @@
 * Java
 
 #+BEGIN_SRC emacs-lisp
- (load-if-exists "./custom-el-scripts/init-java.el")
+ (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
 * Auto-revert
