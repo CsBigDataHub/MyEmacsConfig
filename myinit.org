@@ -33,6 +33,8 @@
     ;; using swiper so ido no longer needed
     (tool-bar-mode -1)
     (winner-mode 1)
+    (superword-mode 1)
+
     ;;to remember window config
     ;;(setq ido-enable-flex-matching t)
     ;;(setq ido-everywhere t)
@@ -218,19 +220,23 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'load-path "~/.emacs.d/evil")
-(require 'evil)
-(evil-mode 1)
+    (add-to-list 'load-path "~/.emacs.d/evil")
+    (require 'evil)
+    (evil-mode 1)
 
- (use-package evil-matchit             ; vi-% for more than {[""]}
-    :ensure t
-    :init
-    (global-evil-matchit-mode 1))
- 
- (use-package evil-surround            ; Exactly like tpopes vim-surround
-    :ensure t
-    :init
-    (global-evil-surround-mode))
+    (use-package evil-matchit             ; vi-% for more than {[""]}
+      :ensure t
+      :init
+      (global-evil-matchit-mode 1))
+
+    (use-package evil-surround            ; Exactly like tpopes vim-surround
+      :ensure t
+      :init
+      (global-evil-surround-mode))
+
+    ;; Treat underscores '_' part of the words
+    (with-eval-after-load 'evil
+      (defalias #'forward-evil-word #'forward-evil-symbol))
   #+END_SRC
 
 * Org Bullets
@@ -1525,17 +1531,19 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package docker
-    :defer t
-    :init
-    (progn
-      (use-package docker-tramp
-        :defer t)
+    :ensure t)
 
-      (use-package dockerfile-mode
-        :mode "Dockerfile\\'")
+  (use-package docker-tramp
+    :ensure t
+    )
 
-      (use-package docker-compose-mode
-        :mode "docker-compose[^/]*\\.yml\\'")))
+  (use-package dockerfile-mode
+    :ensure t
+    :mode "Dockerfile[^/]*\\'")
+
+  (use-package docker-compose-mode
+    :ensure t
+    :mode "docker-compose[^/]*\\.yml\\'")
 #+END_SRC
 
 * EShell-Enhancements
