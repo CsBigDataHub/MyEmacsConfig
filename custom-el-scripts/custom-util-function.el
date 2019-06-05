@@ -363,22 +363,22 @@
      (t (progn
           (message "nothing done. logic error 40873. shouldn't reach here" ))))))
 
-(defun window-half-height ()
+(defun my/window-half-height ()
   (max 1 (/ (1- (window-height (selected-window))) 2)))
 
-(defun scroll-up-half ()
+(defun my/scroll-up-half ()
   (interactive)
-  (scroll-up (window-half-height)))
+  (scroll-up (my/window-half-height)))
 
-(defun scroll-down-half ()
+(defun my/scroll-down-half ()
   (interactive)
-  (scroll-down (window-half-height)))
+  (scroll-down (my/window-half-height)))
 
-(global-set-key (kbd "H-u") 'scroll-up-half)
-(global-set-key (kbd "H-d") 'scroll-down-half)
+(global-set-key (kbd "H-d") 'my/scroll-up-half)
+(global-set-key (kbd "H-u") 'my/scroll-down-half)
 ;;Scrolling 4 lines without moving the point
-(global-set-key (kbd "M-n")  (lambda () (interactive) (scroll-up   4)) )
-(global-set-key (kbd "M-p")  (lambda () (interactive) (scroll-down 4)) )
+;;(global-set-key (kbd "M-n")  (lambda () (interactive) (scroll-up   4)) )
+;;(global-set-key (kbd "M-p")  (lambda () (interactive) (scroll-down 4)) )
 
 
 (defun my/rename-current-buffer-file ()
@@ -729,14 +729,14 @@ point reaches the beginning or end of the buffer, stop there."
  ("M-m g A :"   . my/align-colon)
  ("M-m g A A"   . align-regexp))
 
-defun my/sk/insert-date (prefix)
-"Insert the current date. With prefix-argument, write out the day and month name."
-(interactive "P")
-(let ((format (cond
-               ((not prefix) "%Y-%m-%d")
-               ((equal prefix '(4)) "%A, %d %B %Y")
-               ((equal prefix '(16)) "%Y-%m-%d %H:%M:%S"))))
-  (insert (format-time-string format))))
+(defun my/sk/insert-date (prefix)
+  "Insert the current date. With prefix-argument, write out the day and month name."
+  (interactive "P")
+  (let ((format (cond
+                 ((not prefix) "%Y-%m-%d")
+                 ((equal prefix '(4)) "%A, %d %B %Y")
+                 ((equal prefix '(16)) "%Y-%m-%d %H:%M:%S"))))
+    (insert (format-time-string format))))
 
 (bind-keys*
  ("M-m g D" . my/sk/insert-date))
