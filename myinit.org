@@ -1552,12 +1552,6 @@
 * EShell-Enhancements
 
 #+BEGIN_SRC emacs-lisp
-  (use-package em-smart
-    :ensure t
-    :hook (eshell-mode . eshell-smart-initialize)
-    :config
-    (progn
-      (add-to-list 'eshell-smart-display-navigate-list #'counsel-esh-history)))
 
   (use-package esh-autosuggest
     :ensure t
@@ -1584,8 +1578,6 @@
   (use-package eshell-did-you-mean
     :ensure t)
 
-  (use-package eshell-git-prompt
-    :ensure t)
 #+END_SRC
 
 * Groovy
