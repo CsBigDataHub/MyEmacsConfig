@@ -1308,6 +1308,9 @@
 
   ;; Don't ask for confirmation to delete marked buffers
   (setq ibuffer-expert t)
+
+  (use-package ibuffer-tramp
+    :ensure t)
 #+END_SRC
 
 * Treemacs
@@ -1549,29 +1552,40 @@
 * EShell-Enhancements
 
 #+BEGIN_SRC emacs-lisp
-  ;;(use-package em-smart
-  ;;  :ensure t
-  ;;  :hook (eshell-mode . eshell-smart-initialize)
-  ;;  :config
-  ;;  (progn
-  ;;    (add-to-list 'eshell-smart-display-navigate-list #'counsel-esh-history)))
-  ;;
-  ;;(use-package esh-autosuggest
-  ;;  :ensure t
-  ;;  :disabled t
-  ;;  :hook (eshell-mode . esh-autosuggest-mode))
-  ;;
-  ;;(use-package em-cmpl
-  ;;  :ensure t
-  ;;  :hook (eshell-mode . eshell-cmpl-initialize)
-  ;;  :init
-  ;;  (progn
-  ;;    (defun my/eshell-bash-completion ()
-  ;;      (let ((bash-completion-nospace t))
-  ;;        (while (pcomplete-here
-  ;;                (nth 2 (bash-completion-dynamic-complete-nocomint
-  ;;                        (save-excursion (eshell-bol) (point))
-  ;;                        (point)))))))
+  (use-package em-smart
+    :ensure t
+    :hook (eshell-mode . eshell-smart-initialize)
+    :config
+    (progn
+      (add-to-list 'eshell-smart-display-navigate-list #'counsel-esh-history)))
+
+  (use-package esh-autosuggest
+    :ensure t
+    :disabled t
+    :hook (eshell-mode . esh-autosuggest-mode))
+
+  (use-package esh-help
+    :ensure t
+    :defer t
+    :config
+    (setup-esh-help-eldoc))
+
+  (use-package eshell-prompt-extras
+    :ensure t
+    :after esh-opt
+    :custom
+    (eshell-prompt-function #'epe-theme-dakrone))
+
+  (use-package eshell-fringe-status
+    :ensure t
+    :hook
+    (eshell-mode . eshell-fringe-status-mode))
+
+  (use-package eshell-did-you-mean
+    :ensure t)
+
+  (use-package eshell-git-prompt
+    :ensure t)
 #+END_SRC
 
 * Groovy
@@ -1765,18 +1779,21 @@
 * Kubernates
 
 #+BEGIN_SRC emacs-lisp
-(use-package kubernetes
-  :ensure t
-  :commands (kubernetes-overview))
+  (use-package kubernetes
+    :ensure t
+    :commands (kubernetes-overview))
 
-;; If you want to pull in the Evil compatibility package.
-(use-package kubernetes-evil
-  :ensure t
-  :after kubernetes)
+  ;; If you want to pull in the Evil compatibility package.
+  (use-package kubernetes-evil
+    :ensure t
+    :after kubernetes)
   
-(use-package k8s-mode
-  :ensure t
-  :hook (k8s-mode . yas-minor-mode))
+  (use-package k8s-mode
+    :ensure t
+    :hook (k8s-mode . yas-minor-mode))
+
+  (use-package kubernetes-tramp
+    :ensure t)
 #+END_SRC
 
 * Json
