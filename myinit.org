@@ -35,6 +35,8 @@
     (winner-mode 1)
     (superword-mode 1)
 
+    ;;Added this to disable linum in pdf-tools
+    (add-hook 'pdf-view-mode-hook (lambda() (linum-relative-mode -1)))
     ;;to remember window config
     ;;(setq ido-enable-flex-matching t)
     ;;(setq ido-everywhere t)
@@ -84,6 +86,8 @@
     ;;Persistent history
     (savehist-mode)
 
+    ;; Added this to build pdf tools
+    (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
 
     ;;async, s, dash, and cl-lib are libraries for asynchronous processing, string manipulation, list manipulation and backward compatibility respectively.
     (use-package async
@@ -240,6 +244,10 @@
     ;; Treat underscores '_' part of the words
     (with-eval-after-load 'evil
       (defalias #'forward-evil-word #'forward-evil-symbol))
+
+    (evil-set-initial-state 'ibuffer-mode 'emacs)
+    (evil-set-initial-state 'bookmark-bmenu-mode 'emacs)
+    (evil-set-initial-state 'dired-mode 'emacs)
   #+END_SRC
 
 * Org Bullets
@@ -538,7 +546,7 @@
     (add-to-list 'company-backends 'company-jedi))
 
   (add-hook 'python-mode-hook 'my/python-mode-hook)
-
+  (setq company-global-modes '(not org-mode))
   ;; company box mode
   ;;(use-package company-box
   ;;:ensure t
@@ -1008,10 +1016,10 @@
 #+BEGIN_SRC emacs-lisp
   (setq dired-dwim-target t)
 
-  (when (string= system-type "darwin")
-    (setq dired-use-ls-dired t
-          insert-directory-program "/usr/local/bin/gls"))
- (setq dired-listing-switches "-aBhl --group-directories-first")
+   (when (string= system-type "darwin")
+     (setq dired-use-ls-dired t
+           insert-directory-program "/usr/local/bin/gls"))
+  (setq dired-listing-switches "-aBhl --group-directories-first")
   (use-package dired-narrow
     :ensure t
     :config
@@ -1020,7 +1028,8 @@
     (bind-key "C-x C-N" #'dired-narrow-regexp)
     )
 
-  (use-package dired-subtree :ensure t
+  (use-package dired-subtree
+    :ensure t
     :after dired
     :config
     (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
@@ -1551,9 +1560,82 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
-    :ensure t)
-  (use-package org-pdfview
-    :ensure t)
+    :ensure t
+    :config
+    (pdf-tools-install)
+    (setq-default pdf-view-display-size 'fit-page)
+    (bind-keys :map pdf-view-mode-map
+               ("\\" . hydra-pdftools/body)
+               ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
+               ("g"  . pdf-view-first-page)
+               ("G"  . pdf-view-last-page)
+               ("l"  . image-forward-hscroll)
+               ("h"  . image-backward-hscroll)
+               ("j"  . pdf-view-next-page)
+               ("k"  . pdf-view-previous-page)
+               ("e"  . pdf-view-goto-page)
+               ("u"  . pdf-view-revert-buffer)
+               ("al" . pdf-annot-list-annotations)
+               ("ad" . pdf-annot-delete)
+               ("aa" . pdf-annot-attachment-dired)
+               ("am" . pdf-annot-add-markup-annotation)
+               ("at" . pdf-annot-add-text-annotation)
+               ("y"  . pdf-view-kill-ring-save)
+               ("i"  . pdf-misc-display-metadata)
+               ("s"  . pdf-occur)
+               ("b"  . pdf-view-set-slice-from-bounding-box)
+               ("r"  . pdf-view-reset-slice))
+    (use-package org-pdfview
+      :ensure t))
+
+  (defhydra hydra-pdftools (:color blue :hint nil)
+    "
+                                                                        ╭───────────┐
+         Move  History   Scale/Fit     Annotations  Search/Link    Do   │ PDF Tools │
+     ╭──────────────────────────────────────────────────────────────────┴───────────╯
+           ^^_g_^^      _B_    ^↧^    _+_    ^ ^     [_al_] list    [_s_] search    [_u_] revert buffer
+           ^^^↑^^^      ^↑^    _H_    ^↑^  ↦ _W_ ↤   [_am_] markup  [_o_] outline   [_i_] info
+           ^^_p_^^      ^ ^    ^↥^    _0_    ^ ^     [_at_] text    [_F_] link      [_d_] dark mode
+           ^^^↑^^^      ^↓^  ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_ad_] delete  [_f_] search link
+      _h_ ←pag_e_→ _l_  _N_  │ _P_ │  _-_    _b_     [_aa_] dired
+           ^^^↓^^^      ^ ^  ╰─^─^─╯  ^ ^  ╰─^ ^─╯   [_y_]  yank
+           ^^_n_^^      ^ ^  _r_eset slice box
+           ^^^↓^^^
+           ^^_G_^^
+     --------------------------------------------------------------------------------
+          "
+    ("\\" hydra-master/body "back")
+    ("<ESC>" nil "quit")
+    ("al" pdf-annot-list-annotations)
+    ("ad" pdf-annot-delete)
+    ("aa" pdf-annot-attachment-dired)
+    ("am" pdf-annot-add-markup-annotation)
+    ("at" pdf-annot-add-text-annotation)
+    ("y"  pdf-view-kill-ring-save)
+    ("+" pdf-view-enlarge :color red)
+    ("-" pdf-view-shrink :color red)
+    ("0" pdf-view-scale-reset)
+    ("H" pdf-view-fit-height-to-window)
+    ("W" pdf-view-fit-width-to-window)
+    ("P" pdf-view-fit-page-to-window)
+    ("n" pdf-view-next-page-command :color red)
+    ("p" pdf-view-previous-page-command :color red)
+    ("d" pdf-view-dark-minor-mode)
+    ("b" pdf-view-set-slice-from-bounding-box)
+    ("r" pdf-view-reset-slice)
+    ("g" pdf-view-first-page)
+    ("G" pdf-view-last-page)
+    ("e" pdf-view-goto-page)
+    ("o" pdf-outline)
+    ("s" pdf-occur)
+    ("i" pdf-misc-display-metadata)
+    ("u" pdf-view-revert-buffer)
+    ("F" pdf-links-action-perfom)
+    ("f" pdf-links-isearch-link)
+    ("B" pdf-history-backward :color red)
+    ("N" pdf-history-forward :color red)
+    ("l" image-forward-hscroll :color red)
+    ("h" image-backward-hscroll :color red))
 
   (require 'pdf-tools)
   (require 'org-pdfview)
@@ -2144,10 +2226,10 @@
 * Evil Collection
 
 #+BEGIN_SRC emacs-lisp
-  (use-package evil-collection
-    :ensure t
-    :after (evil)
-    :config
-    (setq evil-collection-mode-list '(dired))
-    (evil-collection-init))
+ ;; (use-package evil-collection
+ ;;   :ensure t
+ ;;   :after (evil)
+ ;;   :config
+ ;;   ;;(setq evil-collection-mode-list '(dired))
+ ;;   (evil-collection-init))
 #+END_SRC
