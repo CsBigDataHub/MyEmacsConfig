@@ -51,6 +51,7 @@
     ;; https://github.com/dakrone/eos/blob/master/eos.org
     (setq save-interprogram-paste-before-kill t)
     (column-number-mode t)
+    (size-indication-mode t)
     (setq tramp-default-method "ssh")
 
     ;;Keyboard tweaks
@@ -116,18 +117,18 @@
     ;;  :ensure t
     ;;  :config (load-theme 'monokai t))
 
-    ;;(use-package zenburn-theme
-    ;;  :ensure t
-    ;;  :config (load-theme 'zenburn t))
-
-    (use-package dracula-theme
+    (use-package zenburn-theme
       :ensure t
-      :demand
-      :config (load-theme 'dracula t))
+      :config (load-theme 'zenburn t))
 
-    ;;(use-package color-theme-modern
-    ;;  :ensure t)
-    ;;
+    ;;(use-package dracula-theme
+    ;;  :ensure t
+    ;;  :demand
+    ;;  :config (load-theme 'dracula t))
+
+   ;; (use-package color-theme-modern
+   ;;   :ensure t)
+    
     ;;(use-package base16-theme
     ;;  :ensure t
     ;;  )
@@ -221,6 +222,8 @@
   #+BEGIN_SRC emacs-lisp
 
     (add-to-list 'load-path "~/.emacs.d/evil")
+    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+    (setq evil-want-keybinding nil)
     (require 'evil)
     (evil-mode 1)
 
@@ -279,10 +282,10 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(use-package tabbar
-  :ensure t
-  :config (tabbar-mode 1)
-  )
+    ;;(use-package tabbar
+    ;;  :ensure t
+    ;;  :config (tabbar-mode 1)
+    ;;  )
 
   #+END_SRC
 
@@ -605,26 +608,30 @@
 
 * Pyhton
   #+BEGIN_SRC emacs-lisp
-  (use-package jedi
-    :ensure t
-    :init
-    (add-hook 'python-mode-hook 'jedi:setup)
-    (add-hook 'python-mode-hook 'jedi:ac-setup))
-  ;; make sure to install jedi-server for effective pip lint
-  ;; M-x jedi:install-server
-  ;; Check Elpy if interested in Python Developement
+    (use-package jedi
+      :ensure t
+      :init
+      (add-hook 'python-mode-hook 'jedi:setup)
+      (add-hook 'python-mode-hook 'jedi:ac-setup))
+    ;; make sure to install jedi-server for effective pip lint
+    ;; M-x jedi:install-server
+    ;; Check Elpy if interested in Python Developement
 
-  (use-package elpy
-    :ensure t
-    :config
-    (elpy-enable))
+    (use-package elpy
+      :ensure t
+      :config
+      (elpy-enable))
 
-  (use-package virtualenvwrapper
-    :ensure t
-    :config
-    (venv-initialize-interactive-shells)
-    (venv-initialize-eshell))
+    (use-package virtualenvwrapper
+      :ensure t
+      :config
+      (venv-initialize-interactive-shells)
+      (venv-initialize-eshell))
 
+
+    (use-package pip-requirements
+      :ensure t
+      :mode ("/requirements.txt$" . pip-requirements-mode))    
   #+END_SRC
 
 * White Space and Blank Lines
@@ -905,7 +912,61 @@
     ;; Whether display buffer modification icon. It respects `doom-modeline-icon'
     ;; and `doom-modeline-buffer-state-icon'.
     (setq doom-modeline-buffer-modification-icon t)
+    ;; Whether display minor modes in mode-line or not.
+    ;;(setq doom-modeline-minor-modes t)
+
+    ;; The maximum displayed length of the branch name of version control.
+    (setq doom-modeline-vcs-max-length 12)
   #+END_SRC
+
+* Telephone-line
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package telephone-line
+  ;;  :ensure t
+  ;;  :config
+  ;;  (telephone-line-defsegment* mymacs-telephone-line-buffer-info ()
+  ;;                              (when (and (eq 'python-mode major-mode)
+  ;;                                         (bound-and-true-p pyvenv-virtual-env-name))
+  ;;                                (telephone-line-raw (format "pyvenv: %s" pyvenv-virtual-env-name) t)))
+  ;;
+  ;;  (setq telephone-line-lhs
+  ;;        '((evil   . (telephone-line-evil-tag-segment))
+  ;;          (accent . (telephone-line-major-mode-segment))
+  ;;          (evil   . (telephone-line-buffer-segment))
+  ;;          (nil    . (telephone-line-minor-mode-segment))))
+  ;;
+  ;;  (setq telephone-line-rhs
+  ;;        '((nil    . (telephone-line-misc-info-segment))
+  ;;          (evil   . (mymacs-telephone-line-buffer-info))
+  ;;          (accent . (telephone-line-vc-segment
+  ;;                     telephone-line-erc-modified-channels-segment
+  ;;                     telephone-line-process-segment))
+  ;;          (evil   . (telephone-line-airline-position-segment))))
+  ;;
+  ;;  (require 'telephone-line)
+  ;;  (require 'telephone-line-config)
+  ;;  (telephone-line-mode t))
+#+END_SRC
+
+* mode-icons
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mode-icons
+    :ensure t
+    :config
+    (mode-icons-mode))
+
+#+END_SRC
+
+* Volatile-Highlights
+
+#+BEGIN_SRC emacs-lisp
+  (use-package volatile-highlights
+    :ensure t
+    :config
+    (volatile-highlights-mode t))
+#+END_SRC
 
 * Uniquify For buffer names
 
@@ -945,22 +1006,25 @@
 * Dired
   
 #+BEGIN_SRC emacs-lisp
-(setq dired-dwim-target t)
+  (setq dired-dwim-target t)
 
-(use-package dired-narrow
-:ensure t
-:config
-(bind-key "C-c C-n" #'dired-narrow)
-(bind-key "C-c C-f" #'dired-narrow-fuzzy)
-(bind-key "C-x C-N" #'dired-narrow-regexp)
-)
+  (when (string= system-type "darwin")
+    (setq dired-use-ls-dired t
+          insert-directory-program "/usr/local/bin/gls"))
+ (setq dired-listing-switches "-aBhl --group-directories-first")
+  (use-package dired-narrow
+    :ensure t
+    :config
+    (bind-key "C-c C-n" #'dired-narrow)
+    (bind-key "C-c C-f" #'dired-narrow-fuzzy)
+    (bind-key "C-x C-N" #'dired-narrow-regexp)
+    )
 
-(use-package dired-subtree :ensure t
-  :after dired
-  :config
-  (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
-  (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
-
+  (use-package dired-subtree :ensure t
+    :after dired
+    :config
+    (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
+    (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 #+END_SRC
 
 * Projectile
@@ -2075,4 +2139,15 @@
                     kept-new-versions 6
                     kept-old-versions 2
                     version-control t)))
+#+END_SRC
+
+* Evil Collection
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-collection
+    :ensure t
+    :after (evil)
+    :config
+    (setq evil-collection-mode-list '(dired))
+    (evil-collection-init))
 #+END_SRC
