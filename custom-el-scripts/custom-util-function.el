@@ -633,9 +633,10 @@ point reaches the beginning or end of the buffer, stop there."
 (defhydra my/hydra-bookmarks (:color blue
                                      :hint nil)
   "
- _s_: set  _b_: bookmark   _j_: jump   _d_: delete   _q_: quit
+ _s_: set  _l_: list  _b_: save   _j_: jump   _d_: delete   _q_: quit
   "
   ("s" bookmark-set)
+  ("l" list-bookmarks)
   ("b" bookmark-save)
   ("j" bookmark-jump)
   ("d" bookmark-delete)
