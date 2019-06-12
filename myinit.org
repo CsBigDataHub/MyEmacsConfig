@@ -55,6 +55,12 @@
     (column-number-mode t)
     (size-indication-mode t)
     (setq tramp-default-method "ssh")
+    (setq tramp-auto-save-directory temporary-file-directory)
+
+    (setq mouse-drag-copy-region nil
+          x-select-enable-primary nil
+          x-select-enable-clipboard t
+          select-active-regions t)
 
     ;;Keyboard tweaks
     ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
@@ -107,6 +113,15 @@
     (use-package restart-emacs
       :ensure t
       :bind* (("C-x M-c" . restart-emacs)))
+
+    ;; Open Large file
+    (use-package vlf
+      :ensure t
+      :config
+      (require 'vlf-setup))
+
+    ;; Delete trailing-whitespace
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
   #+END_SRC
 
 * Theme
@@ -132,7 +147,7 @@
 
    ;; (use-package color-theme-modern
    ;;   :ensure t)
-    
+
     ;;(use-package base16-theme
     ;;  :ensure t
     ;;  )
@@ -193,7 +208,24 @@
 * PosFrame
 
 #+BEGIN_SRC emacs-lisp
-(use-package posframe)
+  (use-package posframe
+    :ensure t)
+#+END_SRC
+
+* Use-package chords
+#+BEGIN_SRC emacs-lisp
+  (use-package use-package-chords
+    :ensure t
+    :config (key-chord-mode 1))
+#+END_SRC
+
+* Quelpa
+
+#+BEGIN_SRC emacs-lisp
+(use-package quelpa-use-package
+    :ensure t
+    :init
+    (setq quelpa-update-melpa-p nil))
 #+END_SRC
 
 * Which key
@@ -406,14 +438,14 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(use-package avy
-  :ensure t
-  :bind (("M-s" . avy-goto-char)
-         ("C-:" . avy-goto-char)
-         ("C-'" . avy-goto-char-2)
-         ("M-g l" . avy-goto-line))
-  :config
-  (avy-setup-default))
+    (use-package avy
+      :ensure t
+      :bind (("M-s" . avy-goto-char)
+             ("C-:" . avy-goto-word-0)
+             ("C-'" . avy-goto-char-2)
+             ("M-g l" . avy-goto-line))
+      :config
+      (avy-setup-default))
 
   #+END_SRC
 
@@ -639,7 +671,7 @@
 
     (use-package pip-requirements
       :ensure t
-      :mode ("/requirements.txt$" . pip-requirements-mode))    
+      :mode ("/requirements.txt$" . pip-requirements-mode))
   #+END_SRC
 
 * White Space and Blank Lines
@@ -664,6 +696,16 @@
 
     (use-package markdownfmt
       :ensure t)
+
+    (use-package markdown-mode+
+      :ensure t
+      :after markdown-mode
+      :defer t)
+
+   ;; (use-package polymode
+   ;;   :ensure t
+   ;;   :config
+   ;;   (require 'poly-markdown))
 
     (use-package markdown-preview-mode
       :ensure t)
@@ -992,7 +1034,7 @@
  (setq-default indent-tabs-mode nil)
 
   #+END_SRC
-  
+
 * Posframe
 
 #+BEGIN_SRC emacs-lisp
@@ -1000,7 +1042,7 @@
 #+END_SRC
 
 * Yasnippet
-  
+
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
@@ -1012,7 +1054,7 @@
 #+END_SRC
 
 * Dired
-  
+
 #+BEGIN_SRC emacs-lisp
   (setq dired-dwim-target t)
 
@@ -1034,6 +1076,61 @@
     :config
     (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
     (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
+
+
+  (use-package peep-dired
+    :ensure t
+    :config
+    (define-key dired-mode-map (kbd "P") 'peep-dired)
+    )
+
+  (use-package dired-single
+    :ensure t
+    :config
+    (define-key dired-mode-map [return] 'dired-single-buffer)
+    (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
+    )
+
+  (use-package dired-collapse
+    :ensure t
+    :defer
+    :init
+    (add-hook 'dired-mode-hook 'dired-collapse-mode))
+
+  (use-package image-dired+
+    :ensure t
+    :config
+    (setq auto-image-file-mode t)
+    (eval-after-load 'image-dired+ '(image-diredx-async-mode 1)))
+
+  (use-package dired-filter
+    :ensure t
+    :init
+    (add-hook 'dired-mode-hook 'dired-filter-group-mode)
+
+    :config
+    (setq dired-filter-group-saved-groups
+          '(("default"
+             ("Directories" (directory))
+             ("PDF"
+              (extension . "pdf"))
+             ("LaTeX"
+              (extension "tex" "bib"))
+             ("Org"
+              (extension . "org"))
+             ("Archives"
+              (extension "zip" "rar" "gz" "bz2" "tar"))
+             ("Multimedia"
+              (extension "ogg" "flv" "mpg" "avi" "mp4" "mp3"))
+             )))
+    )
+
+  (use-package dired-rsync
+    :defer t
+    :ensure t
+    :config
+    (bind-key "C-c C-r" 'dired-rsync dired-mode-map))
+
 #+END_SRC
 
 * Projectile
@@ -1050,7 +1147,7 @@
   ;; (use-package counsel-projectile
   ;;   :ensure t
   ;;   :config
-  ;;   (counsel-projectile-on)q)
+  ;;   (counsel-projectile-on))
 #+END_SRC
 
 * Smart-Parens
@@ -1110,7 +1207,7 @@
 #+END_SRC
 
 * Hydra
-  
+
 #+BEGIN_SRC emacs-lisp
   (use-package hydra
     :ensure hydra
@@ -1309,10 +1406,63 @@
            (magit-diff-visit-file . (lambda ()
                                       (when smerge-mode
                                         (smerge-hydra/body))))))
+
+
+  (use-package magit-tbdiff
+    :ensure t
+    :after magit)
+
+  (use-package magit-todos
+    :ensure t
+    :commands (magit-todos-mode)
+    :hook (magit-mode . magit-todos-mode)
+    :config
+    (setq magit-todos-recursive t
+          magit-todos-depth 100)
+    :custom (magit-todos-keywords (list "TODO" "FIXME")))
+
+  (use-package git-commit
+    :ensure t
+    :defer t)
+
+  (use-package gitattributes-mode
+    :ensure t
+    :defer t)
+
+  (use-package git-msg-prefix
+    :ensure t
+    :defer t
+    :config
+    (setq git-msg-prefix-log-flags " --since='1 week ago' "
+          git-msg-prefix-regex "^\\([^:]*: \\)"
+          git-msg-prefix-input-method 'ivy-read)
+    ;; (add-hook 'git-commit-mode-hook 'git-msg-prefix)
+    )
+
+  ;; Github api
+  (use-package gh :ensure t)
+  (use-package gh-md :ensure t)
+
+  ;; Search on github
+  (use-package github-search :ensure t)
+
+  ;; Mapping github with magit
+  (use-package ghub :ensure t)
+  (use-package ghub+ :ensure t)
+
+  (use-package magithub
+    :ensure t
+    :after (:all magit ghub ghub+)
+    :config (magithub-feature-autoinject t))
+
+  (use-package gist :ensure t)
+
+  (use-package browse-at-remote :ensure t)
+
 #+END_SRC
 
 * Better Shell
-  
+
 #+BEGIN_SRC emacs-lisp
   (use-package better-shell
     :ensure t
@@ -1340,7 +1490,34 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package origami
-    :ensure t)
+    :ensure quelpa
+    :quelpa (origami :repo "seblemaguer/origami.el" :fetcher github)
+    :custom
+    (origami-show-fold-header t)
+
+    :custom-face
+    (origami-fold-replacement-face ((t (:inherit magit-diff-context-highlight))))
+    (origami-fold-fringe-face ((t (:inherit magit-diff-context-highlight))))
+
+    :init
+    (defhydra origami-hydra (:color blue :hint none)
+      "
+        _:_: recursively toggle node       _a_: toggle all nodes    _t_: toggle node
+        _o_: show only current node        _u_: undo                _r_: redo
+        _R_: reset
+        "
+      (":" origami-recursively-toggle-node)
+      ("a" origami-toggle-all-nodes)
+      ("t" origami-toggle-node)
+      ("o" origami-show-only-node)
+      ("u" origami-undo)
+      ("r" origami-redo)
+      ("R" origami-reset))
+
+    :bind (:map origami-mode-map
+                ("C-:" . origami-hydra/body))
+    :config
+    (face-spec-reset-face 'origami-fold-header-face))
 #+END_SRC
 
 * IBUFFER
@@ -1637,6 +1814,7 @@
     ("l" image-forward-hscroll :color red)
     ("h" image-backward-hscroll :color red))
 
+  (setq pdf-view-use-scaling t)
   (require 'pdf-tools)
   (require 'org-pdfview)
 #+END_SRC
@@ -1925,7 +2103,7 @@
   (use-package kubernetes-evil
     :ensure t
     :after kubernetes)
-  
+
   (use-package k8s-mode
     :ensure t
     :hook (k8s-mode . yas-minor-mode))
@@ -1953,7 +2131,7 @@
 
   (use-package web-beautify
     :ensure t)
-    
+
 #+END_SRC
 
 * Csv Mode
@@ -1966,7 +2144,7 @@
 #+END_SRC
 
 * Indentation-tools
-  
+
 #+BEGIN_SRC emacs-lisp
   (use-package indent-tools
     :ensure t)
@@ -2058,7 +2236,7 @@
           ("M-m g ," . goto-last-change-reverse)))
 #+END_SRC
 
-* Ztree 
+* Ztree
 
 #+BEGIN_SRC emacs-lisp
 (use-package ztree
@@ -2108,7 +2286,7 @@
 (use-package cycle-quotes
   :ensure t
   :bind* (("M-m s q" . cycle-quotes)))
-  
+
 (which-key-add-key-based-replacements
   "s q" "switch quotes")
 
@@ -2232,4 +2410,197 @@
  ;;   :config
  ;;   ;;(setq evil-collection-mode-list '(dired))
  ;;   (evil-collection-init))
+#+END_SRC
+
+* LogView
+
+#+BEGIN_SRC emacs-lisp
+  (use-package logview
+    :ensure t
+    :mode ("syslog\\(?:\\.[0-9]+\\)" "\\.log\\(?:\\.[0-9]+\\)?\\'")
+    :config
+    (setq datetime-timezone 'UTC
+          logview-additional-level-mappings '(("ICP"
+                                               (error       "ERROR")
+                                               (warning     "WARNING")
+                                               (information "INFO")
+                                               (debug       "DEBUG")
+                                               (trace       "TRACE")))
+          logview-additional-timestamp-formats '(("easyloggingpp" (java-pattern . "HH:mm:ss,SSS")))
+          logview-additional-submodes '(("ICP" . ((format . "TIMESTAMP LEVEL ")
+                                                  (levels . "ICP")
+                                                  (timestamp . ("easyloggingpp"))))))
+    )
+#+END_SRC
+
+* Paradox
+
+#+BEGIN_SRC emacs-lisp
+(use-package paradox
+  :ensure t
+  :defer t
+  :config
+  (setq paradox-spinner-type 'progress-bar
+        paradox-execute-asynchronously t))
+#+END_SRC
+
+* snapshot-timemachine
+
+#+BEGIN_SRC emacs-lisp
+  (use-package snapshot-timemachine
+    :ensure t
+    :init
+
+    ;; Default Backup directory
+    (defvar backup-directory "~/.emacs.d/backups/")
+    (setq backup-directory-alist `((".*" . ,backup-directory)))
+
+    (when (not (file-exists-p backup-directory))
+      (make-directory backup-directory t))
+
+    ;; Auto-save
+    (defvar auto-save-directory "~/.emacs.d/auto-save/")
+    (setq auto-save-file-name-transforms `((".*" ,auto-save-directory t)))
+
+    (when (not (file-exists-p auto-save-directory))
+      (make-directory auto-save-directory t))
+
+    ;; Tramp backup
+    (defvar tramp-backup-directory "~/.emacs.d/tramp-backups/")
+    (setq tramp-backup-directory-alist `((".*" . ,tramp-backup-directory)))
+
+    (when (not (file-exists-p tramp-backup-directory))
+      (make-directory tramp-backup-directory t))
+
+    (setq make-backup-files t               ; backup of a file the first time it is saved.
+          backup-by-copying t               ; don't clobber symlinks
+          version-control t                 ; version numbers for backup files
+          delete-old-versions t             ; delete excess backup files silently
+          delete-by-moving-to-trash t
+          kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+          kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+          auto-save-default t               ; auto-save every buffer that visits a file
+          auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+          auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+          )
+
+    :config
+
+    (defun snapshot-timemachine-backup-finder (file)
+      "Find snapshots of FILE in rsnapshot backups."
+      (let* ((file (expand-file-name file))
+             (file-adapted (replace-regexp-in-string "/" "!" file))
+             (backup-files(directory-files backup-directory t (format "%s.*" file-adapted))))
+        (seq-map-indexed (lambda (backup-file index)
+                           (make-snapshot :id index
+                                          :name (format "%d" index)
+                                          :file backup-file
+                                          :date (nth 5 (file-attributes backup-file))))
+                         backup-files)))
+
+    (setq snapshot-timemachine-snapshot-finder #'snapshot-timemachine-backup-finder))
+#+END_SRC
+
+* XML
+
+#+BEGIN_SRC emacs-lisp
+ ;; (use-package nxml-mode
+ ;;   :ensure t
+ ;;   :mode ("\\.xml$" . nxml-mode)
+ ;;   :commands (pretty-print-xml-region)
+ ;;   :defer t
+ ;;   :init
+ ;;   ;; Mapping xml to nxml
+ ;;   (fset 'xml-mode 'nxml-mode)
+
+ ;;   :config
+
+ ;;   ;; Global configuration
+ ;;   (setq nxml-child-indent 2
+ ;;         nxml-auto-insert-xml-declaration-flag t
+ ;;         nxml-slash-auto-complete-flag t
+ ;;         nxml-bind-meta-tab-to-complete-flag t)
+
+ ;;   ;; Outline hook
+ ;;   (add-hook 'nxml-mode-hook
+ ;;             (lambda ()
+ ;;               (outline-minor-mode)
+ ;;               (setq outline-regexp "^[ \t]*\<[a-zA-Z]+")))
+
+ ;;   ;; Helper to format
+ ;;   (defun my/pretty-print-xml-region (begin end)
+ ;;     "Pretty format XML markup in region. You need to have nxml-mode
+ ;; http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+ ;; this.  The function inserts linebreaks to separate tags that have
+ ;; nothing but whitespace between them.  It then indents the markup
+ ;; by using nxml's indentation rules."
+ ;;     (interactive "r")
+ ;;     (save-excursion
+ ;;       (nxml-mode)
+ ;;       (goto-char begin)
+ ;;       (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+ ;;         (backward-char) (insert "\n"))
+ ;;       (indent-region begin end))))
+#+END_SRC
+
+* Gradle
+
+#+BEGIN_SRC emacs-lisp
+(use-package gradle-mode
+  :ensure t
+  :config
+  (setq gradle-gradlew-executable "./gradlew"
+        gradle-use-gradlew t)
+  (gradle-mode))
+#+END_SRC
+
+* Winnow
+
+#+BEGIN_SRC emacs-lisp
+(use-package winnow
+  :ensure t
+  :init
+  (add-hook 'compilation-mode-hook 'winnow-mode)
+  (add-hook 'ag-mode-hook 'winnow-mode))
+#+END_SRC
+
+* Images
+
+#+BEGIN_SRC emacs-lisp
+(use-package image+
+  :ensure t
+  :init
+  (add-hook 'image-mode-hook
+            '(lambda ()
+               (require 'image+)
+               (imagex-sticky-mode)))
+
+  :bind (:map image-mode-map
+              ("=" . imagex-sticky-zoom-in)
+              ("-" . imagex-sticky-zoom-out)
+              ("m" . imagex-sticky-maximize)
+              ("g" . imagex-sticky-restore-original)
+              ("S" . imagex-sticky-save-image)
+              ("r" . imagex-sticky-rotate-right)
+              ("l" . imagex-sticky-rotate-left)
+              ("/" . imagex-sticky-binding/body))
+
+  :config
+    (defhydra imagex-sticky-binding () ;; global-map "C-x C-l")
+    "Manipulating Image"
+    ("+" imagex-sticky-zoom-in "zoom in")
+    ("-" imagex-sticky-zoom-out "zoom out")
+    ("M" imagex-sticky-maximize "maximize")
+    ("O" imagex-sticky-restore-original "restore original")
+    ("S" imagex-sticky-save-image "save file")
+    ("r" imagex-sticky-rotate-right "rotate right")
+    ("l" imagex-sticky-rotate-left "rotate left")))
+#+END_SRC
+
+* System Monitoring
+
+#+BEGIN_SRC emacs-lisp
+(use-package symon
+  :ensure t
+  :defer t)
 #+END_SRC
