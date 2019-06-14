@@ -150,7 +150,7 @@
 
     (use-package base16-theme
       :ensure t
-      :config (load-theme 'base16-spacemacs-theme)
+      :init (load-theme 'base16-spacemacs t)
       )
 
     ;;(use-package moe-theme
@@ -448,6 +448,8 @@
              ("M-g l" . avy-goto-line))
       :config
       (avy-setup-default))
+
+    (setq avy-background t)
 
   #+END_SRC
 
