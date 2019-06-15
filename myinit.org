@@ -66,7 +66,7 @@
     ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
     ;;(setq mac-option-modifier 'super) ; make opt key do Super
     ;;(setq mac-control-modifier 'control) ; make Control key do Control
-    (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+    ;;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
     (setq user-full-name "Chetan Koneru")
 
     ;; Default to 16MB for garbage collection
@@ -93,7 +93,7 @@
     (savehist-mode)
 
     ;; Added this to build pdf tools
-    (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
+    ;;(setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
 
     ;;async, s, dash, and cl-lib are libraries for asynchronous processing, string manipulation, list manipulation and backward compatibility respectively.
     (use-package async
@@ -425,7 +425,7 @@
       (setq ivy-display-style 'fancy))
 
 
-    (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
 
     ;; Enhance fuzzy matching
     (use-package flx
@@ -962,7 +962,7 @@
 
 * Dump-Keys
   #+BEGIN_SRC emacs-lisp
-  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/dump-keys.el")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/dump-keys.el")
   #+END_SRC
 
 * Web-Mode
@@ -1796,11 +1796,11 @@
 * Sunrise Commander
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
-(require 'sunrise-commander)
-(require 'sunrise-x-buttons)
-(require 'sunrise-x-modeline)
-(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
+;;(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
+;;(require 'sunrise-commander)
+;;(require 'sunrise-x-buttons)
+;;(require 'sunrise-x-modeline)
+;;(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
 #+END_SRC
 
 * EditorConfig
@@ -1907,7 +1907,7 @@
 * Custom Utils
 
 #+Begin_SRC emacs-lisp
-  (setq custom-file "/Users/ckoneru/.emacs.d/custom-el-scripts/custom-util-function.el")
+  (setq custom-file "~/.emacs.d/custom-el-scripts/custom-util-function.el")
   (when (file-exists-p custom-file)
     (load custom-file))
 #+END_SRC
@@ -1931,7 +1931,7 @@
 * Java
 
 #+BEGIN_SRC emacs-lisp
- (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-java.el")
+ (load-if-exists "~/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
 * Auto-revert
