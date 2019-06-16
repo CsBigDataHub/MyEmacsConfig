@@ -90,7 +90,15 @@
     (setq search-whitespace-regexp ".*?")
 
     ;;Persistent history
-    (savehist-mode)
+    (setq savehist-file "~/.emacs.d/savehist")
+    (savehist-mode 1)
+    (setq history-length t)
+    (setq history-delete-duplicates t)
+    (setq savehist-save-minibuffer-history 1)
+    (setq savehist-additional-variables
+          '(kill-ring
+            search-ring
+            regexp-search-ring))
 
     ;; Added this to build pdf tools
     ;;(setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
@@ -105,6 +113,8 @@
 
     (use-package dash
       :ensure t)
+
+    (use-package diminish :ensure t)
 
     (use-package s
       :ensure t)
@@ -122,6 +132,11 @@
 
     ;; Delete trailing-whitespace
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+    ;;  Sometimes you want to be able to do fancy things with the text that you're entering into the minibuffer. Sometimes you just want to be able to read it, especially when it comes to lots of text. This binds C-M-e in a minibuffer) so that you can edit the contents of the minibuffer before submitting it.
+    ;;(use-package miniedit
+    ;;  :commands minibuffer-edit
+    ;;  :init (miniedit-install))
   #+END_SRC
 
 * Theme
