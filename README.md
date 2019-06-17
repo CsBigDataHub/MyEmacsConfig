@@ -1,5 +1,11 @@
 # Emacs CheatSheet
 
+## Remapping keys
+
+    Here I am remapping right ALT to Hyper key oin linux
+
+`xmodmap ~/.xmodmap`
+
 ## To get Emacs Running Faster
 
 - Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`
@@ -37,7 +43,7 @@ Keys 	Description
 `C-r` 	Same as C-s, but search in reverse.
 `M-<` 	Move to beginning of buffer.
 `M->` 	Move to end of buffer.
-`M-g g` 	Go to line. 
+`M-g g` 	Go to line.
 ```
 
 
@@ -49,7 +55,7 @@ Keys 	Description
 `C-y` 	Yank.
 `M-y` 	Cycle through kill ring after yanking.
 `M-d` 	Kill word.
-`C-k` 	Kill line. 
+`C-k` 	Kill line.
 ```
 
 ```
@@ -69,7 +75,7 @@ Keys 	Description
 `C-x 1` 	Delete all other windows, leaving only the current window in the frame. This doesn’t close your buffers, and it won’t cause you to lose any work.
 `C-x 2` 	Split frame above and below.
 `C-x 3` 	Split frame side by side.
-`C-x 0` 	Delete current window. 
+`C-x 0` 	Delete current window.
 ```
 
 
@@ -99,11 +105,11 @@ To perform this function             | Use these keys
 -------------------------------------|---------------------------------
 Moving to the next line              | C-n (n for Next)
 Moving to the previous line          | C-p (p for Previous)
-Moving one character forward         | C-f (f for Forward) 
+Moving one character forward         | C-f (f for Forward)
 Moving one character backward        | C-b (b for Backward)
-Moving one word forward              | M-f (f for Forward) 
+Moving one word forward              | M-f (f for Forward)
 Moving one word backward             | M-b (b for Backward)
-Moving to the start of a line        | C-a 
+Moving to the start of a line        | C-a
 Moving to the end of a line          | C-e (e for End)
 Moving to the start of a sentence    | M-a
 Moving to the end of a sentence      | M-e (e for End)
@@ -193,7 +199,7 @@ key 	what it does
 
 ###   In Org-Mode to Write Code
 
-`C-c '`  This will write Code in a new window 
+`C-c '`  This will write Code in a new window
 
 ###  https://emacs.stackexchange.com/questions/40571/how-to-set-a-short-cut-for-begin-src-end-src/47370#47370
 
@@ -227,7 +233,7 @@ i	#+INDEX: line
 I	#+INCLUDE: line
 
 ```
-More templates can added by customizing the variable org-structure-template-alist, whose docstring has additional details. 
+More templates can added by customizing the variable org-structure-template-alist, whose docstring has additional details.
 
 
 ## Macro's
@@ -237,8 +243,8 @@ Command 	Key
 `kmacro-start-macro-or-insert-counter` 	`F3` or `C-x (`
 `kmacro-end-and-call-macro` 	`F4` or `C-x )`
 `kmocro-call-marco`       `C-x e`
-`kmacro-name-last-macro` 	
-`insert-kbd-macro` 	
+`kmacro-name-last-macro`
+`insert-kbd-macro`
 
 ```
 
@@ -246,7 +252,7 @@ Command 	Key
 
 ```
 `C-<SPC>` Set the mark at point, and activate it (set-mark-command).
-`C-@`   The same. 
+`C-@`   The same.
 
 ```
 
@@ -259,7 +265,7 @@ Emacs has commands for converting either a single word or any arbitrary range of
 `M-u` Convert following word to upper case (upcase-word).
 `M-c` Capitalize the following word (capitalize-word).
 `C-x C-l` Convert region to lower case (downcase-region).
-`C-x C-u` Convert region to upper case (upcase-region). 
+`C-x C-u` Convert region to upper case (upcase-region).
 
 ```
 
