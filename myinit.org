@@ -2677,3 +2677,66 @@
                 ("q"   nil "cancel" :color blue)))
     )
 #+END_SRC
+
+* View
+
+#+BEGIN_SRC emacs-lisp
+  (use-package view
+    :config
+    (defun View-goto-line-last (&optional line)
+      "goto last line"
+      (interactive "P")
+      (goto-line (line-number-at-pos (point-max))))
+
+    (define-key view-mode-map (kbd "e") 'View-scroll-half-page-forward)
+    (define-key view-mode-map (kbd "u") 'View-scroll-half-page-backward)
+
+    ;; less like
+    (define-key view-mode-map (kbd "N") 'View-search-last-regexp-backward)
+    (define-key view-mode-map (kbd "?") 'View-search-regexp-backward?)
+    (define-key view-mode-map (kbd "g") 'View-goto-line)
+    (define-key view-mode-map (kbd "G") 'View-goto-line-last)
+    ;; vi/w3m like
+    (define-key view-mode-map (kbd "h") 'backward-char)
+    (define-key view-mode-map (kbd "j") 'next-line)
+    (define-key view-mode-map (kbd "k") 'previous-line)
+    (define-key view-mode-map (kbd "l") 'forward-char))
+#+END_SRC
+
+* Hide-Show
+
+#+BEGIN_SRC emacs-lisp
+(use-package hideshow
+  :bind (("C-c TAB" . hs-toggle-hiding)
+         ("C-\\" . hs-toggle-hiding)
+         ("M-+" . hs-show-all))
+  :init (add-hook #'prog-mode-hook #'hs-minor-mode)
+  :diminish hs-minor-mode
+  :config
+  (setq hs-special-modes-alist
+        (mapcar 'purecopy
+                '((c-mode "{" "}" "/[*/]" nil nil)
+                  (c++-mode "{" "}" "/[*/]" nil nil)
+                  (java-mode "{" "}" "/[*/]" nil nil)
+                  (js-mode "{" "}" "/[*/]" nil)
+                  (json-mode "{" "}" "/[*/]" nil)
+                  (javascript-mode  "{" "}" "/[*/]" nil)))))
+#+END_SRC
+
+* HL-ANYTHING
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hl-anything
+    :ensure t
+    :diminish hl-highlight-mode
+    :commands hl-highlight-mode
+    :init
+    )
+#+END_SRC
+
+* COMMENT Cool-Moves
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cool-moves
+    :load-path "~/.emacs.d/cool-moves")
+#+END_SRC
