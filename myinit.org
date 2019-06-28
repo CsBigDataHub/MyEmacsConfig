@@ -719,9 +719,13 @@
 
     (use-package virtualenvwrapper
       :ensure t
+      ;; Automatically switch python venv
+      :hook (projectile-after-switch-project . venv-projectile-auto-workon)
       :config
       (venv-initialize-interactive-shells)
-      (venv-initialize-eshell))
+      (venv-initialize-eshell)
+      (setq venv-location "/Users/ckoneru/.virtualenvs/")
+      )
 
 
     (use-package pip-requirements
@@ -731,7 +735,33 @@
     (use-package blacken
       :ensure t
       :config
-      (add-hook 'python-mode-hook 'blacken-mode))
+      (add-hook 'python-mode-hook 'blacken-mode)
+      ;; Allow using Python 3.6-only syntax
+      (setq blacken-allow-py36 t)
+      ;; Skips temporary sanity checks
+      (setq blacken-fast-unsafe t)
+      ;; Use fill-column line-length
+      (setq blacken-line-length 'fill)
+      )
+
+    ;; package-list-packages like interface for python packages
+    (use-package pippel :defer t)
+
+    (use-package python-test
+      :defer t
+      :config
+      ;; Set default test backend to pytest
+      (setq python-test-backend 'pytest))
+
+
+    ;; Enable (restructured) syntax highlighting for python docstrings
+    (use-package python-docstring
+      :hook (python-mode . python-docstring-mode))
+
+    (use-package pydoc
+      :after anaconda-mode
+      :bind (:map anaconda-mode-map
+                  ("M-?" . pydoc-at-point)))
   #+END_SRC
 
 * White Space and Blank Lines
@@ -1191,6 +1221,52 @@
     :config
     (bind-key "C-c C-r" 'dired-rsync dired-mode-map))
 
+  ;; Display the recursive size of directories in Dired
+  (use-package dired-du
+    :ensure t
+    :after dired
+    :config
+    ;; human readable size format
+    (setq dired-du-size-format t))
+
+  (use-package wdired
+    :ensure t
+    :after dired
+    :config
+    ;; Make permission bits editable
+    (setq wdired-allow-to-change-permissions t))
+
+  (use-package dired-hacks-utils
+    :ensure t
+    :hook (dired-mode . dired-utils-format-information-line-mode))
+
+  (use-package dired-open
+    :ensure t
+    :after dired
+    :bind (:map dired-mode-map
+                ("RET" . dired-open-file)
+                ([return] . dired-open-file)
+                ("f" . dired-open-file))
+    :config
+    ;; Reuse existing dired buffer
+    (setq dired-open-find-file-function 'diredp-find-file-reuse-dir-buffer)
+    (setq dired-open-functions '(dired-open-by-extension dired-open-guess-shell-alist dired-open-subdir)))
+
+  (use-package dired-ranger
+    :ensure t
+    :after dired
+    :init
+    (bind-keys :map dired-mode-map
+               :prefix "c"
+               :prefix-map dired-ranger-map
+               :prefix-docstring "Map for ranger operations."
+               ("c" . dired-ranger-copy)
+               ("p" . dired-ranger-paste)
+               ("m" . dired-ranger-move))
+
+    (bind-keys :map dired-mode-map
+               ("'" . dired-ranger-bookmark)
+               ("`" . dired-ranger-bookmark-visit)))
 #+END_SRC
 
 * Projectile
@@ -1871,7 +1947,22 @@
     :ensure t
     :after esh-opt
     :custom
-    (eshell-prompt-function #'epe-theme-dakrone))
+    (eshell-prompt-function #'epe-theme-dakrone)
+    :config
+    (require 'virtualenvwrapper)  ; We want python venv support
+    (autoload 'epe-theme-dakrone "eshell-prompt-extras")
+    (setq eshell-highlight-prompt nil
+          eshell-prompt-function 'epe-theme-dakrone)
+    )
+
+  ;; Show git info in prompt
+  (use-package eshell-git-prompt
+    :ensure t
+    :disabled t  ; Use eshell-prompt-extras
+    :after eshell
+    :config ;;(eshell-git-prompt-use-theme 'powerline)
+    ;; XXX: Wait for powerline font https://github.com/powerline/fonts/issues/154
+    (eshell-git-prompt-use-theme 'robbyrussell))
 
   (use-package eshell-fringe-status
     :ensure t
@@ -1881,6 +1972,29 @@
   (use-package eshell-did-you-mean
     :ensure t)
 
+  (add-to-list 'load-path (expand-file-name "/Users/ckoneru/.emacs.d/aweshell"))
+  (require 'aweshell)
+
+  ;; Increase eshell history size from default of only 128
+  (setq eshell-history-size 8192)
+
+  (use-package eshell-z
+    :ensure t
+    :after eshell)
+
+  (use-package eshell-up
+    :ensure t
+    :after eshell)
+
+  ;; Autocomplete for git commands in shell and
+  ;; the git command from magit ('!')
+  (use-package pcmpl-git
+    :ensure t
+    :after pcomplete)
+
+  (use-package pcmpl-pip
+    :ensure t
+    :after pcomplete)
 #+END_SRC
 
 * Groovy
@@ -2046,6 +2160,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package dimmer
     :ensure t
+    :unless noninteractive
     :disabled
     :custom
     (dimmer-fraction 0.5)
@@ -2059,6 +2174,21 @@
        ".*Ilist.*"))
     :config
     (dimmer-mode t))
+#+END_SRC
+
+* Bicycle - Cycle outline and code visibility
+
+#+BEGIN_SRC emacs-lisp
+  (use-package bicycle
+    :after outline
+    :bind (:map outline-minor-mode-map
+                ([C-tab] . bicycle-cycle)
+                ([S-tab] . bicycle-cycle-global)))
+
+  (use-package prog-mode
+    :config
+    (add-hook 'prog-mode-hook 'outline-minor-mode)
+    (add-hook 'prog-mode-hook 'hs-minor-mode))
 #+END_SRC
 
 * Rainbow
@@ -2274,9 +2404,26 @@
 * Highlight Indentation
 
 #+BEGIN_SRC emacs-lisp
-(use-package highlight-indentation
-  :ensure t
-  :commands (highlight-indentation-mode))
+  (use-package highlight-indentation
+    :ensure t
+    :commands (highlight-indentation-mode))
+
+  ;; highlight indentations in python
+  (use-package highlight-indent-guides
+    :hook ((python-mode sass-mode yaml-mode nim-mode) . highlight-indent-guides-mode)
+    :config
+    ;; Don't highlight first level (that would be a line at column 1)
+    (defun my-highlighter (level responsive display)
+      (if (> 1 level) ; replace `1' with the number of guides you want to hide
+          nil
+        (highlight-indent-guides--highlighter-default level responsive display)))
+
+    (setq highlight-indent-guides-highlighter-function 'my-highlighter)
+    (setq highlight-indent-guides-method 'character)
+    (setq highlight-indent-guides-character ?\|)
+    (setq highlight-indent-guides-auto-odd-face-perc 15)
+    (setq highlight-indent-guides-auto-even-face-perc 15)
+    (setq highlight-indent-guides-auto-character-face-perc 20))
 #+END_SRC
 
 * Region State
@@ -2753,4 +2900,130 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package frog-jump-buffer :ensure t)
+#+END_SRC
+
+* Subword: CamelCase aware editing operations
+
+#+BEGIN_SRC emacs-lisp
+(use-package subword
+  :ensure t
+  :hook ((python-mode yaml-mode go-mode clojure-mode cider-repl-mode java-mode cds-mode js2-mode) . subword-mode))
+#+END_SRC
+
+* Shr: Simple html renderer
+
+#+BEGIN_SRC emacs-lisp
+(use-package shr
+  :ensure t
+  :defer t
+  :config
+  (setq shr-width 80)
+  (setq shr-external-browser 'eww-browse-url)
+  (setq shr-color-visible-luminance-min 80))
+#+END_SRC
+
+* Hl-todo: Highlight and navigate TODO keywords
+
+#+BEGIN_SRC emacs-lisp
+(use-package hl-todo
+  :ensure t
+  :defer 2
+  :config (global-hl-todo-mode))
+#+END_SRC
+
+* Automatically remove trailing whitespace (only if I put them there)
+
+#+BEGIN_SRC emacs-lisp
+(use-package ws-butler
+  :ensure t
+  :hook ((text-mode prog-mode) . ws-butler-mode)
+  :config (setq ws-butler-keep-whitespace-before-point nil))
+#+END_SRC
+
+* CRUX
+
+#+BEGIN_SRC emacs-lisp
+  (use-package crux
+    :ensure t
+    :bind (("C-c o" . crux-open-with)
+           ("C-a" . crux-move-beginning-of-line)))
+#+End_SRC
+
+* zop-to-char: Remove multiple characters at once
+
+#+BEGIN_SRC emacs-lisp
+  ;; Replace zap-to-char functionaity with the more powerful zop-to-char
+  (use-package zop-to-char
+    :ensure t
+    :bind (("M-z" . zop-up-to-char)
+           ("M-Z" . zop-to-char)))
+#+END_SRC
+
+* Visual-regex:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package visual-regexp
+    :ensure t
+    :bind (:map mode-specific-map
+                :prefix-map visual-regexp-prefix-map
+                :prefix "r"
+                ("r" . vr/query-replace)
+                ("R" . vr/replace)
+                ))
+
+  (use-package visual-regexp-steroids
+    :after visual-regexp
+    )
+#+END_SRC
+
+* Elisp-demos: Inject elisp demos into help buffer
+
+#+BEGIN_SRC emacs-lisp
+(use-package elisp-demos
+  :ensure t
+  :after helpful
+  :config
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+#+END_SRC
+
+* Imenu
+
+#+BEGIN_SRC emacs-lisp
+(use-package imenu
+  :ensure t
+  :defer t
+  ;;:hook (emacs-lisp-mode . imenu-use-package)
+  :config
+  ;; Recenter window after imenu jump so cursor doesn't end up on the last line
+  (add-hook 'imenu-after-jump-hook 'recenter)  ; or 'reposition-window
+  (set-default 'imenu-auto-rescan t))
+  ;; Use use-package-enable-imenu-support
+  ;;(defun imenu-use-package ()
+  ;;  (add-to-list 'imenu-generic-expression
+  ;;               '("Packages" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))))
+
+(use-package imenu-anywhere
+  :ensure t
+  :bind (("M-I" . ivy-imenu-anywhere)
+         ("C-c i" . ivy-imenu-anywhere)))
+#+END_SRC
+
+* Xref
+Select from xref candidates with ivy
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-xref
+  :ensure t
+  :after (ivy xref)
+  :config
+  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  (setq xref-show-definitions-function #'ivy-xref-show-defs))
+#+END_SRC
+
+* Dicover-My-Mojor
+
+#+BEGIN_SRC emacs-lisp
+  (use-package discover-my-major
+    :ensure t
+    :bind (("C-h C-m" . discover-my-major)))
 #+END_SRC
