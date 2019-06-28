@@ -727,6 +727,11 @@
     (use-package pip-requirements
       :ensure t
       :mode ("/requirements.txt$" . pip-requirements-mode))
+
+    (use-package blacken
+      :ensure t
+      :config
+      (add-hook 'python-mode-hook 'blacken-mode))
   #+END_SRC
 
 * White Space and Blank Lines
@@ -2734,9 +2739,18 @@
     )
 #+END_SRC
 
-* COMMENT Cool-Moves
+* Cool-Moves
 
 #+BEGIN_SRC emacs-lisp
   (use-package cool-moves
     :load-path "~/.emacs.d/cool-moves")
+
+  (add-to-list 'load-path "~/.emacs.d/cool-moves")
+  (load "cool-moves")
+#+END_SRC
+
+* Frog_Jump_buffer
+
+#+BEGIN_SRC emacs-lisp
+  (use-package frog-jump-buffer :ensure t)
 #+END_SRC

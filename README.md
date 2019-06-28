@@ -37,7 +37,7 @@ Keys 	Description
 `C-r` 	Same as C-s, but search in reverse.
 `M-<` 	Move to beginning of buffer.
 `M->` 	Move to end of buffer.
-`M-g g` 	Go to line. 
+`M-g g` 	Go to line.
 ```
 
 
@@ -49,7 +49,7 @@ Keys 	Description
 `C-y` 	Yank.
 `M-y` 	Cycle through kill ring after yanking.
 `M-d` 	Kill word.
-`C-k` 	Kill line. 
+`C-k` 	Kill line.
 ```
 
 ```
@@ -69,7 +69,7 @@ Keys 	Description
 `C-x 1` 	Delete all other windows, leaving only the current window in the frame. This doesn’t close your buffers, and it won’t cause you to lose any work.
 `C-x 2` 	Split frame above and below.
 `C-x 3` 	Split frame side by side.
-`C-x 0` 	Delete current window. 
+`C-x 0` 	Delete current window.
 ```
 
 
@@ -99,11 +99,11 @@ To perform this function             | Use these keys
 -------------------------------------|---------------------------------
 Moving to the next line              | C-n (n for Next)
 Moving to the previous line          | C-p (p for Previous)
-Moving one character forward         | C-f (f for Forward) 
+Moving one character forward         | C-f (f for Forward)
 Moving one character backward        | C-b (b for Backward)
-Moving one word forward              | M-f (f for Forward) 
+Moving one word forward              | M-f (f for Forward)
 Moving one word backward             | M-b (b for Backward)
-Moving to the start of a line        | C-a 
+Moving to the start of a line        | C-a
 Moving to the end of a line          | C-e (e for End)
 Moving to the start of a sentence    | M-a
 Moving to the end of a sentence      | M-e (e for End)
@@ -193,7 +193,7 @@ key 	what it does
 
 ###   In Org-Mode to Write Code
 
-`C-c '`  This will write Code in a new window 
+`C-c '`  This will write Code in a new window
 
 ###  https://emacs.stackexchange.com/questions/40571/how-to-set-a-short-cut-for-begin-src-end-src/47370#47370
 
@@ -227,7 +227,7 @@ i	#+INDEX: line
 I	#+INCLUDE: line
 
 ```
-More templates can added by customizing the variable org-structure-template-alist, whose docstring has additional details. 
+More templates can added by customizing the variable org-structure-template-alist, whose docstring has additional details.
 
 
 ## Macro's
@@ -237,8 +237,8 @@ Command 	Key
 `kmacro-start-macro-or-insert-counter` 	`F3` or `C-x (`
 `kmacro-end-and-call-macro` 	`F4` or `C-x )`
 `kmocro-call-marco`       `C-x e`
-`kmacro-name-last-macro` 	
-`insert-kbd-macro` 	
+`kmacro-name-last-macro`
+`insert-kbd-macro`
 
 ```
 
@@ -246,7 +246,7 @@ Command 	Key
 
 ```
 `C-<SPC>` Set the mark at point, and activate it (set-mark-command).
-`C-@`   The same. 
+`C-@`   The same.
 
 ```
 
@@ -259,10 +259,572 @@ Emacs has commands for converting either a single word or any arbitrary range of
 `M-u` Convert following word to upper case (upcase-word).
 `M-c` Capitalize the following word (capitalize-word).
 `C-x C-l` Convert region to lower case (downcase-region).
-`C-x C-u` Convert region to upper case (upcase-region). 
+`C-x C-u` Convert region to upper case (upcase-region).
 
 ```
 
 ### I-edit
 
 `C-;` mark all the marked words
+
+<div class="units-container"><div><div class="row">
+<div class="col-xs-12">
+<div class="plans-section-header">
+Text Navigation Beginner
+</div>
+</div>
+</div>
+<div class="row">
+<div class="shortcuts-container col-xs-12"><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-f
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move forward a char
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-b
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move backward a char
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+M-f
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move forward a word
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-b
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move backward a word
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-v
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move forward a screen
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-v
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move backward a screen
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-p
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move to previous line
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-a
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move to beginning of line
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-e
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move to end of line
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-a
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move to beginning of sentence
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+M-e
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move to end of sentence
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-&lt;
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move to beginning of doc
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+M-&gt;
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move to end of doc
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div></div>
+</div></div><div><div class="row">
+<div class="col-xs-12">
+<div class="plans-section-header">
+Text Editing Beginner
+</div>
+</div>
+</div>
+<div class="row">
+<div class="shortcuts-container col-xs-12"><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+BACKSPACE
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Delete previous char
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-d
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Delete next char
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+M-BACKSPACE
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Kill (cut) previous word
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-d
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Kill (cut) next word
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-/
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Undo
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div></div>
+</div></div><div><div class="row">
+<div class="col-xs-12">
+<div class="plans-section-header">
+Text Navigation Intermediate
+</div>
+</div>
+</div>
+<div class="row">
+<div class="shortcuts-container col-xs-12"><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-u8C-f
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move forward 8 chars
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-u6C-p
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move up 6 lines
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-u9C-b
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Move backward 9 chars
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div></div>
+</div></div><div><div class="row">
+<div class="col-xs-12">
+<div class="plans-section-header">
+Text Editing Intermediate
+</div>
+</div>
+</div>
+<div class="row">
+<div class="shortcuts-container col-xs-12"><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-u20w
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Insert 20 'w's
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-k
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Kill (cut) to end of sentence
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Set mark
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-y
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Yank (paste)
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+M-y
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Previous yank
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div></div>
+</div></div><div><div class="row">
+<div class="col-xs-12">
+<div class="plans-section-header">
+File Management
+</div>
+</div>
+</div>
+<div class="row">
+<div class="shortcuts-container col-xs-12"><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-xC-f
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Find a file
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-xC-s
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Save file
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-xC-b
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+List buffers
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-xb
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Switch to buffer
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-xs
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Save buffers
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div></div>
+</div></div><div><div class="row">
+<div class="col-xs-12">
+<div class="plans-section-header">
+Misc
+</div>
+</div>
+</div>
+<div class="row">
+<div class="shortcuts-container col-xs-12"><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-x4C-f
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Find in other window
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-xrepl s↵
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Replace string
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+ESCESCESC
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Get out of current command
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-xtext-mode↵
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Text mode
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-x0C-l
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Scroll line to top of screen
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-xC-c
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Close emacs
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-z
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Suspend emacs
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-g
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Stop command
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-x2
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Open 2 windows
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-x1
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Open 1 window
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+M-xfundamental-mode↵
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Fundamental mode
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+C-s
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Incremental search
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-xo
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Change windows
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12 is-odd">
+<div class="cheatsheet-keys col-xs-4">
+M-C-v
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Scroll other window
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div><div><div class="cheatsheet-shortcut-container col-xs-12">
+<div class="cheatsheet-keys col-xs-4">
+C-ha
+</div>
+<div class="cheatsheet-name col-xs-7">
+<span class="preview-command glyphicon glyphicon-camera hidden"></span>
+Command apropos
+</div>
+<div class="col-xs-1">
+
+</div>
+</div></div></div>
+</div></div></div>

@@ -1764,7 +1764,7 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
   ("f" yafolding-toggle-element)
   ("q" nil))
 
-(defhydra my/hydra-text-motions (:color amaranth :hint nil :foreign-keys nil)
+(defhydra my/hydra-coolmoves-text-motions (:color amaranth :hint nil :foreign-keys nil)
   "
     ^
 	^Motions^
