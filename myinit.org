@@ -66,7 +66,7 @@
     ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
     ;;(setq mac-option-modifier 'super) ; make opt key do Super
     ;;(setq mac-control-modifier 'control) ; make Control key do Control
-    ;;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+    (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
     (setq user-full-name "Chetan Koneru")
 
     ;; Default to 16MB for garbage collection
@@ -90,18 +90,10 @@
     (setq search-whitespace-regexp ".*?")
 
     ;;Persistent history
-    (setq savehist-file "~/.emacs.d/savehist")
-    (savehist-mode 1)
-    (setq history-length t)
-    (setq history-delete-duplicates t)
-    (setq savehist-save-minibuffer-history 1)
-    (setq savehist-additional-variables
-          '(kill-ring
-            search-ring
-            regexp-search-ring))
+    (savehist-mode)
 
     ;; Added this to build pdf tools
-    ;;(setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
+    (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
 
     ;;async, s, dash, and cl-lib are libraries for asynchronous processing, string manipulation, list manipulation and backward compatibility respectively.
     (use-package async
@@ -113,8 +105,6 @@
 
     (use-package dash
       :ensure t)
-
-    (use-package diminish :ensure t)
 
     (use-package s
       :ensure t)
@@ -132,11 +122,6 @@
 
     ;; Delete trailing-whitespace
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-    ;;  Sometimes you want to be able to do fancy things with the text that you're entering into the minibuffer. Sometimes you just want to be able to read it, especially when it comes to lots of text. This binds C-M-e in a minibuffer) so that you can edit the contents of the minibuffer before submitting it.
-    ;;(use-package miniedit
-    ;;  :commands minibuffer-edit
-    ;;  :init (miniedit-install))
   #+END_SRC
 
 * Theme
@@ -290,17 +275,10 @@
 * Quelpa
 
 #+BEGIN_SRC emacs-lisp
-  (use-package quelpa-use-package
+(use-package quelpa-use-package
     :ensure t
     :init
     (setq quelpa-update-melpa-p nil))
-
-  ;;(package-initialize)
-  ;;(if (require 'quelpa nil t)
-  ;;    (quelpa-self-upgrade)
-  ;;  (with-temp-buffer
-  ;;    (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
-  ;;    (eval-buffer)))
 #+END_SRC
 
 * Which key
@@ -447,7 +425,7 @@
       (setq ivy-display-style 'fancy))
 
 
-    (load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-ivy-rich.el")
 
     ;; Enhance fuzzy matching
     (use-package flx
@@ -749,6 +727,11 @@
     (use-package pip-requirements
       :ensure t
       :mode ("/requirements.txt$" . pip-requirements-mode))
+
+    (use-package blacken
+      :ensure t
+      :config
+      (add-hook 'python-mode-hook 'blacken-mode))
   #+END_SRC
 
 * White Space and Blank Lines
@@ -984,7 +967,7 @@
 
 * Dump-Keys
   #+BEGIN_SRC emacs-lisp
-  (load-if-exists "~/.emacs.d/custom-el-scripts/dump-keys.el")
+  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/dump-keys.el")
   #+END_SRC
 
 * Web-Mode
@@ -1128,11 +1111,6 @@
 
   (use-package auto-yasnippet
     :ensure t)
-
-
-  (use-package yasnippet-snippets
-    :defer    t
-    :straight t)
 #+END_SRC
 
 * Dired
@@ -1235,50 +1213,44 @@
 * Smart-Parens
 
 #+BEGIN_SRC emacs-lisp
-  (use-package smartparens
-    :ensure t
-    :demand t
-    :bind* (("M-m m j" . sp-down-sexp)
-            ("M-m m k" . sp-backward-up-sexp)
-            ("M-m m h" . sp-backward-down-sexp)
-            ("M-m m l" . sp-up-sexp)
-            ("M-m m f" . sp-forward-sexp)
-            ("M-m m b" . sp-backward-sexp)
-            ("M-m m a" . sp-beginning-of-sexp)
-            ("M-m m e" . sp-end-of-sexp)
-            ("M-m m n" . sp-next-sexp)
-            ("M-m m p" . sp-previous-sexp)
-            ("M-m m >" . sp-forward-barf-sexp)
-            ("M-m m <" . sp-backward-barf-sexp)
-            ("M-m m )" . sp-forward-slurp-sexp)
-            ("M-m m (" . sp-backward-slurp-sexp)
-            ("M-m m x" . sp-transpose-sexp)
-            ("M-m m d" . sp-kill-sexp)
-            ("M-m m y" . sp-copy-sexp)
-            ("M-m m u" . sp-unwrap-sexp)
-            ("M-m m U" . sp-backward-unwrap-sexp)
-            ("M-m m C" . sp-convolute-sexp)
-            ("M-m m r" . sp-raise-sexp)
-            ("M-m m s" . sp-split-sexp)
-            ("M-m m S" . sp-splice-sexp)
-            ("M-m m F" . sp-splice-sexp-killing-forward)
-            ("M-m m B" . sp-splice-sexp-killing-backward)
-            ("M-m m A" . sp-splice-sexp-killing-around))
-    :diminish smartparens-mode
-    :diminish smartparens-strict-mode
-    :config
-    (require 'smartparens-config)
-    (smartparens-global-mode)
-    ;;(smartparens-global-strict-mode)
-    (show-smartparens-global-mode)
-    (which-key-add-key-based-replacements
-      "M-m m" "move prefix"))
-
-  (use-package smartparens-config
-    :straight smartparens
-    :hook ((after-init . show-smartparens-global-mode)
-           (after-init . smartparens-global-mode))
-    :init (gsetq sp-hybrid-kill-entire-symbol nil))
+(use-package smartparens
+  :ensure t
+  :demand t
+  :bind* (("M-m m j" . sp-down-sexp)
+          ("M-m m k" . sp-backward-up-sexp)
+          ("M-m m h" . sp-backward-down-sexp)
+          ("M-m m l" . sp-up-sexp)
+          ("M-m m f" . sp-forward-sexp)
+          ("M-m m b" . sp-backward-sexp)
+          ("M-m m a" . sp-beginning-of-sexp)
+          ("M-m m e" . sp-end-of-sexp)
+          ("M-m m n" . sp-next-sexp)
+          ("M-m m p" . sp-previous-sexp)
+          ("M-m m >" . sp-forward-barf-sexp)
+          ("M-m m <" . sp-backward-barf-sexp)
+          ("M-m m )" . sp-forward-slurp-sexp)
+          ("M-m m (" . sp-backward-slurp-sexp)
+          ("M-m m x" . sp-transpose-sexp)
+          ("M-m m d" . sp-kill-sexp)
+          ("M-m m y" . sp-copy-sexp)
+          ("M-m m u" . sp-unwrap-sexp)
+          ("M-m m U" . sp-backward-unwrap-sexp)
+          ("M-m m C" . sp-convolute-sexp)
+          ("M-m m r" . sp-raise-sexp)
+          ("M-m m s" . sp-split-sexp)
+          ("M-m m S" . sp-splice-sexp)
+          ("M-m m F" . sp-splice-sexp-killing-forward)
+          ("M-m m B" . sp-splice-sexp-killing-backward)
+          ("M-m m A" . sp-splice-sexp-killing-around))
+  :diminish smartparens-mode
+  :diminish smartparens-strict-mode
+  :config
+  (require 'smartparens-config)
+  (smartparens-global-mode)
+  (smartparens-global-strict-mode)
+  (show-smartparens-global-mode)
+  (which-key-add-key-based-replacements
+    "M-m m" "move prefix"))
 #+END_SRC
 
 * Font Scaling
@@ -1829,11 +1801,11 @@
 * Sunrise Commander
 
 #+BEGIN_SRC emacs-lisp
-;;(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
-;;(require 'sunrise-commander)
-;;(require 'sunrise-x-buttons)
-;;(require 'sunrise-x-modeline)
-;;(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
+(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
+(require 'sunrise-commander)
+(require 'sunrise-x-buttons)
+(require 'sunrise-x-modeline)
+(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
 #+END_SRC
 
 * EditorConfig
@@ -1940,7 +1912,7 @@
 * Custom Utils
 
 #+Begin_SRC emacs-lisp
-  (setq custom-file "~/.emacs.d/custom-el-scripts/custom-util-function.el")
+  (setq custom-file "/Users/ckoneru/.emacs.d/custom-el-scripts/custom-util-function.el")
   (when (file-exists-p custom-file)
     (load custom-file))
 #+END_SRC
@@ -1964,7 +1936,7 @@
 * Java
 
 #+BEGIN_SRC emacs-lisp
- (load-if-exists "~/.emacs.d/custom-el-scripts/init-java.el")
+ (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
 * Auto-revert
@@ -2711,92 +2683,74 @@
     )
 #+END_SRC
 
-#+END_SRC
-
-* Popup
+* View
 
 #+BEGIN_SRC emacs-lisp
-  (use-package popup :ensure t :defer t)
-  (use-package popwin :ensure t
-               :config
-               (popwin-mode 1)
-               (setq popwin:close-popup-window-timer-interval 0.1)
-               (setq popwin:close-popup-window-timer nil))
+  (use-package view
+    :config
+    (defun View-goto-line-last (&optional line)
+      "goto last line"
+      (interactive "P")
+      (goto-line (line-number-at-pos (point-max))))
+
+    (define-key view-mode-map (kbd "e") 'View-scroll-half-page-forward)
+    (define-key view-mode-map (kbd "u") 'View-scroll-half-page-backward)
+
+    ;; less like
+    (define-key view-mode-map (kbd "N") 'View-search-last-regexp-backward)
+    (define-key view-mode-map (kbd "?") 'View-search-regexp-backward?)
+    (define-key view-mode-map (kbd "g") 'View-goto-line)
+    (define-key view-mode-map (kbd "G") 'View-goto-line-last)
+    ;; vi/w3m like
+    (define-key view-mode-map (kbd "h") 'backward-char)
+    (define-key view-mode-map (kbd "j") 'next-line)
+    (define-key view-mode-map (kbd "k") 'previous-line)
+    (define-key view-mode-map (kbd "l") 'forward-char))
 #+END_SRC
 
-* Point History
+* Hide-Show
 
 #+BEGIN_SRC emacs-lisp
-  (use-package point-history
-    :straight (point-history :type git :host github :repo "blue0513/point-history")
-    :hook ((after-init . point-history-mode))
-    :bind (("C-c C-/" . point-history-show))
-    :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
+(use-package hideshow
+  :bind (("C-c TAB" . hs-toggle-hiding)
+         ("C-\\" . hs-toggle-hiding)
+         ("M-+" . hs-show-all))
+  :init (add-hook #'prog-mode-hook #'hs-minor-mode)
+  :diminish hs-minor-mode
+  :config
+  (setq hs-special-modes-alist
+        (mapcar 'purecopy
+                '((c-mode "{" "}" "/[*/]" nil nil)
+                  (c++-mode "{" "}" "/[*/]" nil nil)
+                  (java-mode "{" "}" "/[*/]" nil nil)
+                  (js-mode "{" "}" "/[*/]" nil)
+                  (json-mode "{" "}" "/[*/]" nil)
+                  (javascript-mode  "{" "}" "/[*/]" nil)))))
 #+END_SRC
 
-* Undo Propose
+* HL-ANYTHING
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package undo-propose
-    :straight t
-    :config (undo-propose-wrap redo))
+  (use-package hl-anything
+    :ensure t
+    :diminish hl-highlight-mode
+    :commands hl-highlight-mode
+    :init
+    )
 #+END_SRC
 
-* Popup
+* Cool-Moves
 
 #+BEGIN_SRC emacs-lisp
-  (use-package popup :ensure t :defer t)
-  (use-package popwin :ensure t
-               :config
-               (popwin-mode 1)
-               (setq popwin:close-popup-window-timer-interval 0.1)
-               (setq popwin:close-popup-window-timer nil))
+  (use-package cool-moves
+    :load-path "~/.emacs.d/cool-moves")
+
+  (add-to-list 'load-path "~/.emacs.d/cool-moves")
+  (load "cool-moves")
 #+END_SRC
 
-* Point History
+* Frog_Jump_buffer
 
 #+BEGIN_SRC emacs-lisp
-  (use-package point-history
-    :straight (point-history :type git :host github :repo "blue0513/point-history")
-    :hook ((after-init . point-history-mode))
-    :bind (("C-c C-/" . point-history-show))
-    :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
-#+END_SRC
-
-* Undo Propose
-
-#+BEGIN_SRC emacs-lisp
-  (use-package undo-propose
-    :straight t
-    :config (undo-propose-wrap redo))
-#+END_SRC
-
-* Popup
-
-#+BEGIN_SRC emacs-lisp
-  (use-package popup :ensure t :defer t)
-  (use-package popwin :ensure t
-               :config
-               (popwin-mode 1)
-               (setq popwin:close-popup-window-timer-interval 0.1)
-               (setq popwin:close-popup-window-timer nil))
-#+END_SRC
-
-* Point History
-
-#+BEGIN_SRC emacs-lisp
-  (use-package point-history
-    :straight (point-history :type git :host github :repo "blue0513/point-history")
-    :hook ((after-init . point-history-mode))
-    :bind (("C-c C-/" . point-history-show))
-    :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
-#+END_SRC
-
-* Undo Propose
-
-#+BEGIN_SRC emacs-lisp
-  (use-package undo-propose
-    :straight t
-    :config (undo-propose-wrap redo))
+  (use-package frog-jump-buffer :ensure t)
 #+END_SRC

@@ -1635,3 +1635,166 @@ _SPC_ cancel	_o_nly this     _d_elete
   (let ((fpath (concat (eshell/pwd) "/" fname)))
     (clipboard/set fpath)
     (concat "Copied path: " fpath)))
+
+(defun my/magit-add-current-buffer-to-kill-ring ()
+  "Show the current branch in the echo-area and add it to the `kill-ring'."
+  (interactive)
+  (let ((branch (magit-get-current-branch)))
+    (if branch
+        (progn (kill-new branch)
+               (message "%s" branch))
+      (user-error "There is not current branch"))))
+
+(defun get-point (symbol &optional arg)
+  "get the point"
+  (funcall symbol arg)
+  (point))
+
+(defun copy-thing (begin-of-thing end-of-thing &optional arg)
+  "Copy thing between beg & end into kill ring."
+  (save-excursion
+    (let ((beg (get-point begin-of-thing 1))
+          (end (get-point end-of-thing arg)))
+      (copy-region-as-kill beg end))))
+
+(defun paste-to-mark (&optional arg)
+  "Paste things to mark, or to the prompt in shell-mode."
+  (unless (eq arg 1)
+    (if (string= "shell-mode" major-mode)
+        (comint-next-prompt 25535)
+      (goto-char (mark)))
+    (yank)))
+
+(defun copy-word (&optional arg)
+  "Copy words at point into kill-ring"
+  (interactive "P")
+  (copy-thing 'backward-word 'forward-word arg)
+  ;;(paste-to-mark arg)
+  )
+
+(global-set-key (kbd "C-c w") (quote copy-word))
+
+(defun copy-backward-word ()
+  "copy word before point - rocky @ stackexchange"
+  (interactive "")
+  (save-excursion
+    (let ((end (point))
+          (beg (get-point 'backward-word 1)))
+      (copy-region-as-kill beg end))))
+
+(global-set-key (kbd "C-c l") (quote copy-line))
+
+(defun copy-paragraph (&optional arg)
+  "Copy paragraphes at point"
+  (interactive "P")
+  (copy-thing 'backward-paragraph 'forward-paragraph arg)
+  (paste-to-mark arg)
+  )
+
+(global-set-key (kbd "C-c P")(quote copy-paragraph))
+
+
+(defhydra my/nav-mode (:foreign-keys run)
+  "
+_a_ beginning-of-line  _e_     View-scroll-half-page-forward    _j_ next-line          _<_ beginning-of-buffer
+_l_ forward-char       _u_     View-scroll-half-page-backward   _p_ previous-line      _>_ end-of-buffer
+_h_ backward-char      _SPC_   scroll-up-command                _k_ previous-line      _._ end-of-buffer
+_n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
+ "
+  ("C-h" hl-line-mode)
+  ("t" toggle-truncate-lines)
+  ("a" beginning-of-line)
+  ("l" forward-char)
+  ("h" backward-char)
+  ("n" next-line)
+  ("j" next-line)
+  ("p" previous-line)
+  ("k" previous-line)
+  ("e" View-scroll-half-page-forward)
+  ("u" View-scroll-half-page-backward)
+  ("SPC" scroll-up-command)
+  ("S-SPC" scroll-down-command)
+  ("<" beginning-of-buffer)
+  (">" end-of-buffer)
+  ("." end-of-buffer)
+  ("C-'" nil)
+  ("d" (when (y-or-n-p "Kill buffer?")
+         (kill-this-buffer))
+   :exit t)
+  ("/" isearch-forward-regexp :exit t)
+  ("?" isearch-backward-regexp :exit t)
+  ("i" nil :exit t)
+  ("q" nil :exit t))
+
+(defhydra my/indent-tools-hydra (:color red :hint nil)
+  "
+ ^Indent^         | ^Navigation^        | ^Actions^
+------------------+---------------------+-----------
+ _._ indent       | _j_ v               | _K_ kill
+ _,_ de-indent    | _k_ ʌ               | _i_ imenu
+ _l_ end of level | _n_ next sibling    | _C_ Copy…
+ _E_ end of fn    | _p_ previous sibling| _c_ comment
+ _P_ paragraph    | _u_ up parent       | _U_ uncomment (paragraph)
+ _SPC_ space      | _d_ down child      | _f_ fold
+ ___ undo         | _e_ end of tree     | _q_ quit
+"
+
+  ("." indent-tools-indent)
+  ("," indent-tools-demote)
+  ("E" indent-tools-indent-end-of-defun)
+  ("c" indent-tools-comment)
+  ("U" indent-tools-uncomment)
+  ("P" indent-tools-indent-paragraph)
+  ("l" indent-tools-indent-end-of-level)
+  ("K" indent-tools-kill-tree)
+  ("C" indent-tools-copy-hydra/body :color blue)
+  ("s" indent-tools-select)
+  ("e" indent-tools-goto-end-of-tree)
+  ("u" indent-tools-goto-parent)
+  ("d" indent-tools-goto-child)
+  ("S" indent-tools-select-end-of-tree)
+  ("n" indent-tools-goto-next-sibling)
+  ("p" indent-tools-goto-previous-sibling)
+  ("i" helm-imenu)
+  ("j" forward-line)
+  ("k" previous-line)
+  ("SPC" indent-tools-indent-space)
+  ("_" undo-tree-undo)
+  ("L" recenter-top-bottom)
+  ("f" yafolding-toggle-element)
+  ("q" nil))
+
+(defhydra my/hydra-coolmoves-text-motions (:color amaranth :hint nil :foreign-keys nil)
+  "
+    ^
+	^Motions^
+	-------------------------
+	_l_: line ↓      _w_: word →
+	_L_: line ↑      _W_: word ←
+	_p_: par  ↓      _c_: char →
+	_P_: par  ↑      _C_: char ←
+	_s_: sentence →  _x_: sexp →
+	_S_: sentence ←  _X_: sexp ←
+
+    "
+
+  ("<escape>" nil)
+  ("u" nil)
+
+  ("l" cool-moves/line-forward)
+  ("L" cool-moves/line-backward)
+
+  ("p" cool-moves/paragraph-forward)
+  ("P" cool-moves/paragraph-backward)
+
+  ("w" cool-moves/word-forward)
+  ("W" cool-moves/word-backwards)
+
+  ("c" cool-moves/character-forward)
+  ("C" cool-moves/character-backward)
+
+  ("s" cool-moves/sentence-forward)
+  ("S" cool-moves/sentence-backward)
+
+  ("x" cool-moves/sexp-forward)
+  ("X" cool-moves/sexp-backward))
