@@ -782,7 +782,7 @@
       :mode (("README\\.md\\'" . gfm-mode)
              ("\\.md\\'" . markdown-mode)
              ("\\.markdown\\'" . markdown-mode))
-      :init (setq markdown-command "multimarkdown"))
+      :init (setq markdown-command "/usr/local/bin/multimarkdown"))
 
     (use-package markdownfmt
       :ensure t)
@@ -792,10 +792,18 @@
       :after markdown-mode
       :defer t)
 
-   ;; (use-package polymode
-   ;;   :ensure t
-   ;;   :config
-   ;;   (require 'poly-markdown))
+    ;;(setq markdown-command
+    ;;      (concat
+    ;;       "/usr/local/bin/pandoc"
+    ;;       " --from=markdown --to=html"
+    ;;       " --standalone --mathjax --highlight-style=pygments"))
+
+    ;;(setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
+
+    ;; (use-package polymode
+    ;;   :ensure t
+    ;;   :config
+    ;;   (require 'poly-markdown))
 
     (use-package markdown-preview-mode
       :ensure t)
@@ -2910,6 +2918,21 @@
   :hook ((python-mode yaml-mode go-mode clojure-mode cider-repl-mode java-mode cds-mode js2-mode) . subword-mode))
 #+END_SRC
 
+* EWW
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eww
+    :ensure t
+    ;;:defer t
+    :config
+    (add-hook 'eww-mode-hook 'visual-line-mode)
+    (setq eww-header-line-format nil
+          shr-width 80
+          shr-use-fonts nil
+          shr-color-visible-distance-min 10
+          shr-color-visible-luminance-min 80))
+#+END_SRC
+
 * Shr: Simple html renderer
 
 #+BEGIN_SRC emacs-lisp
@@ -3026,4 +3049,63 @@ Select from xref candidates with ivy
   (use-package discover-my-major
     :ensure t
     :bind (("C-h C-m" . discover-my-major)))
+#+END_SRC
+
+* Plant-UML Config
+
+#+BEGIN_SRC emacs-lisp
+  ;; active Org-babel languages
+  ;;(org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((shell . t)
+  ;;    (plantuml . t)
+  ;;    (emacs-lisp . t)
+  ;;    (java . t)
+  ;;    (python . t)
+  ;;    (sed . t)
+  ;;    (sql . t)
+  ;;    (awk . t)
+  ;;    (R . t)
+  ;;    (awk . t)
+  ;;    (dot . t)
+  ;;    (ruby . t)
+  ;;    (js . t)
+  ;;    (C . t)))
+  ;;
+  ;;(add-to-list 'org-src-lang-modes (quote ("dot". graphviz-dot)))
+  ;;(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+  ;;(setq org-plantuml-jar-path (expand-file-name "/Users/ckoneru/GitRepos/plantuml.jar"))
+  ;;(add-to-list
+  ;; 'org-src-lang-modes '("plantuml" . plantuml))
+  ;;(use-package plantuml-mode
+  ;;  :ensure t
+  ;;  :custom
+  ;;  (plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar")
+  ;;  :mode "\\.uml\\'")
+  (use-package plantuml-mode
+    :ensure t
+    :mode "\\.uml\\'"
+    :init
+    (setq plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar"))
+  (use-package flycheck-plantuml
+    :ensure t
+    :commands (flycheck-plantuml-setup)
+    :init
+    (with-eval-after-load 'flycheck
+      (flycheck-plantuml-setup)))
+#+END_SRC
+
+* Mermaid-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mermaid-mode
+    :ensure t
+    :config
+    (setq mermaid-mmdc-location "~/GitRepos/node_modules/.bin/mmdc"))
+
+  (use-package ob-mermaid
+    :ensure t
+    :config
+    (setq ob-mermaid-cli-path "~/GitRepos/node_modules/.bin/mmdc")
+    )
 #+END_SRC

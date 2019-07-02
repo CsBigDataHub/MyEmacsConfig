@@ -1043,6 +1043,7 @@ point reaches the beginning or end of the buffer, stop there."
 (defhydra my/hydra-dired (:hint nil :color pink)
   "
 _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
+_P_eep
 _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
 _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
 _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
@@ -1075,6 +1076,7 @@ T - tag prefix
   ("m" dired-mark)
   ("O" dired-display-file)
   ("o" dired-find-file-other-window)
+  ("P" peep-dired)
   ("Q" dired-do-find-regexp-and-replace)
   ("R" dired-do-rename)
   ("r" dired-do-rsynch)
@@ -1798,3 +1800,35 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
 
   ("x" cool-moves/sexp-forward)
   ("X" cool-moves/sexp-backward))
+
+
+(require 'iimage)
+(autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
+(autoload 'turn-on-iimage-mode "iimage" "Turn on Inline image minor mode." t)
+(add-to-list 'iimage-mode-image-regex-alist '("@startuml\s+\\(.+\\)" . 1))
+
+;; Rendering plantuml
+(defun my/plantuml-render-buffer ()
+  (interactive)
+  (message "PLANTUML Start rendering")
+  (shell-command (concat "java -jar ~/GitRepos/plantuml.jar "
+                         buffer-file-name))
+  (message (concat "PLANTUML Rendered:  " (buffer-name))))
+
+;; Image reloading
+(defun my/reload-image-at-point ()
+  (interactive)
+  (message "reloading image at point in the current buffer...")
+  (image-refresh (get-text-property (point) 'display)))
+
+;; Image resizing and reloading
+(defun my/resize-image-at-point ()
+  (interactive)
+  (message "resizing image at point in the current buffer123...")
+  (let* ((image-spec (get-text-property (point) 'display))
+         (file (cadr (member :file image-spec))))
+    (message (concat "resizing image..." file))
+    (shell-command (format "convert -resize %d %s %s "
+                           (* (window-width (selected-window)) (frame-char-width))
+                           file file))
+    (reload-image-at-point)))
