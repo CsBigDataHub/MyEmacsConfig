@@ -1622,6 +1622,11 @@ _SPC_ cancel	_o_nly this     _d_elete
     (erase-buffer)
     (eshell-send-input)))
 
+(defun my/eshell/exit ()
+  (insert "exit")
+  (eshell-send-input)
+  (delete-window))
+
 (defun clipboard/set (astring)
   "Copy a string to clipboard"
   (with-temp-buffer
@@ -1832,3 +1837,33 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
                            (* (window-width (selected-window)) (frame-char-width))
                            file file))
     (reload-image-at-point)))
+
+(defun markdown-to-html ()
+  "Compiles the current file to HTML using Pandoc."
+  (interactive)
+  (let ((output-dir (read-directory-name "Output directory: "))
+	(input-file (file-name-nondirectory buffer-file-name)))
+    (setq output-file (concat output-dir "/" (file-name-sans-extension input-file) ".html"))
+    (shell-command-on-region
+     (point-min) (point-max)
+     (concat "pandoc -f markdown -t html5 -Ss --toc --self-contained -c https://raw.githubusercontent.com/manuelp/pandoc-stylesheet/master/pub.css -o " output-file " " input-file))))
+
+(defun markdown-to-pdf ()
+  "Compiles the current file to PDF using Pandoc."
+  (interactive)
+  (let ((output-dir (read-directory-name "Output directory: "))
+	(input-file (file-name-nondirectory buffer-file-name)))
+    (setq output-file (concat output-dir "/" (file-name-sans-extension input-file) ".pdf"))
+    (shell-command-on-region
+     (point-min) (point-max)
+     (concat "pandoc -f markdown -Ss --toc --chapters --number-sections --variable papersize:a4paper --variable documentclass:article --variable colorlinks:blue -o " output-file " " input-file))))
+
+(defun duplicate-line ()
+  (interactive)
+  (let ((col (current-column)))
+    (move-beginning-of-line 1)
+    (kill-line)
+    (yank)
+    (newline)
+    (yank)
+    (move-to-column col)))

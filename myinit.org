@@ -57,6 +57,14 @@
     (setq tramp-default-method "ssh")
     (setq tramp-auto-save-directory temporary-file-directory)
 
+    ;; to speed up tramp
+    (setq remote-file-name-inhibit-cache nil)
+    (setq vc-ignore-dir-regexp
+          (format "%s\\|%s"
+                  vc-ignore-dir-regexp
+                  tramp-file-name-regexp))
+    (setq tramp-verbose 1)
+
     (setq mouse-drag-copy-region nil
           x-select-enable-primary nil
           x-select-enable-clipboard t
@@ -800,12 +808,22 @@
 
     ;;(setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
 
-    ;; (use-package polymode
-    ;;   :ensure t
-    ;;   :config
-    ;;   (require 'poly-markdown))
+    (use-package poly-markdown
+      :ensure t)
+
+    (use-package polymode
+      :ensure t
+      )
 
     (use-package markdown-preview-mode
+      :ensure t)
+
+    (use-package markdown-toc
+      :ensure t)
+
+    ;; Automatic preview
+    ;; Link: https://github.com/mola-T/flymd
+    (use-package flymd
       :ensure t)
   #+END_SRC
 
@@ -2003,6 +2021,77 @@
   (use-package pcmpl-pip
     :ensure t
     :after pcomplete)
+
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (add-to-list 'eshell-visual-commands "ssh")
+              (add-to-list 'eshell-visual-commands "tail")
+              (add-to-list 'eshell-visual-commands "top")))
+
+  (add-hook 'eshell-mode-hook (lambda ()
+                                (eshell/alias "e" "find-file $1")
+                                (eshell/alias "ff" "find-file $1")
+                                (eshell/alias "emacs" "find-file $1")
+                                (eshell/alias "ee" "find-file-other-window $1")
+
+                                (eshell/alias "gd" "magit-diff-unstaged")
+                                (eshell/alias "gds" "magit-diff-staged")
+                                (eshell/alias "d" "dired $1")
+                                (eshell/alias "ll" "ls -ltrah")
+
+                                ;; The 'ls' executable requires the Gnu version on the Mac
+                                (let ((ls (if (file-exists-p "/usr/local/bin/gls")
+                                              "/usr/local/bin/gls"
+                                            "/bin/ls")))
+                                  (eshell/alias "ll" (concat ls " -AlohG --color=always")))))
+
+  (defun eshell/eshell-host->tramp (username hostname &optional prefer-root)
+    "Returns a TRAMP reference based on a USERNAME and HOSTNAME
+  that refers to any host or IP address."
+    (cond ((string-match-p "^/" host)
+           host)
+          ((or (and prefer-root (not username)) (equal username "root"))
+           (format "/ssh:%s|sudo:%s:" hostname hostname))
+          ((or (null username) (equal username user-login-name))
+           (format "/ssh:%s:" hostname))
+          (t
+           (format "/ssh:%s|sudo:%s|sudo@%s:%s:" hostname hostname username hostname))))
+
+  (defun eshell-load-bash-aliases ()
+    "Reads bash aliases from Bash and inserts
+      them into the list of eshell aliases."
+    (interactive)
+    (progn
+      (message "Parsing aliases")
+      (shell-command "alias" "bash-aliases" "bash-errors")
+      (switch-to-buffer "bash-aliases")
+      (replace-string "alias " "")
+      (goto-char 1)
+      (replace-string "='" " ")
+      (goto-char 1)
+      (replace-string "'\n" "\n")
+      (goto-char 1)
+      (let ((alias-name) (command-string) (alias-list))
+        (while (not (eobp))
+          (while (not (char-equal (char-after) 32))
+            (forward-char 1))
+          (setq alias-name
+                (buffer-substring-no-properties (line-beginning-position) (point)))
+          (forward-char 1)
+          (setq command-string
+                (buffer-substring-no-properties (point) (line-end-position)))
+          (setq alias-list (cons (list alias-name command-string) alias-list))
+          (forward-line 1))
+        (setq eshell-command-aliases-list alias-list))
+      (if (get-buffer "bash-aliases")(kill-buffer "bash-aliases"))
+      (if (get-buffer "bash-errors")(kill-buffer "bash-errors"))))
+
+  (add-hook 'eshell-mode-hook 'eshell-load-bash-aliases)
+
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (bind-keys :map eshell-mode-map
+                         ("C-r" . counsel-esh-history))))
 #+END_SRC
 
 * Groovy
