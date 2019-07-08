@@ -470,14 +470,14 @@
 
 (defun my/general-formatting-hooks ()
   (setq show-trailing-whitespace 't)
-  (my/turn-on 'form-feed))
+  (turn-on 'form-feed))
 (defun fixup-json ()
   "Re-indent json buffers with broken literal strings. Needs jsonpp installed (available using homebrew)"
   (interactive)
   (shell-command-on-region (point-min) (point-max) "sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g'|jsonpp"  nil t))
 
 (defun my/text-formatting-hooks ()
-  (my/turn-on 'auto-fill)) ; turn on automatic hard line wraps
+  (turn-on 'auto-fill)) ; turn on automatic hard line wraps
 
 (add-hook 'text-mode-hook
           'my/text-formatting-hooks)
@@ -1616,13 +1616,13 @@ _SPC_ cancel	_o_nly this     _d_elete
   (interactive "r")
   (align-regexp begin end "\\(\\s-*\\)=" 1 1 ))
 
-(defun my/eshell/clear ()
+(defun eshell/clear ()
   "Clear the eshell buffer."
   (let ((inhibit-read-only t))
     (erase-buffer)
     (eshell-send-input)))
 
-(defun my/eshell/exit ()
+(defun eshell/exit ()
   (insert "exit")
   (eshell-send-input)
   (delete-window))
@@ -1633,17 +1633,17 @@ _SPC_ cancel	_o_nly this     _d_elete
     (insert astring)
     (clipboard-kill-region (point-min) (point-max))))
 
-(defun my/eshell/copy-pwd ()
+(defun eshell/copy-pwd ()
   "Copy current directory to clipboard "
   (clipboard/set (eshell/pwd)))
 
-(defun my/eshell/copy-fpath (fname)
+(defun eshell/copy-fpath (fname)
   "Copy file name with full path to clipboard "
   (let ((fpath (concat (eshell/pwd) "/" fname)))
     (clipboard/set fpath)
     (concat "Copied path: " fpath)))
 
-(defun my/magit-add-current-buffer-to-kill-ring ()
+(defun my/magit-copy-branch-name-to-kill-ring ()
   "Show the current branch in the echo-area and add it to the `kill-ring'."
   (interactive)
   (let ((branch (magit-get-current-branch)))

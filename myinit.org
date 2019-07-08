@@ -23,6 +23,16 @@
 
   #+BEGIN_SRC emacs-lisp
 
+    ;; Core settings
+    ;; UTF-8 please
+    (set-charset-priority 'unicode)
+    (setq locale-coding-system   'utf-8)   ; pretty
+    (set-terminal-coding-system  'utf-8)   ; pretty
+    (set-keyboard-coding-system  'utf-8)   ; pretty
+    (set-selection-coding-system 'utf-8)   ; please
+    (prefer-coding-system        'utf-8)   ; with sugar on top
+    (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+
     (setq inhibit-startup-message t)
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
     (fset 'yes-or-no-p 'y-or-n-p)
@@ -136,6 +146,8 @@
 
   #+BEGIN_SRC emacs-lisp
 
+    (load-theme 'misterioso t)
+
     ;;(use-package spacemacs-theme
     ;;  :defer t
     ;;  :init (load-theme 'spacemacs-dark t))
@@ -156,10 +168,15 @@
     ;; (use-package color-theme-modern
     ;;   :ensure t)
 
-    (use-package base16-theme
-      :ensure t
-      :init (load-theme 'base16-spacemacs t)
-      )
+    ;;(use-package base16-theme
+    ;;  :ensure t
+    ;;  :init (load-theme 'base16-spacemacs t)
+    ;;  )
+
+    ;;(use-package base16-theme
+    ;;  :ensure t
+    ;;  :init (load-theme 'base16-monokai t)
+    ;;  )
 
     ;;(use-package moe-theme
     ;;  :ensure t)
@@ -1777,8 +1794,18 @@
 #+BEGIN_SRC emacs-lisp
   (use-package exec-path-from-shell
     :ensure t
+    :if (memq window-system '(mac ns))
     :config
+    (setq exec-path-from-shell-arguments '("-l"))
     (exec-path-from-shell-initialize)
+    (exec-path-from-shell-copy-env "LC_ALL")
+    (exec-path-from-shell-copy-env "LANG")
+    (exec-path-from-shell-copy-env "LC_TYPE")
+    (exec-path-from-shell-copy-env "SSH_AGENT_PID")
+    (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")
+    (exec-path-from-shell-copy-env "SHELL")
+    (exec-path-from-shell-copy-env "JAVA_HOME")
+
     )
 #+END_SRC
 
@@ -1924,6 +1951,8 @@
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
     :ensure t
+    :mode (("\\.yaml\\'" . yaml-mode)
+           ("\\.yml\\'" . yaml-mode))
     )
 
   (use-package flycheck-yamllint
@@ -2037,61 +2066,35 @@
                                 (eshell/alias "gd" "magit-diff-unstaged")
                                 (eshell/alias "gds" "magit-diff-staged")
                                 (eshell/alias "d" "dired $1")
-                                (eshell/alias "ll" "ls -ltrah")
-
                                 ;; The 'ls' executable requires the Gnu version on the Mac
                                 (let ((ls (if (file-exists-p "/usr/local/bin/gls")
                                               "/usr/local/bin/gls"
                                             "/bin/ls")))
-                                  (eshell/alias "ll" (concat ls " -AlohG --color=always")))))
+                                  (eshell/alias "ll" (concat ls " -AlohG --color=always")))
+                                ))
 
-  (defun eshell/eshell-host->tramp (username hostname &optional prefer-root)
-    "Returns a TRAMP reference based on a USERNAME and HOSTNAME
-  that refers to any host or IP address."
-    (cond ((string-match-p "^/" host)
-           host)
-          ((or (and prefer-root (not username)) (equal username "root"))
-           (format "/ssh:%s|sudo:%s:" hostname hostname))
-          ((or (null username) (equal username user-login-name))
-           (format "/ssh:%s:" hostname))
-          (t
-           (format "/ssh:%s|sudo:%s|sudo@%s:%s:" hostname hostname username hostname))))
-
-  (defun eshell-load-bash-aliases ()
-    "Reads bash aliases from Bash and inserts
-      them into the list of eshell aliases."
-    (interactive)
-    (progn
-      (message "Parsing aliases")
-      (shell-command "alias" "bash-aliases" "bash-errors")
-      (switch-to-buffer "bash-aliases")
-      (replace-string "alias " "")
-      (goto-char 1)
-      (replace-string "='" " ")
-      (goto-char 1)
-      (replace-string "'\n" "\n")
-      (goto-char 1)
-      (let ((alias-name) (command-string) (alias-list))
-        (while (not (eobp))
-          (while (not (char-equal (char-after) 32))
-            (forward-char 1))
-          (setq alias-name
-                (buffer-substring-no-properties (line-beginning-position) (point)))
-          (forward-char 1)
-          (setq command-string
-                (buffer-substring-no-properties (point) (line-end-position)))
-          (setq alias-list (cons (list alias-name command-string) alias-list))
-          (forward-line 1))
-        (setq eshell-command-aliases-list alias-list))
-      (if (get-buffer "bash-aliases")(kill-buffer "bash-aliases"))
-      (if (get-buffer "bash-errors")(kill-buffer "bash-errors"))))
-
-  (add-hook 'eshell-mode-hook 'eshell-load-bash-aliases)
+  ;;(defun eshell/eshell-host->tramp (username hostname &optional prefer-root)
+  ;;  "Returns a TRAMP reference based on a USERNAME and HOSTNAME
+  ;;that refers to any host or IP address."
+  ;;  (cond ((string-match-p "^/" host)
+  ;;         host)
+  ;;        ((or (and prefer-root (not username)) (equal username "root"))
+  ;;         (format "/ssh:%s|sudo:%s:" hostname hostname))
+  ;;        ((or (null username) (equal username user-login-name))
+  ;;         (format "/ssh:%s:" hostname))
+  ;;        (t
+  ;;         (format "/ssh:%s|sudo:%s|sudo@%s:%s:" hostname hostname username hostname)));;)
 
   (add-hook 'eshell-mode-hook
             (lambda ()
               (bind-keys :map eshell-mode-map
                          ("C-r" . counsel-esh-history))))
+
+  (add-hook 'eshell-mode-hook (lambda () (linum-mode -1)))
+
+  (evil-set-initial-state 'eshell-mode 'emacs)
+
+  (add-hook 'eshell-mode-hook (lambda () (linum-relative-mode -1)))
 #+END_SRC
 
 * Groovy
@@ -2285,7 +2288,8 @@
   (use-package prog-mode
     :config
     (add-hook 'prog-mode-hook 'outline-minor-mode)
-    (add-hook 'prog-mode-hook 'hs-minor-mode))
+    (add-hook 'prog-mode-hook 'hs-minor-mode)
+    )
 #+END_SRC
 
 * Rainbow
@@ -2312,7 +2316,11 @@
 
   (use-package k8s-mode
     :ensure t
-    :hook (k8s-mode . yas-minor-mode))
+    :hook (k8s-mode . yas-minor-mode)
+    :config
+    (setq k8s-site-docs-url "https://kubernetes.io/docs/reference/generated/kubernetes-api/")
+    (setq k8s-site-docs-version "v1.13")
+    )
 
   (use-package kubernetes-tramp
     :ensure t)
@@ -2503,11 +2511,20 @@
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-indentation
     :ensure t
-    :commands (highlight-indentation-mode))
+    :commands (highlight-indentation-mode)
+    :config
+    ;;(set-face-background 'highlight-indentation-face "#ffe39f")
+    (set-face-background 'highlight-indentation-current-column-face "#f1c40f")
+    )
 
   ;; highlight indentations in python
   (use-package highlight-indent-guides
-    :hook ((python-mode sass-mode yaml-mode nim-mode) . highlight-indent-guides-mode)
+    :ensure t
+    :init (setq highlight-indent-guides-responsive 'stack)
+    :hook
+    ((prog-mode yaml-mode) . highlight-indent-guides-mode)
+    :custom
+    (highlight-indent-guides-auto-enabled t)
     :config
     ;; Don't highlight first level (that would be a line at column 1)
     (defun my-highlighter (level responsive display)
@@ -2520,7 +2537,21 @@
     (setq highlight-indent-guides-character ?\|)
     (setq highlight-indent-guides-auto-odd-face-perc 15)
     (setq highlight-indent-guides-auto-even-face-perc 15)
-    (setq highlight-indent-guides-auto-character-face-perc 20))
+    (setq highlight-indent-guides-auto-character-face-perc 20)
+    )
+
+
+  (add-hook 'python-mode 'highlight-indent-guides-mode)
+  (add-hook 'yaml-mode 'highlight-indent-guides-mode)
+  (add-hook 'k8s-mode 'highlight-indent-guides-mode)
+
+  (add-hook 'python-mode 'highlight-indentation-current-column-mode)
+  (add-hook 'yaml-mode 'highlight-indentation-current-column-mode)
+  (add-hook 'k8s-mode 'highlight-indentation-current-column-mode)
+
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+  (add-hook 'prog-mode-hook 'highlight-indentation-current-column-mode)
+
 #+END_SRC
 
 * Region State
@@ -3197,4 +3228,12 @@ Select from xref candidates with ivy
     :config
     (setq ob-mermaid-cli-path "~/GitRepos/node_modules/.bin/mmdc")
     )
+#+END_SRC
+
+* color-identifier
+
+#+BEGIN_SRC emacs-lisp
+  (use-package color-identifiers-mode
+    :ensure t
+    :hook ((after-init . global-color-identifiers-mode)))
 #+END_SRC
