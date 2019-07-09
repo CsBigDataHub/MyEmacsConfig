@@ -61,6 +61,7 @@
       (progn	(copy-file filename newname 1)	(delete-file filename)	(set-visited-file-name nil)))))
 
 (defun my/put-current-path-to-clipboard ()
+  "copy current buffer or file path to clipboard"
   (interactive)
   (let ((file-path buffer-file-name)
         (dir-path default-directory))
@@ -74,6 +75,7 @@
            (error-message-string "Fail to get path name.")))))
 
 (defun my/put-current-filename-to-clipboard ()
+  "copy current buffer or file name to clipboard"
   (interactive)
   (let ((file-path buffer-file-name)
         (dir-path default-directory))
@@ -87,6 +89,7 @@
            (error-message-string "Fail to get path name.")))))
 
 (defun my/put-current-filename-with-line-to-clipboard ()
+  "copy current file name or buffer name with a line to clipboard"
   (interactive)
   (let ((file-path buffer-file-name)
         (dir-path default-directory))
