@@ -198,6 +198,11 @@
     ;;
     ;;(use-package doom-themes
     ;;  :ensure t)
+
+    ;;(use-package color-theme-sanityinc-tomorrow
+    ;;  :ensure t
+    ;;  :init
+    ;;  (load-theme 'sanityinc-tomorrow-blue))
   #+END_SRC
 
 * Hydra
@@ -1310,6 +1315,32 @@
     (bind-keys :map dired-mode-map
                ("'" . dired-ranger-bookmark)
                ("`" . dired-ranger-bookmark-visit)))
+
+  (use-package dired-rainbow
+    :ensure t
+    :config
+    (progn
+      (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+      (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+      (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+      (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+      (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+      (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+      (dired-rainbow-define media "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+      (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+      (dired-rainbow-define log "#c17d11" ("log"))
+      (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+      (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+      (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+      (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+      (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+      (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+      (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+      (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+      (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+      (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+      (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
+      ))
 #+END_SRC
 
 * Projectile
@@ -2354,7 +2385,43 @@
   (use-package csv-mode
     :ensure t
     :mode "\\.[Cc][Ss][Vv]\\'"
-    :config (setq csv-separators '("," ";" "|" " ")))
+    :init
+
+    ;; Use for *.tsv files.
+    ;; TODO: set `csv-separators' buffer-locally instead of globally.
+    (defun my-tsv-in-csv-mode ()
+      (csv-mode)
+      (custom-set-variables '(csv-separators '("\t")))) ; We can't use `setq' because the `:set' hook wouldn't be run.
+    (add-to-list 'auto-mode-alist '("\\.tsv\\'" . my-tsv-in-csv-mode))
+    :config
+    ;;(setq csv-separators '("," ";" "|" "    "))
+    (progn
+      (setq csv-separators '("," ";" "|" "\t"))
+      )
+    )
+
+  (setq csv-separators '("," ";" "|" "\t"))
+  (setq csv-align-padding 2)
+  ;;(setq csv-field-quotes '("\"" "'"))
+  (setq csv-header-lines 1)
+  (require 'csv-mode)
+
+  ;;(add-to-list 'auto-mode-alist '("\\.[Tt][Ss][Vv]\\'" . csv-mode))
+  ;;
+  ;;(add-hook 'csv-mode-hook
+  ;;          (lambda ()
+  ;;            (if (equal (file-name-extension buffer-file-name) "tsv")
+  ;;                (setq-local csv-separators '("\t" "," "|"))
+  ;;              (setq-local csv-separators '("," "\t" "|")))))
+  ;;
+  ;;(defun csv-separators-toggle ()
+  ;;  (interactive)
+  ;;  (cond ((equal (car csv-separators) ",")
+  ;;         (setq-local csv-separators '("\t" "," "|"))
+  ;;         (message "Separator -> TAB"))
+  ;;        (t
+  ;;         (setq-local csv-separators '("," "\t" "|"))
+  ;;         (message "Separator -> ,"))))
 #+END_SRC
 
 * Indentation-tools
@@ -2658,12 +2725,12 @@
 * Evil Collection
 
 #+BEGIN_SRC emacs-lisp
- ;; (use-package evil-collection
- ;;   :ensure t
- ;;   :after (evil)
- ;;   :config
- ;;   ;;(setq evil-collection-mode-list '(dired))
- ;;   (evil-collection-init))
+  ;; (use-package evil-collection
+  ;;   :ensure t
+  ;;   :after (evil)
+  ;;   :config
+  ;;   ;;(setq evil-collection-mode-list '(dired))
+  ;;   (evil-collection-init))
 #+END_SRC
 
 * LogView
@@ -3236,4 +3303,70 @@ Select from xref candidates with ivy
   (use-package color-identifiers-mode
     :ensure t
     :hook ((after-init . global-color-identifiers-mode)))
+#+END_SRC
+
+* Ranger
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package ranger
+  ;;  :ensure t
+  ;;  :config (setq ranger-width-preview 0.5))
+#+END_SRC
+
+* Garbage collection
+
+#+BEGIN_SRC emacs-lisp
+ ;; (let ((normal-gc-cons-threshold (* 128 1024 1024))
+ ;;       (init-gc-cons-threshold (* 256 1024 1024)))
+ ;;   (setq gc-cons-threshold init-gc-cons-threshold)
+ ;;   (add-hook #'emacs-startup-hook
+ ;;             (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
+
+ ;; (add-hook 'focus-out-hook #'garbage-collect)
+#+END_SRC
+
+* Super-save
+
+#+BEGIN_SRC emacs-lisp
+  (use-package super-save
+    :ensure t
+    :config
+    (super-save-mode +1))
+#+END_SRC
+
+* BeginEnd
+
+#+BEGIN_SRC emacs-lisp
+  (use-package beginend
+    :ensure t
+    :hook ((after-init . beginend-global-mode)))
+#+END_SRC
+
+* CHT.SH
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package cheat-sh
+     :ensure t)
+ #+END_SRC
+
+* ANZU
+
+#+BEGIN_SRC emacs-lisp
+  (use-package anzu
+    :ensure t
+    :hook ((after-init . global-anzu-mode))
+    :bind ([remap query-replace] . anzu-query-replace-regexp))
+#+END_SRC
+
+* Centaur-tabs
+
+#+BEGIN_SRC emacs-lisp
+  (use-package centaur-tabs
+    :ensure t
+    :demand
+    :config
+    (centaur-tabs-mode t)
+    :bind
+    ("H-t t <left>" . centaur-tabs-backward)
+    ("H-t t <right>" . centaur-tabs-forward))
 #+END_SRC
