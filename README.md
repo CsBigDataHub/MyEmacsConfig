@@ -4,6 +4,8 @@
 
 - Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`
 
+- Method explorer - speedbar-mode
+
 `emacsclient -a "" -c`
 
 ```elisp
