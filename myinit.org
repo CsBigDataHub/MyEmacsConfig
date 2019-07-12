@@ -2771,3 +2771,32 @@
     :straight t
     :config (undo-propose-wrap redo))
 #+END_SRC
+
+* Popup
+
+#+BEGIN_SRC emacs-lisp
+  (use-package popup :ensure t :defer t)
+  (use-package popwin :ensure t
+               :config
+               (popwin-mode 1)
+               (setq popwin:close-popup-window-timer-interval 0.1)
+               (setq popwin:close-popup-window-timer nil))
+#+END_SRC
+
+* Point History
+
+#+BEGIN_SRC emacs-lisp
+  (use-package point-history
+    :straight (point-history :type git :host github :repo "blue0513/point-history")
+    :hook ((after-init . point-history-mode))
+    :bind (("C-c C-/" . point-history-show))
+    :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
+#+END_SRC
+
+* Undo Propose
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-propose
+    :straight t
+    :config (undo-propose-wrap redo))
+#+END_SRC
