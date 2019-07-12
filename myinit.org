@@ -341,10 +341,17 @@
 * Quelpa
 
 #+BEGIN_SRC emacs-lisp
-(use-package quelpa-use-package
+  (use-package quelpa-use-package
     :ensure t
     :init
     (setq quelpa-update-melpa-p nil))
+
+  ;;(package-initialize)
+  ;;(if (require 'quelpa nil t)
+  ;;    (quelpa-self-upgrade)
+  ;;  (with-temp-buffer
+  ;;    (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
+  ;;    (eval-buffer)))
 #+END_SRC
 
 * Which key
@@ -1225,6 +1232,11 @@
 
   (use-package auto-yasnippet
     :ensure t)
+
+
+  (use-package yasnippet-snippets
+    :defer    t
+    :straight t)
 #+END_SRC
 
 * Dired
@@ -1399,44 +1411,50 @@
 * Smart-Parens
 
 #+BEGIN_SRC emacs-lisp
-(use-package smartparens
-  :ensure t
-  :demand t
-  :bind* (("M-m m j" . sp-down-sexp)
-          ("M-m m k" . sp-backward-up-sexp)
-          ("M-m m h" . sp-backward-down-sexp)
-          ("M-m m l" . sp-up-sexp)
-          ("M-m m f" . sp-forward-sexp)
-          ("M-m m b" . sp-backward-sexp)
-          ("M-m m a" . sp-beginning-of-sexp)
-          ("M-m m e" . sp-end-of-sexp)
-          ("M-m m n" . sp-next-sexp)
-          ("M-m m p" . sp-previous-sexp)
-          ("M-m m >" . sp-forward-barf-sexp)
-          ("M-m m <" . sp-backward-barf-sexp)
-          ("M-m m )" . sp-forward-slurp-sexp)
-          ("M-m m (" . sp-backward-slurp-sexp)
-          ("M-m m x" . sp-transpose-sexp)
-          ("M-m m d" . sp-kill-sexp)
-          ("M-m m y" . sp-copy-sexp)
-          ("M-m m u" . sp-unwrap-sexp)
-          ("M-m m U" . sp-backward-unwrap-sexp)
-          ("M-m m C" . sp-convolute-sexp)
-          ("M-m m r" . sp-raise-sexp)
-          ("M-m m s" . sp-split-sexp)
-          ("M-m m S" . sp-splice-sexp)
-          ("M-m m F" . sp-splice-sexp-killing-forward)
-          ("M-m m B" . sp-splice-sexp-killing-backward)
-          ("M-m m A" . sp-splice-sexp-killing-around))
-  :diminish smartparens-mode
-  :diminish smartparens-strict-mode
-  :config
-  (require 'smartparens-config)
-  (smartparens-global-mode)
-  (smartparens-global-strict-mode)
-  (show-smartparens-global-mode)
-  (which-key-add-key-based-replacements
-    "M-m m" "move prefix"))
+  (use-package smartparens
+    :ensure t
+    :demand t
+    :bind* (("M-m m j" . sp-down-sexp)
+            ("M-m m k" . sp-backward-up-sexp)
+            ("M-m m h" . sp-backward-down-sexp)
+            ("M-m m l" . sp-up-sexp)
+            ("M-m m f" . sp-forward-sexp)
+            ("M-m m b" . sp-backward-sexp)
+            ("M-m m a" . sp-beginning-of-sexp)
+            ("M-m m e" . sp-end-of-sexp)
+            ("M-m m n" . sp-next-sexp)
+            ("M-m m p" . sp-previous-sexp)
+            ("M-m m >" . sp-forward-barf-sexp)
+            ("M-m m <" . sp-backward-barf-sexp)
+            ("M-m m )" . sp-forward-slurp-sexp)
+            ("M-m m (" . sp-backward-slurp-sexp)
+            ("M-m m x" . sp-transpose-sexp)
+            ("M-m m d" . sp-kill-sexp)
+            ("M-m m y" . sp-copy-sexp)
+            ("M-m m u" . sp-unwrap-sexp)
+            ("M-m m U" . sp-backward-unwrap-sexp)
+            ("M-m m C" . sp-convolute-sexp)
+            ("M-m m r" . sp-raise-sexp)
+            ("M-m m s" . sp-split-sexp)
+            ("M-m m S" . sp-splice-sexp)
+            ("M-m m F" . sp-splice-sexp-killing-forward)
+            ("M-m m B" . sp-splice-sexp-killing-backward)
+            ("M-m m A" . sp-splice-sexp-killing-around))
+    :diminish smartparens-mode
+    :diminish smartparens-strict-mode
+    :config
+    (require 'smartparens-config)
+    (smartparens-global-mode)
+    ;;(smartparens-global-strict-mode)
+    (show-smartparens-global-mode)
+    (which-key-add-key-based-replacements
+      "M-m m" "move prefix"))
+
+  (use-package smartparens-config
+    :straight smartparens
+    :hook ((after-init . show-smartparens-global-mode)
+           (after-init . smartparens-global-mode))
+    :init (gsetq sp-hybrid-kill-entire-symbol nil))
 #+END_SRC
 
 * Font Scaling
@@ -3488,4 +3506,33 @@ Select from xref candidates with ivy
              html-mode
              prog-mode). rainbow-mode))
     :diminish rainbow-mode)
+#+END_SRC
+
+* Popup
+
+#+BEGIN_SRC emacs-lisp
+  (use-package popup :ensure t :defer t)
+  (use-package popwin :ensure t
+               :config
+               (popwin-mode 1)
+               (setq popwin:close-popup-window-timer-interval 0.1)
+               (setq popwin:close-popup-window-timer nil))
+#+END_SRC
+
+* Point History
+
+#+BEGIN_SRC emacs-lisp
+  (use-package point-history
+    :straight (point-history :type git :host github :repo "blue0513/point-history")
+    :hook ((after-init . point-history-mode))
+    :bind (("C-c C-/" . point-history-show))
+    :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
+#+END_SRC
+
+* Undo Propose
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-propose
+    :straight t
+    :config (undo-propose-wrap redo))
 #+END_SRC
