@@ -205,6 +205,42 @@
     ;;  (load-theme 'sanityinc-tomorrow-blue))
   #+END_SRC
 
+* Straight
+
+#+BEGIN_SRC emacs-lisp
+  (setq straight-recipes-gnu-elpa-use-mirror t
+        straight-repository-branch           "develop"
+        straight-check-for-modifications     'live
+        straight-vc-git-default-clone-depth  1)
+
+  (defvar bootstrap-version)
+
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+
+  (straight-use-package 'use-package)
+#+END_SRC
+
+* Genearl
+
+#+BEGIN_SRC emacs-lisp
+  (use-package general
+    :straight t
+    :init
+    (defalias 'gsetq #'general-setq)
+    (defalias 'gsetq-local #'general-setq-local)
+    (defalias 'gsetq-default #'general-setq-default))
+#+END_SRC
+
 * Hydra
 
 #+BEGIN_SRC emacs-lisp
@@ -3369,4 +3405,87 @@ Select from xref candidates with ivy
     :bind
     ("H-t t <left>" . centaur-tabs-backward)
     ("H-t t <right>" . centaur-tabs-forward))
+#+END_SRC
+
+* Recentf
+
+#+BEGIN_SRC emacs-lisp
+  (require 'recentf)
+
+  ;; get rid of `find-file-read-only' and replace it with something
+  ;; more useful.
+  (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+
+  ;; enable recent files mode.
+  (recentf-mode t)
+
+                                          ; 50 files ought to be enough.
+  (setq recentf-max-saved-items 50)
+
+  (defun ido-recentf-open ()
+    "Use `ido-completing-read' to \\[find-file] a recent file"
+    (interactive)
+    (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+        (message "Opening file...")
+      (message "Aborting")))
+#+END_SRC
+
+* AutoInsert
+
+#+BEGIN_SRC emacs-lisp
+  (use-package autoinsert
+    :init
+    (define-auto-insert
+      '("\\.py" . "Python Language")
+      '("Python Language"
+        "#!/usr/bin/env python3\n"
+        "# -*- coding: utf-8 -*-\n"
+        "author   : Chetan Koneru \n"
+        "date     : " (format-time-string "%b %e, %Y") \n
+        "email    : Chetan <chetan.koneru@optum.com>" \n
+        "filename : " (file-name-nondirectory (buffer-file-name)) \n
+        "project  : " (file-name-nondirectory (directory-file-name (or projectile-project-root default-directory))) \n
+        "license  : GPL-3.0+\n\n"
+        "\"\"\"\n")))
+#+END_SRC
+
+* Benchmark-init
+
+#+BEGIN_SRC emacs-lisp
+  (use-package benchmark-init
+    :ensure t
+    :config
+    ;; To disable collection of benchmark data after init is done.
+    (add-hook 'after-init-hook 'benchmark-init/deactivate))
+#+END_SRC
+
+* Highlight's
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hl-line
+    :ensure t
+    :hook ((after-init . global-hl-line-mode)))
+
+  (use-package highlight-indent-guides
+    :straight t
+    :init (setq highlight-indent-guides-responsive 'stack)
+    :hook '(prog-mode-hook text-mode-hook org-mode-hook))
+
+  (use-package highlight-numbers
+    :straight t
+    :hook '(after-init-hook prog-mode-hook text-mode-hook org-mode-hook))
+#+END_SRC
+
+* Rainbow-Mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode
+    :straight t
+    :hook (((after-init
+             text-mode
+             org-mode
+             css-mode
+             html-mode
+             prog-mode). rainbow-mode))
+    :diminish rainbow-mode)
 #+END_SRC
