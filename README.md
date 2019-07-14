@@ -6,6 +6,10 @@
 
 `xmodmap ~/.xmodmap`
 
+    - https://superuser.com/questions/417568/setting-hyper-and-super-modifiers-for-certain-keys-with-setxkbmap-or-xmodmap
+    - https://wiki.archlinux.org/index.php/Xmodmap#Turn_CapsLock_into_Control,_and_LeftControl_into_Hyper
+
+
 ## To get Emacs Running Faster
 
 - Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`

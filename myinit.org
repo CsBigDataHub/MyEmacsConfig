@@ -2015,11 +2015,11 @@
 * Sunrise Commander
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
-(require 'sunrise-commander)
-(require 'sunrise-x-buttons)
-(require 'sunrise-x-modeline)
-(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
+;;(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
+;;(require 'sunrise-commander)
+;;(require 'sunrise-x-buttons)
+;;(require 'sunrise-x-modeline)
+;;(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
 #+END_SRC
 
 * EditorConfig
