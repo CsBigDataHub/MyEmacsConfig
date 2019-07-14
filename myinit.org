@@ -84,7 +84,7 @@
     ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
     ;;(setq mac-option-modifier 'super) ; make opt key do Super
     ;;(setq mac-control-modifier 'control) ; make Control key do Control
-    (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+    ;;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
     (setq user-full-name "Chetan Koneru")
 
     ;; Default to 16MB for garbage collection
@@ -111,7 +111,7 @@
     (savehist-mode)
 
     ;; Added this to build pdf tools
-    (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
+    ;;(setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
 
     ;;async, s, dash, and cl-lib are libraries for asynchronous processing, string manipulation, list manipulation and backward compatibility respectively.
     (use-package async
@@ -498,7 +498,7 @@
       (setq ivy-display-style 'fancy))
 
 
-    (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "/home/linuxlite/.emacs.d/custom-el-scripts/init-ivy-rich.el")
 
     ;; Enhance fuzzy matching
     (use-package flx
@@ -797,7 +797,7 @@
       :config
       (venv-initialize-interactive-shells)
       (venv-initialize-eshell)
-      (setq venv-location "/Users/ckoneru/.virtualenvs/")
+      (setq venv-location "/home/linuxlite/.virtualenvs/")
       )
 
 
@@ -1088,7 +1088,7 @@
 
 * Dump-Keys
   #+BEGIN_SRC emacs-lisp
-  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/dump-keys.el")
+  (load-if-exists "/home/linuxlite/.emacs.d/custom-el-scripts/dump-keys.el")
   #+END_SRC
 
 * Web-Mode
@@ -2112,7 +2112,7 @@
   (use-package eshell-did-you-mean
     :ensure t)
 
-  (add-to-list 'load-path (expand-file-name "/Users/ckoneru/.emacs.d/aweshell"))
+  (add-to-list 'load-path (expand-file-name "/home/linuxlite/.emacs.d/aweshell"))
   (require 'aweshell)
 
   ;; Increase eshell history size from default of only 128
@@ -2211,7 +2211,7 @@
 * Custom Utils
 
 #+Begin_SRC emacs-lisp
-  (setq custom-file "/Users/ckoneru/.emacs.d/custom-el-scripts/custom-util-function.el")
+  (setq custom-file "/home/linuxlite/.emacs.d/custom-el-scripts/custom-util-function.el")
   (when (file-exists-p custom-file)
     (load custom-file))
 #+END_SRC
@@ -2235,7 +2235,7 @@
 * Java
 
 #+BEGIN_SRC emacs-lisp
- (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-java.el")
+ (load-if-exists "/home/linuxlite/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
 * Auto-revert
@@ -3315,19 +3315,21 @@ Select from xref candidates with ivy
   ;;
   ;;(add-to-list 'org-src-lang-modes (quote ("dot". graphviz-dot)))
   ;;(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
-  ;;(setq org-plantuml-jar-path (expand-file-name "/Users/ckoneru/GitRepos/plantuml.jar"))
+  ;;(setq org-plantuml-jar-path (expand-file-name "/home/linuxlite/GitRepos/plantuml.jar"))
   ;;(add-to-list
   ;; 'org-src-lang-modes '("plantuml" . plantuml))
   ;;(use-package plantuml-mode
   ;;  :ensure t
   ;;  :custom
-  ;;  (plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar")
+  ;;  (plantuml-jar-path "/home/linuxlite/GitRepos/plantuml.jar")
   ;;  :mode "\\.uml\\'")
+
+;;; Changed for Linux
   (use-package plantuml-mode
     :ensure t
     :mode "\\.uml\\'"
     :init
-    (setq plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar"))
+    (setq plantuml-jar-path "/home/linuxlite/Downloads/plantuml.jar"))
   (use-package flycheck-plantuml
     :ensure t
     :commands (flycheck-plantuml-setup)
@@ -3339,16 +3341,17 @@ Select from xref candidates with ivy
 * Mermaid-mode
 
 #+BEGIN_SRC emacs-lisp
-  (use-package mermaid-mode
-    :ensure t
-    :config
-    (setq mermaid-mmdc-location "~/GitRepos/node_modules/.bin/mmdc"))
+;;; This configuration is for mac
+ ;; (use-package mermaid-mode
+ ;;   :ensure t
+ ;;   :config
+ ;;   (setq mermaid-mmdc-location "~/GitRepos/node_modules/.bin/mmdc"))
 
-  (use-package ob-mermaid
-    :ensure t
-    :config
-    (setq ob-mermaid-cli-path "~/GitRepos/node_modules/.bin/mmdc")
-    )
+ ;; (use-package ob-mermaid
+ ;;   :ensure t
+ ;;   :config
+ ;;   (setq ob-mermaid-cli-path "~/GitRepos/node_modules/.bin/mmdc")
+ ;;   )
 #+END_SRC
 
 * color-identifier
