@@ -3460,7 +3460,7 @@ Select from xref candidates with ivy
         "# -*- coding: utf-8 -*-\n"
         "author   : Chetan Koneru \n"
         "date     : " (format-time-string "%b %e, %Y") \n
-        "email    : Chetan <chetan.koneru@optum.com>" \n
+        "email    : Chetan <>" \n
         "filename : " (file-name-nondirectory (buffer-file-name)) \n
         "project  : " (file-name-nondirectory (directory-file-name (or projectile-project-root default-directory))) \n
         "license  : GPL-3.0+\n\n"
