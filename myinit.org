@@ -5,8 +5,8 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
-
+    (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
   #+END_SRC
 
 * File-Exists Function
@@ -346,12 +346,12 @@
     :init
     (setq quelpa-update-melpa-p nil))
 
-  ;;(package-initialize)
-  ;;(if (require 'quelpa nil t)
-  ;;    (quelpa-self-upgrade)
-  ;;  (with-temp-buffer
-  ;;    (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
-  ;;    (eval-buffer)))
+  (package-initialize)
+  (if (require 'quelpa nil t)
+      (quelpa-self-upgrade)
+    (with-temp-buffer
+      (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
+      (eval-buffer)))
 #+END_SRC
 
 * Which key
@@ -1673,8 +1673,9 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package origami
-    :ensure quelpa
-    :quelpa (origami :repo "seblemaguer/origami.el" :fetcher github)
+    :ensure t
+    ;;:ensure quelpa
+    ;;:quelpa (origami :repo "seblemaguer/origami.el" :fetcher github)
     :custom
     (origami-show-fold-header t)
 
