@@ -36,6 +36,9 @@
   :config
   (dap-mode t)
   (dap-ui-mode t))
+
+(use-package dap-java :after (lsp-java))
+
 (use-package autodisass-java-bytecode
   :ensure t)
 (add-to-list 'auto-mode-alist '("\\.aj\\'" . java-mode))

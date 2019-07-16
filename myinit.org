@@ -7,6 +7,10 @@
 
     (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+    ;; Enable defer and ensure by default for use-package
+    (setq use-package-always-defer t
+          use-package-always-ensure t)
   #+END_SRC
 
 * File-Exists Function
@@ -2220,17 +2224,69 @@
 * Ensime/Scala/Sbt
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ensime
-    :ensure t
-    :pin melpa)
+  ;;(use-package ensime
+  ;;  :ensure t
+  ;;  :pin melpa)
+  ;;
+  ;;(use-package sbt-mode
+  ;;  :ensure t
+  ;;  :pin melpa)
+  ;;
+  ;;(use-package scala-mode
+  ;;  :ensure t
+  ;;  :pin melpa)
+
+
+  ;; Enable scala-mode and sbt-mode
+  (use-package scala-mode
+    :mode "\\.s\\(cala\\|bt\\)$")
 
   (use-package sbt-mode
-    :ensure t
-    :pin melpa)
+    :commands sbt-start sbt-command
+    :config
+    ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+    ;; allows using SPACE when in the minibuffer
+    (substitute-key-definition
+     'minibuffer-complete-word
+     'self-insert-command
+     minibuffer-local-completion-map))
 
-  (use-package scala-mode
-    :ensure t
-    :pin melpa)
+  ;; Enable nice rendering of diagnostics like compile errors.
+  (use-package flycheck
+    :init (global-flycheck-mode))
+
+  (use-package lsp-mode
+    ;; Optional - enable lsp-mode automatically in scala files
+    :hook (scala-mode . lsp)
+    :config (setq lsp-prefer-flymake nil))
+
+  (use-package lsp-ui)
+
+  ;; Add company-lsp backend for metals
+  (use-package company-lsp)
+
+  ;;; Config for Eglot
+
+  ;; Enable scala-mode and sbt-mode
+  ;;(use-package scala-mode
+  ;;  :mode "\\.s\\(cala\\|bt\\)$")
+  ;;
+  ;;(use-package sbt-mode
+  ;;  :commands sbt-start sbt-command
+  ;;  :config
+  ;;  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;;  ;; allows using SPACE when in the minibuffer
+  ;;  (substitute-key-definition
+  ;;   'minibuffer-complete-word
+  ;;   'self-insert-command
+  ;;   minibuffer-local-completion-map))
+  ;;
+  ;;(use-package eglot
+  ;;  :pin melpa-stable
+  ;;  :config
+  ;;  (add-to-list 'eglot-server-programs '(scala-mode . ("metals-emacs")))
+  ;;  ;; (optional) Automatically start metals for Scala files.
+  ;;  :hook (scala-mode . eglot-ensure))
 #+END_SRC
 
 * Java
@@ -3536,4 +3592,14 @@ Select from xref candidates with ivy
   (use-package undo-propose
     :straight t
     :config (undo-propose-wrap redo))
+#+END_SRC
+
+* LSP for Bash
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package lsp-mode
+    :commands lsp
+    :hook
+    (sh-mode . lsp))
 #+END_SRC
