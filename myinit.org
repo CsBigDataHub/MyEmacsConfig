@@ -9,8 +9,8 @@
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
     ;; Enable defer and ensure by default for use-package
-    (setq use-package-always-defer t
-          use-package-always-ensure t)
+    ;;(setq use-package-always-defer t
+    ;;      use-package-always-ensure t)
   #+END_SRC
 
 * File-Exists Function
@@ -356,6 +356,8 @@
     (with-temp-buffer
       (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
       (eval-buffer)))
+
+  ;;(setq use-package-ensure-function 'quelpa)
 #+END_SRC
 
 * Which key
@@ -1206,11 +1208,11 @@
 * Uniquify For buffer names
 
   #+BEGIN_SRC emacs-lisp
-(use-package uniquify
-  :config
-  (setq uniquify-buffer-name-style 'forward)
-  )
-
+    (use-package uniquify
+      :ensure nil
+      :config
+      (setq uniquify-buffer-name-style 'post-forward-angle-brackets) ;; or "forward"
+      (setq uniquify-min-dir-content 3))
   #+END_SRC
 
 * Formatting and white-space
@@ -1455,6 +1457,7 @@
       "M-m m" "move prefix"))
 
   (use-package smartparens-config
+    :ensure nil
     :straight smartparens
     :hook ((after-init . show-smartparens-global-mode)
            (after-init . smartparens-global-mode))
@@ -2042,7 +2045,7 @@
   (use-package yaml-mode
     :ensure t
     :mode (("\\.yaml\\'" . yaml-mode)
-           ("\\.yml\\'" . yaml-mode))
+	   ("\\.yml\\'" . yaml-mode))
     )
 
   (use-package flycheck-yamllint
@@ -2051,7 +2054,13 @@
     :init
     (progn
       (eval-after-load 'flycheck
-        '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
+	'(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
+
+  (use-package lsp-yaml
+    :straight (lsp-yaml :type git :host github :repo "iquiw/lsp-yaml")
+    :after lsp
+    :config
+    (add-hook 'yaml-mode-hook #'lsp))
 #+END_SRC
 
 * Docker-Mode
