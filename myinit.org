@@ -13,6 +13,33 @@
     ;;      use-package-always-ensure t)
   #+END_SRC
 
+* Garbage collection
+
+#+BEGIN_SRC emacs-lisp
+  ;; (let ((normal-gc-cons-threshold (* 128 1024 1024))
+  ;;       (init-gc-cons-threshold (* 256 1024 1024)))
+  ;;   (setq gc-cons-threshold init-gc-cons-threshold)
+  ;;   (add-hook #'emacs-startup-hook
+  ;;             (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
+
+  ;; (add-hook 'focus-out-hook #'garbage-collect)
+
+  ;;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
+
+  (defun my-minibuffer-setup-hook ()
+    (setq gc-cons-threshold most-positive-fixnum))
+
+  (defun my-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+
+  ;;(let ((gc-cons-threshold most-positive-fixnum))
+  ;;  # existing init code
+  ;;  )
+#+END_SRC
+
 * File-Exists Function
   #+BEGIN_SRC emacs-lisp
     (defun load-if-exists(f)
@@ -150,40 +177,45 @@
 
   #+BEGIN_SRC emacs-lisp
 
-    (load-theme 'misterioso t)
-
+    ;;(load-theme 'misterioso t)
+    ;;
     ;;(use-package spacemacs-theme
-    ;;  :defer t
-    ;;  :init (load-theme 'spacemacs-dark t))
-
+    ;;  :ensure t
+    ;;  :defer
+    ;;  ;;:init (load-theme 'spacemacs-dark t)
+    ;;  )
+    ;;
     ;;(use-package monokai-theme
     ;;  :ensure t
-    ;;  :config (load-theme 'monokai t))
-
-    ;; (use-package zenburn-theme
-    ;;   :ensure t
-    ;;   :config (load-theme 'zenburn t))
-
+    ;;  ;;:init (load-theme 'monokai t)
+    ;;  )
+    ;;
+    ;;(use-package zenburn-theme
+    ;;  :ensure t
+    ;;  ;;:init (load-theme 'zenburn t)
+    ;;  )
+    ;;
     ;;(use-package dracula-theme
     ;;  :ensure t
-    ;;  :demand
-    ;;  :config (load-theme 'dracula t))
-
-    ;; (use-package color-theme-modern
-    ;;   :ensure t)
-
-    ;;(use-package base16-theme
-    ;;  :ensure t
-    ;;  :init (load-theme 'base16-spacemacs t)
+    ;;  ;;:init (load-theme 'dracula t)
     ;;  )
-
-    ;;(use-package base16-theme
-    ;;  :ensure t
-    ;;  :init (load-theme 'base16-monokai t)
-    ;;  )
-
-    ;;(use-package moe-theme
+    ;;
+    ;;(use-package color-theme-modern
     ;;  :ensure t)
+    ;;
+    (use-package base16-theme
+      :ensure t
+      :init (load-theme 'base16-spacemacs t)
+      )
+    ;;
+    ;;(use-package base16-theme
+    ;;  :ensure t
+    ;;  ;;:init (load-theme 'base16-monokai t)
+    ;;  )
+    ;;
+    ;;(use-package moe-theme
+    ;;  :ensure t
+    ;;  :init (load-theme 'moe-dark))
     ;;
     ;;(use-package alect-themes
     ;;  :ensure t)
@@ -192,21 +224,29 @@
     ;;  :ensure t)
     ;;
     ;;(use-package faff-theme
-    ;;  :ensure t)
+    ;;:ensure t)
     ;;
     ;;(use-package poet-theme
     ;;  :ensure t)
     ;;
     ;;(use-package tao-theme
-    ;;  :ensure t)
+    ;;:ensure t)
     ;;
     ;;(use-package doom-themes
-    ;;  :ensure t)
-
+    ;;:ensure t)
+    ;;
     ;;(use-package color-theme-sanityinc-tomorrow
     ;;  :ensure t
-    ;;  :init
-    ;;  (load-theme 'sanityinc-tomorrow-blue))
+    ;;  ;;:init (load-theme 'sanityinc-tomorrow-blue)
+    ;;  )
+    ;;
+    ;;(use-package apropospriate-theme
+    ;;:ensure t
+    ;;;; :init
+    ;;;; (load-theme 'apropospriate-dark t)
+    ;;;; ;; or
+    ;;;; (load-theme 'apropospriate-light t)
+    ;;)
   #+END_SRC
 
 * Straight
@@ -933,6 +973,18 @@
     (global-hungry-delete-mode))
   #+END_SRC
 
+* Smart-HUngry Delete
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-hungry-delete
+    :ensure t
+    :bind (("C-M-<backspace>" . smart-hungry-delete-backward-char)
+           ("C-d" . smart-hungry-delete-forward-char))
+    :defer nil ;; dont defer so we can add our functions to hooks
+    :config (smart-hungry-delete-add-default-hooks)
+    )
+#+END_SRC
+
 * Expand Region
   #+BEGIN_SRC emacs-lisp
     ;; expand the marked region in semantic increments (negative prefix to reduce region)
@@ -1212,7 +1264,8 @@
       :ensure nil
       :config
       (setq uniquify-buffer-name-style 'post-forward-angle-brackets) ;; or "forward"
-      (setq uniquify-min-dir-content 3))
+      ;;(setq uniquify-min-dir-content 3)
+      )
   #+END_SRC
 
 * Formatting and white-space
@@ -2045,7 +2098,7 @@
   (use-package yaml-mode
     :ensure t
     :mode (("\\.yaml\\'" . yaml-mode)
-	   ("\\.yml\\'" . yaml-mode))
+           ("\\.yml\\'" . yaml-mode))
     )
 
   (use-package flycheck-yamllint
@@ -2054,13 +2107,16 @@
     :init
     (progn
       (eval-after-load 'flycheck
-	'(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
+        '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
 
   (use-package lsp-yaml
     :straight (lsp-yaml :type git :host github :repo "iquiw/lsp-yaml")
     :after lsp
     :config
     (add-hook 'yaml-mode-hook #'lsp))
+
+  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
+
 #+END_SRC
 
 * Docker-Mode
@@ -3433,18 +3489,6 @@ Select from xref candidates with ivy
   ;;  :config (setq ranger-width-preview 0.5))
 #+END_SRC
 
-* Garbage collection
-
-#+BEGIN_SRC emacs-lisp
- ;; (let ((normal-gc-cons-threshold (* 128 1024 1024))
- ;;       (init-gc-cons-threshold (* 256 1024 1024)))
- ;;   (setq gc-cons-threshold init-gc-cons-threshold)
- ;;   (add-hook #'emacs-startup-hook
- ;;             (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
-
- ;; (add-hook 'focus-out-hook #'garbage-collect)
-#+END_SRC
-
 * Super-save
 
 #+BEGIN_SRC emacs-lisp
@@ -3503,7 +3547,7 @@ Select from xref candidates with ivy
   ;; enable recent files mode.
   (recentf-mode t)
 
-                                          ; 50 files ought to be enough.
+  ;;  50 files ought to be enough.
   (setq recentf-max-saved-items 50)
 
   (defun ido-recentf-open ()
@@ -3611,4 +3655,17 @@ Select from xref candidates with ivy
     :commands lsp
     :hook
     (sh-mode . lsp))
+#+END_SRC
+
+* MMM-Mode
+
+- MMM mode lets you edit multiple languages within one buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mmm-mode
+    :ensure t
+    :commands mmm-mode
+    :config
+    (use-package mmm-auto
+      :ensure nil))
 #+END_SRC
