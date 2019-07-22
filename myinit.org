@@ -203,20 +203,30 @@
     ;;(use-package color-theme-modern
     ;;  :ensure t)
     ;;
-    (use-package base16-theme
-      :ensure t
-      :init (load-theme 'base16-spacemacs t)
-      )
+    ;;(use-package base16-theme
+    ;;  :ensure t
+    ;;  :init (load-theme 'base16-spacemacs t)
+    ;;  )
     ;;
     ;;(use-package base16-theme
     ;;  :ensure t
     ;;  ;;:init (load-theme 'base16-monokai t)
     ;;  )
     ;;
-    ;;(use-package moe-theme
-    ;;  :ensure t
-    ;;  :init (load-theme 'moe-dark))
-    ;;
+    (use-package moe-theme
+      :ensure t
+      :config
+      (setq moe-theme-highlight-buffer-id t)
+      ;; (Available colors: blue, orange, green ,magenta, yellow, purple, red, cyan, w/b.)
+      ;; Choose a color for mode-line.(Default: blue)
+      ;;(moe-theme-set-color 'cyan)
+      (moe-theme-set-color 'w/b)
+
+      ;; Show highlighted buffer-id as decoration. (Default: nil)
+      (setq moe-theme-highlight-buffer-id t)
+      :init (load-theme 'moe-dark)
+      )
+
     ;;(use-package alect-themes
     ;;  :ensure t)
     ;;
@@ -247,6 +257,16 @@
     ;;;; ;; or
     ;;;; (load-theme 'apropospriate-light t)
     ;;)
+
+    ;;(use-package chocolate-theme
+    ;;  :ensure t
+    ;;  :config
+    ;;  (load-theme 'chocolate t)
+    ;;  )
+
+    ;;(use-package sublime-themes
+    ;;  :ensure t)
+    ;;(load-theme 'junio t)
   #+END_SRC
 
 * Straight
@@ -334,6 +354,10 @@
 
      ))
 
+  (use-package major-mode-hydra
+    :ensure t
+    :bind
+    ("M-SPC" . major-mode-hydra))
 #+END_SRC
 
 * All the Icons
@@ -604,6 +628,9 @@
       :ensure t
       :after ivy
       :init (ivy-prescient-mode))
+
+    (setq counsel-grep-base-command
+          "rg -i -M 120 --no-heading --line-number --color never %s %s")
   #+END_SRC
 
 * Avy
@@ -1165,6 +1192,15 @@
     (setq web-mode-enable-auto-quoting t))
   #+END_SRC
 
+* Parrot
+
+#+BEGIN_SRC emacs-lisp
+  (use-package parrot
+    :ensure t
+    :config
+    (parrot-mode))
+#+END_SRC
+
 * Mode Line
 
   #+BEGIN_SRC emacs-lisp
@@ -1206,6 +1242,80 @@
 
     ;; The maximum displayed length of the branch name of version control.
     (setq doom-modeline-vcs-max-length 12)
+
+    ;; Whether display environment version or not
+    (setq doom-modeline-env-version t)
+    ;; Or for individual languages
+    (setq doom-modeline-env-enable-python t)
+    ;;(setq doom-modeline-env-enable-ruby t)
+    ;;(setq doom-modeline-env-enable-perl t)
+    ;;(setq doom-modeline-env-enable-go t)
+    ;;(setq doom-modeline-env-enable-elixir t)
+    ;;(setq doom-modeline-env-enable-rust t)
+
+    ;; Change the executables to use for the language version string
+    (setq doom-modeline-env-python-executable "python3") ; or `python-shell-interpreter'
+    ;;(setq doom-modeline-env-ruby-executable "ruby")
+    ;;(setq doom-modeline-env-perl-executable "perl")
+    ;;(setq doom-modeline-env-go-executable "go")
+    ;;(setq doom-modeline-env-elixir-executable "iex")
+    ;;(setq doom-modeline-env-rust-executable "rustc")
+
+    ;; What to dispaly as the version while a new one is being loaded
+    ;;(setq doom-modeline-env-load-string "...")
+
+    ;; Hooks that run before/after the modeline version string is updated
+    (setq doom-modeline-before-update-env-hook nil)
+    (setq doom-modeline-after-update-env-hook nil)
+
+    (doom-modeline-def-modeline 'main
+      '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
+      '(objed-state misc-info persp-name debug lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker))
+
+    (doom-modeline-def-modeline 'minimal
+      '(bar matches buffer-info-simple)
+      '(media-info major-mode))
+
+    (doom-modeline-def-modeline 'special
+      '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
+      '(objed-state misc-info debug lsp minor-modes input-method indent-info buffer-encoding major-mode process checker))
+
+    (doom-modeline-def-modeline 'project
+      '(bar window-number buffer-default-directory)
+      '(misc-info debug major-mode process))
+
+    (doom-modeline-def-modeline 'package
+      '(bar window-number package)
+      '(misc-info major-mode process))
+
+    (doom-modeline-def-modeline 'info
+      '(bar window-number buffer-info info-nodes buffer-position parrot selection-info)
+      '(misc-info buffer-encoding major-mode))
+
+    (doom-modeline-def-modeline 'media
+      '(bar window-number buffer-size buffer-info)
+      '(misc-info media-info major-mode process vcs))
+
+    (doom-modeline-def-modeline 'pdf
+      '(bar window-number buffer-size buffer-info pdf-pages)
+      '(misc-info major-mode process vcs))
+
+    ;;(doom-modeline-def-modeline 'helm
+    ;;  '(bar helm-buffer-id helm-number helm-follow helm-prefix-argument)
+    ;;  '(helm-help))
+
+    ;;(doom-modeline-def-modeline 'timemachine
+    ;;  '(bar window-number matches git-timemachine buffer-position parrot selection-info)
+    ;;  '(misc-info fancy-battery mu4e github debug minor-modes indent-info buffer-encoding major-mode))
+
+    (doom-modeline-def-modeline 'my-simple-line
+      '(bar window-number matches buffer-info remote-host buffer-position parrot selection-info)
+      '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
+
+    (defun setup-custom-doom-modeline ()
+      (doom-modeline-set-modeline 'my-simple-line 'default))
+
+    (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
   #+END_SRC
 
 * Telephone-line
@@ -2553,6 +2663,8 @@
   (use-package web-beautify
     :ensure t)
 
+  (use-package json-reformat
+    :ensure t)
 #+END_SRC
 
 * Csv Mode
@@ -3668,4 +3780,30 @@ Select from xref candidates with ivy
     :config
     (use-package mmm-auto
       :ensure nil))
+#+END_SRC
+
+* Reformatter
+
+#+BEGIN_SRC emacs-lisp
+  (use-package reformatter
+    :straight (reformatter :host github :repo "purcell/reformatter.el"))
+
+  (reformatter-define xml-format
+    :program "xmllint"
+    :args '("--format" "-")
+    :mode nil)
+
+#+END_SRC
+
+* Shell-Pop
+
+#+BEGIN_SRC emacs-lisp
+  (use-package shell-pop
+    :ensure t
+    :bind (("H-x H-t" . shell-pop))
+    :config
+    (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+    (setq shell-pop-term-shell "/bin/zsh")
+    ;; need to do this manually or not picked up by `shell-pop'
+    (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
 #+END_SRC
