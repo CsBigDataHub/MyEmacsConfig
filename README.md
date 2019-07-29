@@ -4,6 +4,10 @@
 
 - Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`
 
+- https://fumbling.it/posts/how-i-blog/
+
+- https://ox-hugo.scripter.co/
+
 - Method explorer - speedbar-mode
 
 `emacsclient -a "" -c`
