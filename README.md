@@ -4,9 +4,15 @@
 
 - Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`
 
+- https://github.com/TommyX12/company-tabnine
+
 - https://fumbling.it/posts/how-i-blog/
 
 - https://ox-hugo.scripter.co/
+
+- screenshot of the code
+ Select a region and do `M-x shell-command-on-region` and run
+`~/.cargo/bin/silicon -l el -o ~/testImage.jpg`
 
 - Method explorer - speedbar-mode
 
