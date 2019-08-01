@@ -1,0 +1,104 @@
+* Emacs Notes
+
+** movement
+
+| keys                    | Movements                                                                                      |
+|-------------------------+------------------------------------------------------------------------------------------------|
+| C-a                     | Move to beginning of line.                                                                     |
+| M-m                     | Move to first non-whitespace character on the line.                                            |
+| C-e                     | Move to end of line.                                                                           |
+| C-f                     | Move forward one character.                                                                    |
+| C-b                     | Move backward one character.                                                                   |
+| M-f                     | Move forward one word (I use this a lot).                                                      |
+| M-b                     | Move backward one word (I use this a lot, too).                                                |
+| C-s                     | Regex search for text in current buffer and move to it. Press C-s again to move to next match. |
+| C-r                     | Same as C-s, but search in reverse.                                                            |
+| M-<                     | Move to beginning of buffer.                                                                   |
+| M->                     | Move to end of buffer.                                                                         |
+| M-g g                   | Go to line.                                                                                    |
+| C-n (n for Next)        | Moving to the next line                                                                        |
+| C-p (p for Previous)    | Moving to the previous line                                                                    |
+| C-f (f for Forward)     | Moving one character forward                                                                   |
+| C-b (b for Backward)    | Moving one character backward                                                                  |
+| M-f (f for Forward)     | Moving one word forward                                                                        |
+| M-b (b for Backward)    | Moving one word backward                                                                       |
+| C-a                     | Moving to the start of a line                                                                  |
+| C-e (e for End)         | Moving to the end of a line                                                                    |
+| M-a                     | Moving to the start of a sentence                                                              |
+| M-e (e for End)         | Moving to the end of a sentence                                                                |
+| C-v (or PgDn)           | Moving one page down                                                                           |
+| M-v (or PgUp)           | Moving one page up                                                                             |
+| M-< (Alt + Shift + "<") | Moving to the beginning of the file                                                            |
+| M-> (Alt + Shift + ">") | Moving to the end of the file                                                                 |
+
+
+** Mark
+
+| keys  | description |
+|-------+-------------|
+| C-SPC | set mark    |
+
+** Copy/Paste
+
+| Keys | Description                            |
+|------+----------------------------------------|
+| C-w  | Kill region.                           |
+| M-w  | Copy region to kill ring.              |
+| C-y  | Yank.                                  |
+| M-y  | Cycle through kill ring after yanking. |
+| M-d  | Kill word.                             |
+| C-k  | Kill line.                             |
+
+** Delete Text
+
+| Keys        | Description            |
+|-------------+------------------------|
+| C-d         | Delete a character     |
+| M-d         | Delete a word forward  |
+| M-BackSpace | Delete a word backward |
+|             |                        |
+
+
+** Case Conversion Commands
+
+| keys    | Description                                           |
+|---------+-------------------------------------------------------|
+| M-l     | Convert following word to lower case (downcase-word). |
+| M-u     | Convert following word to upper case (upcase-word).   |
+| M-c     | Capitalize the following word (capitalize-word).      |
+| C-x C-l | Convert region to lower case (downcase-region).       |
+| C-x C-u | Convert region to upper case (upcase-region).         |
+|         |                                                       |
+
+
+** Window Operation
+
+| Keys  | Description                                  |
+|-------+----------------------------------------------|
+| C-x 2 | split-window-below (vertically)              |
+| C-x 3 | split-window-right (horizontally)            |
+| C-x 0 | delete-window (this one)                     |
+| C-x 1 | delete-other-windows                         |
+| C-x o | other-window (moves foxus to the next window |
+|       |                                              |
+|       |                                              |
+
+
+** Search Repalce
+
+| Keys | Description             |
+|------+-------------------------|
+| C-s  | Start a forward search. |
+| C-r  | Start a reverse search. |
+| M-%  | Query-replace           |
+
+
+** Undo / Redo
+
+| Keys  | Description |
+|-------+-------------|
+| C-x u | Undo        |
+| C-_   | Undo        |
+| C-/   | Undo        |
+| C-S-/ | Redo        |
+|       |             |
