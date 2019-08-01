@@ -102,3 +102,33 @@
 | C-/   | Undo        |
 | C-S-/ | Redo        |
 |       |             |
+
+** Clojure
+
+| Keys        | Description                                                                       |
+|-------------+-----------------------------------------------------------------------------------|
+| C-c M-n     | Switch to namespace of current buffer.                                            |
+| C-x C-e     | Evaluate expression immediately preceding point.                                  |
+| C-c C-k     | Compile current buffer.                                                           |
+| C-c C-d C-d | Display documentation for symbol under point.                                     |
+| M-. and M-, | Navigate to source code for symbol under point and return to your original buffer |
+| C-c C-d C-a | Apropros search; find arbitrary text across function names and documentation.     |
+
+** Cider REPL
+
+| Keys         | Des                             |
+|--------------+---------------------------------|
+| C-up, C-down | Cycle through REPL history.     |
+| C-enter      | Close parentheses and evaluate. |
+
+
+** ParEdit-Mode
+
+| Keys             | Description                                                             |
+|------------------+-------------------------------------------------------------------------|
+| C-right          | Slurp; move closing parenthesis to the right to include nextexpression. |
+| C-left           | Barf; move closing parenthesis to the left to exclude lastexpression.   |
+| C-M-f            | Move to the opening/closing parenthesis.                                |
+| C-M-b            | Move to the opening/closing parenthesis.                                |
+| M-(              | Surround expression after point in parentheses(paredit-wrap-round).     |
+| M-x paredit-mode | Toggle paredit mode                                                                        |
