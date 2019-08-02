@@ -10,6 +10,8 @@
 
 - https://ox-hugo.scripter.co/
 
+- https://github.com/georgek/paredit-cheatsheet/blob/master/paredit-cheatsheet.pdf
+
 - screenshot of the code
  Select a region and do `M-x shell-command-on-region` and run
 `~/.cargo/bin/silicon -l el -o ~/testImage.jpg`

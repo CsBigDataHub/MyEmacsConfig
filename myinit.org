@@ -229,7 +229,7 @@
 
       ;; Show highlighted buffer-id as decoration. (Default: nil)
       (setq moe-theme-highlight-buffer-id t)
-      :init (load-theme 'moe-dark)
+      :init (load-theme 'moe-dark t)
       )
 
     ;;(use-package alect-themes
@@ -808,40 +808,46 @@
 * Org-Config-Easy-Template
 
   #+BEGIN_SRC emacs-lisp
-  ;; add <el for emacs-lisp expansion
-  (add-to-list 'org-structure-template-alist
-               '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"
-                 "<src lang=\"emacs-lisp\">\n?\n</src>"))
-  ;; add <p for python expansion
-  (add-to-list 'org-structure-template-alist
-               '("p" "#+BEGIN_SRC python :results output org drawer\n?\n#+END_SRC"
-                 "<src lang=\"python\">\n?\n</src>"))
+    ;; add <el for emacs-lisp expansion
+    (add-to-list 'org-structure-template-alist
+                 '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"
+                   "<src lang=\"emacs-lisp\">\n?\n</src>"))
 
-  ;; add <r for R expansion
-  (add-to-list 'org-structure-template-alist
-               '("p" "#+BEGIN_SRC r :results output org drawer\n?\n#+END_SRC"
-                 "<src lang=\"r\">\n?\n</src>"))
+    ;; add <cl for emacs-lisp expansion
+    (add-to-list 'org-structure-template-alist
+                 '("cl" "#+BEGIN_SRC clojure\n?\n#+END_SRC"
+                   "<src lang=\"clojure\">\n?\n</src>"))
 
-  (add-to-list 'org-structure-template-alist
-               '("ao" "#+attr_org: " ""))
+    ;; add <p for python expansion
+    (add-to-list 'org-structure-template-alist
+                 '("p" "#+BEGIN_SRC python :results output org drawer\n?\n#+END_SRC"
+                   "<src lang=\"python\">\n?\n</src>"))
 
-  (add-to-list 'org-structure-template-alist
-               '("al" "#+attr_latex: " ""))
+    ;; add <r for R expansion
+    (add-to-list 'org-structure-template-alist
+                 '("r" "#+BEGIN_SRC r :results output org drawer\n?\n#+END_SRC"
+                   "<src lang=\"r\">\n?\n</src>"))
 
-  (add-to-list 'org-structure-template-alist
-               '("ca" "#+caption: " ""))
+    (add-to-list 'org-structure-template-alist
+                 '("ao" "#+attr_org: " ""))
 
-  (add-to-list 'org-structure-template-alist
-               '("tn" "#+tblname: " ""))
+    (add-to-list 'org-structure-template-alist
+                 '("al" "#+attr_latex: " ""))
 
-  (add-to-list 'org-structure-template-alist
-               '("n" "#+name: " ""))
+    (add-to-list 'org-structure-template-alist
+                 '("ca" "#+caption: " ""))
 
-  (add-to-list 'org-structure-template-alist
-               '("o" "#+options: " ""))
+    (add-to-list 'org-structure-template-alist
+                 '("tn" "#+tblname: " ""))
 
-  (add-to-list 'org-structure-template-alist
-               '("ti" "#+title: " ""))
+    (add-to-list 'org-structure-template-alist
+                 '("n" "#+name: " ""))
+
+    (add-to-list 'org-structure-template-alist
+                 '("o" "#+options: " ""))
+
+    (add-to-list 'org-structure-template-alist
+                 '("ti" "#+title: " ""))
   #+END_SRC
 
 * FlyCheck

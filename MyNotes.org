@@ -131,4 +131,5 @@
 | C-M-f            | Move to the opening/closing parenthesis.                                |
 | C-M-b            | Move to the opening/closing parenthesis.                                |
 | M-(              | Surround expression after point in parentheses(paredit-wrap-round).     |
-| M-x paredit-mode | Toggle paredit mode                                                                        |
+| M-x paredit-mode | Toggle paredit mode                                                     |
+|                  |                                                                         |
