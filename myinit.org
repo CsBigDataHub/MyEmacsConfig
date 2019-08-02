@@ -1,5 +1,6 @@
 #+STARTUP: overview
 #+PROPERTY: header-args :comments yes :results silent
+#+OPTIONS: toc:2
 
 * repos
 
