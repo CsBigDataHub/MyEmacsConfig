@@ -146,6 +146,8 @@
 
   #+BEGIN_SRC emacs-lisp
 
+    ;;(set-cursor-color "#ffffff")
+
     (load-theme 'misterioso t)
 
     ;;(use-package spacemacs-theme
@@ -498,7 +500,7 @@
       (setq ivy-display-style 'fancy))
 
 
-    (load-if-exists "/home/linuxlite/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
 
     ;; Enhance fuzzy matching
     (use-package flx
@@ -797,7 +799,7 @@
       :config
       (venv-initialize-interactive-shells)
       (venv-initialize-eshell)
-      (setq venv-location "/home/linuxlite/.virtualenvs/")
+      (setq venv-location "~/.virtualenvs/")
       )
 
 
@@ -894,10 +896,10 @@
 
 * Undo-tree
   #+BEGIN_SRC emacs-lisp
-  (use-package undo-tree
-    :ensure t
-    :init
-    (global-undo-tree-mode))
+    (use-package undo-tree
+      :ensure t
+      :init
+      (global-undo-tree-mode))
   #+END_SRC
 
 * Highlight cursor line
@@ -1088,7 +1090,7 @@
 
 * Dump-Keys
   #+BEGIN_SRC emacs-lisp
-  (load-if-exists "/home/linuxlite/.emacs.d/custom-el-scripts/dump-keys.el")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/dump-keys.el")
   #+END_SRC
 
 * Web-Mode
@@ -2112,7 +2114,7 @@
   (use-package eshell-did-you-mean
     :ensure t)
 
-  (add-to-list 'load-path (expand-file-name "/home/linuxlite/.emacs.d/aweshell"))
+  (add-to-list 'load-path (expand-file-name "~/.emacs.d/aweshell"))
   (require 'aweshell)
 
   ;; Increase eshell history size from default of only 128
@@ -2211,7 +2213,7 @@
 * Custom Utils
 
 #+Begin_SRC emacs-lisp
-  (setq custom-file "/home/linuxlite/.emacs.d/custom-el-scripts/custom-util-function.el")
+  (setq custom-file "~/.emacs.d/custom-el-scripts/custom-util-function.el")
   (when (file-exists-p custom-file)
     (load custom-file))
 #+END_SRC
@@ -2235,7 +2237,7 @@
 * Java
 
 #+BEGIN_SRC emacs-lisp
- (load-if-exists "/home/linuxlite/.emacs.d/custom-el-scripts/init-java.el")
+ (load-if-exists "~/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
 * Auto-revert
@@ -3315,13 +3317,13 @@ Select from xref candidates with ivy
   ;;
   ;;(add-to-list 'org-src-lang-modes (quote ("dot". graphviz-dot)))
   ;;(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
-  ;;(setq org-plantuml-jar-path (expand-file-name "/home/linuxlite/GitRepos/plantuml.jar"))
+  ;;(setq org-plantuml-jar-path (expand-file-name "~/GitRepos/plantuml.jar"))
   ;;(add-to-list
   ;; 'org-src-lang-modes '("plantuml" . plantuml))
   ;;(use-package plantuml-mode
   ;;  :ensure t
   ;;  :custom
-  ;;  (plantuml-jar-path "/home/linuxlite/GitRepos/plantuml.jar")
+  ;;  (plantuml-jar-path "~/GitRepos/plantuml.jar")
   ;;  :mode "\\.uml\\'")
 
 ;;; Changed for Linux
@@ -3329,7 +3331,7 @@ Select from xref candidates with ivy
     :ensure t
     :mode "\\.uml\\'"
     :init
-    (setq plantuml-jar-path "/home/linuxlite/Downloads/plantuml.jar"))
+    (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
   (use-package flycheck-plantuml
     :ensure t
     :commands (flycheck-plantuml-setup)
@@ -3538,4 +3540,105 @@ Select from xref candidates with ivy
   (use-package undo-propose
     :straight t
     :config (undo-propose-wrap redo))
+#+END_SRC
+#+END_SRC
+
+* LSP for Bash
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package lsp-mode
+    :commands lsp
+    :hook
+    (sh-mode . lsp))
+#+END_SRC
+
+* MMM-Mode
+
+- MMM mode lets you edit multiple languages within one buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mmm-mode
+    :ensure t
+    :commands mmm-mode
+    :config
+    (use-package mmm-auto
+      :ensure nil))
+#+END_SRC
+
+* Reformatter
+
+#+BEGIN_SRC emacs-lisp
+  (use-package reformatter
+    :straight (reformatter :host github :repo "purcell/reformatter.el"))
+
+  (reformatter-define xml-format
+    :program "xmllint"
+    :args '("--format" "-")
+    :mode nil)
+
+#+END_SRC
+
+* Shell-Pop
+
+#+BEGIN_SRC emacs-lisp
+  (use-package shell-pop
+    :ensure t
+    :bind (("H-x H-t" . shell-pop))
+    :config
+    (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+    (setq shell-pop-term-shell "/bin/zsh")
+    ;; need to do this manually or not picked up by `shell-pop'
+    (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
+#+END_SRC
+
+* Clojure and Cider
+
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode
+    :ensure t
+    :mode (("\\.clj\\'" . clojure-mode)
+           ("\\.edn\\'" . clojure-mode))
+    :init
+    (add-hook 'clojure-mode-hook #'yas-minor-mode)
+    (add-hook 'clojure-mode-hook #'linum-mode)
+    (add-hook 'clojure-mode-hook #'subword-mode)
+    (add-hook 'clojure-mode-hook #'smartparens-mode)
+    (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+    (add-hook 'clojure-mode-hook #'eldoc-mode)
+    (add-hook 'clojure-mode-hook #'idle-highlight-mode))
+
+  (use-package cider
+    :ensure t
+    :defer t
+    :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
+    :diminish subword-mode
+    :config
+    (setq nrepl-log-messages t
+          cider-repl-display-in-current-window t
+          cider-repl-use-clojure-font-lock t
+          cider-prompt-save-file-on-load 'always-save
+          cider-font-lock-dynamically '(macro core function var)
+          nrepl-hide-special-buffers t
+          cider-overlays-use-font-lock t)
+    (cider-repl-toggle-pretty-printing))
+
+  (use-package cider-eval-sexp-fu
+    :defer t)
+
+  (use-package clj-refactor
+    :defer t
+    :ensure t
+    :diminish clj-refactor-mode
+    :config (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+  (use-package clojure-snippets
+    :ensure t)
+#+END_SRC
+
+* Carbon-now-sh
+
+#+BEGIN_SRC emacs-lisp
+  (use-package carbon-now-sh
+    :ensure t)
 #+END_SRC
