@@ -479,11 +479,11 @@
   (interactive)
   (shell-command-on-region (point-min) (point-max) "sed -e ':a' -e 'N' -e '$!ba' -e 's/\\n/ /g'|jsonpp"  nil t))
 
-(defun my/text-formatting-hooks ()
-  (turn-on 'auto-fill)) ; turn on automatic hard line wraps
-
-(add-hook 'text-mode-hook
-          'my/text-formatting-hooks)
+;;(defun my/text-formatting-hooks ()
+;;  (turn-on 'auto-fill)) ; turn on automatic hard line wraps
+;;
+;;(add-hook 'text-mode-hook
+;;          'my/text-formatting-hooks)
 
 
 (defun my/open-config ()
@@ -1840,6 +1840,13 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
                            (* (window-width (selected-window)) (frame-char-width))
                            file file))
     (reload-image-at-point)))
+
+(defun my/kill-this-buffer ()
+  "Kill the current buffer."
+  (interactive)
+  (kill-buffer (current-buffer)))
+
+(global-set-key (kbd "C-x k") 'my/kill-this-buffer)
 
 (defun markdown-to-html ()
   "Compiles the current file to HTML using Pandoc."

@@ -975,6 +975,13 @@
     ;; Link: https://github.com/mola-T/flymd
     (use-package flymd
       :ensure t)
+
+    (use-package ox-gfm
+      :ensure t
+      :after ox
+      :config (require 'ox-gfm))
+
+
   #+END_SRC
 
 * Undo-tree
@@ -3869,4 +3876,17 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   (use-package carbon-now-sh
     :ensure t)
+#+END_SRC
+
+* OX-Pandoc
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-pandoc
+    :ensure t
+    :after ox
+    :defer t)
+
+  (use-package toc-org
+    :ensure t)
+
 #+END_SRC
