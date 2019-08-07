@@ -69,7 +69,11 @@
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
     (fset 'yes-or-no-p 'y-or-n-p)
     (global-auto-revert-mode 1)
+
     (global-set-key (kbd "<f5>") 'revert-buffer)
+    (global-set-key (kbd "C-a") 'move-beginning-of-line)
+    (global-set-key (kbd "C-e") 'move-end-of-line)
+
     (global-auto-revert-mode 1) ;; you might not want this
     (setq auto-revert-verbose nil) ;; or thiS
     ;; using swiper so ido no longer needed
@@ -2451,7 +2455,8 @@
 
   (use-package lsp-mode
     ;; Optional - enable lsp-mode automatically in scala files
-    :hook (scala-mode . lsp)
+    :hook ((sh-mode . lsp)
+           (scala-mode . lsp))
     :config (setq lsp-prefer-flymake nil))
 
   (use-package lsp-ui)
@@ -3889,4 +3894,14 @@ Select from xref candidates with ivy
   (use-package toc-org
     :ensure t)
 
+#+END_SRC
+
+* GoTo-last-point
+
+#+BEGIN_SRC emacs-lisp
+  (use-package goto-last-point
+    :ensure t
+    :demand t
+    :bind ("H-<" . goto-last-point)
+    :config (goto-last-point-mode))
 #+END_SRC
