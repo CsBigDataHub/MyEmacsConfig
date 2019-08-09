@@ -14,6 +14,12 @@
 
 - https://orgmode.org/guide/
 
+- http://thegreyblog.blogspot.com/2017/12/starting-emacs-daemon-automatically-at.html
+
+- https://www.emacswiki.org/emacs/EmacsAsDaemon
+
+- https://www.emacswiki.org/emacs/MacOSTweaks#toc27
+
 - screenshot of the code
  Select a region and do `M-x shell-command-on-region` and run
 `~/.cargo/bin/silicon -l el -o ~/testImage.jpg`
