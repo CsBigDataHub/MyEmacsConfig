@@ -29,7 +29,9 @@
 | C-v (or PgDn)           | Moving one page down                                                                           |
 | M-v (or PgUp)           | Moving one page up                                                                             |
 | M-< (Alt + Shift + "<") | Moving to the beginning of the file                                                            |
-| M-> (Alt + Shift + ">") | Moving to the end of the file                                                                 |
+| M-> (Alt + Shift + ">") | Moving to the end of the file                                                                  |
+| C-u C-SPC               | go to previous cursor position of the same buffer                                              |
+| C-x C-SPC               | go to previous cursor position between buffers                                                                                       |
 
 
 ** Mark

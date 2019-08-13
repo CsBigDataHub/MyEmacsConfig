@@ -2496,6 +2496,12 @@
  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
+* Hive-Mode
+
+#+BEGIN_SRC emacs-lisp
+  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-hive.el")
+#+END_SRC
+
 * Auto-revert
 
 #+BEGIN_SRC emacs-lisp
