@@ -2496,6 +2496,34 @@
  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
+* Languaues
+
+#+BEGIN_SRC emacs-lisp
+
+  (add-to-list 'load-path (concat user-emacs-directory "./custom-el-scripts/languages"))
+
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-go.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-ruby.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-php.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-javascript.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-web.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-rust.el")
+
+  (require 'lang-ruby)
+
+  (require 'lang-go)
+
+  (require 'lang-php)
+
+  (require 'lang-javascript)
+
+  (require 'lang-web)
+
+  (require 'lang-rust)
+
+  (require 'lang-c)
+#+END_SRC
+
 * Hive-Mode
 
 #+BEGIN_SRC emacs-lisp
