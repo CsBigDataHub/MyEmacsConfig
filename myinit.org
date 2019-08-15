@@ -3448,7 +3448,9 @@
 * Frog_Jump_buffer
 
 #+BEGIN_SRC emacs-lisp
-  (use-package frog-jump-buffer :ensure t)
+  (use-package frog-jump-buffer
+    :ensure t
+    :bind ("C-x f" . frog-jump-buffer))
 #+END_SRC
 
 * Subword: CamelCase aware editing operations
