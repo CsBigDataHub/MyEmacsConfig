@@ -33,7 +33,6 @@
 | C-u C-SPC               | go to previous cursor position of the same buffer                                              |
 | C-x C-SPC               | go to previous cursor position between buffers                                                                                       |
 
-
 ** Mark
 
 | keys  | description |
@@ -123,7 +122,6 @@
 | C-up, C-down | Cycle through REPL history.     |
 | C-enter      | Close parentheses and evaluate. |
 
-
 ** ParEdit-Mode
 
 | Keys             | Description                                                             |
@@ -135,3 +133,14 @@
 | M-(              | Surround expression after point in parentheses(paredit-wrap-round).     |
 | M-x paredit-mode | Toggle paredit mode                                                     |
 |                  |                                                                         |
+
+** counsel-find-file
+
+| keys    | Desc                               |
+|---------+------------------------------------|
+| //      | when on remote, cd to remote root. |
+| / C-j   | select local root.                 |
+| ~       | when on remote, cd to remote home. |
+| / C-j ~ | when on remote, cd to local home.  |
+| M-o c   | copy file                          |
+| M-o d   | dired                              |
