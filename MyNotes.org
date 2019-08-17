@@ -145,7 +145,7 @@
 | M-o c   | copy file                          |
 | M-o d   | dired                              |
 
-* Org-Mode
+** Org-Mode
 
 | Keys           | Desc                           |
 |----------------+--------------------------------|
