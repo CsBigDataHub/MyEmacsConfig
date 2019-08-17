@@ -20,6 +20,8 @@
 
 - https://www.emacswiki.org/emacs/MacOSTweaks#toc27
 
+- https://ladicle.com/post/config/#configuration
+
 - screenshot of the code
  Select a region and do `M-x shell-command-on-region` and run
 `~/.cargo/bin/silicon -l el -o ~/testImage.jpg`
