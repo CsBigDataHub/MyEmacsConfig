@@ -501,6 +501,16 @@
 
   #+END_SRC
 
+* Org-Download
+
+ - https://github.com/abo-abo/org-download
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-download
+     :ensure t
+     :config
+     (add-hook 'dired-mode-hook 'org-download-enable))
+ #+END_SRC
+
 * Relative Line number
 
   #+BEGIN_SRC emacs-lisp

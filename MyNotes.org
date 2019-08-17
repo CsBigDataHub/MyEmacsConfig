@@ -144,3 +144,17 @@
 | / C-j ~ | when on remote, cd to local home.  |
 | M-o c   | copy file                          |
 | M-o d   | dired                              |
+
+* Org-Mode
+
+| Keys           | Desc                           |
+|----------------+--------------------------------|
+| S-<right>      | mark as TODO or DONE           |
+| C-c C-c        | Tag the bulltes                |
+| M-x org-agenda | filter through tags and todo's |
+|                |                                |
+|                |                                |
+|                |                                |
+|                |                                |
+|                |                                |
+|                |                                |
