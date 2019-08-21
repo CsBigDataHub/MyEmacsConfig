@@ -9,6 +9,33 @@
 
   #+END_SRC
 
+* Garbage collection
+
+#+BEGIN_SRC emacs-lisp
+  ;; (let ((normal-gc-cons-threshold (* 128 1024 1024))
+  ;;       (init-gc-cons-threshold (* 256 1024 1024)))
+  ;;   (setq gc-cons-threshold init-gc-cons-threshold)
+  ;;   (add-hook #'emacs-startup-hook
+  ;;             (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
+
+  ;; (add-hook 'focus-out-hook #'garbage-collect)
+
+  ;;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
+
+  (defun my-minibuffer-setup-hook ()
+    (setq gc-cons-threshold most-positive-fixnum))
+
+  (defun my-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+
+  ;;(let ((gc-cons-threshold most-positive-fixnum))
+  ;;  # existing init code
+  ;;  )
+#+END_SRC
+
 * File-Exists Function
   #+BEGIN_SRC emacs-lisp
     (defun load-if-exists(f)
@@ -56,7 +83,7 @@
     ;;(setq ido-enable-flex-matching t)
     ;;(setq ido-everywhere t)
     ;;(ido-mode 1)
-    (add-to-list 'default-frame-alist '(font . "Fira Code-17"))
+    (add-to-list 'default-frame-alist '(font . "Fira Code-13"))
     ;;(windmove-default-keybindings) ;;uses shift + arrow keys to move around the windows.
 
     ;;(defalias 'list-buffers 'ibuffer) ; make ibuffer default
@@ -430,6 +457,8 @@
     (add-to-list 'load-path "~/.emacs.d/evil")
     (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
     (setq evil-want-keybinding nil)
+
+    (setq evil-disable-insert-state-bindings t) ;;full blown emacs in insert mode
     (require 'evil)
     (evil-mode 1)
 
@@ -2202,7 +2231,7 @@
     :config
     (add-hook 'yaml-mode-hook #'lsp))
 
-  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
 
 #+END_SRC
 
@@ -2447,6 +2476,39 @@
  (load-if-exists "~/.emacs.d/custom-el-scripts/init-java.el")
 #+END_SRC
 
+* Lanuguages
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (concat user-emacs-directory "./custom-el-scripts/languages"))
+
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-go.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-ruby.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-php.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-javascript.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-web.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-rust.el")
+
+  (require 'lang-ruby)
+
+  (require 'lang-go)
+
+  (require 'lang-php)
+
+  (require 'lang-javascript)
+
+  (require 'lang-web)
+
+  (require 'lang-rust)
+
+  (require 'lang-c)
+#+END_SRC
+
+* Hive
+
+#+BEGIN_SRC emacs-lisp
+  (load-if-exists "~/.emacs.d/custom-el-scripts/init-hive.el")
+#+END_SRC
+
 * Auto-revert
 
 #+BEGIN_SRC emacs-lisp
@@ -2617,6 +2679,12 @@
     )
 
   (use-package kubernetes-tramp
+    :ensure t)
+
+  (use-package kubernetes-helm
+    :ensure t)
+
+  (use-package kubel
     :ensure t)
 #+END_SRC
 
@@ -3849,4 +3917,26 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   (use-package carbon-now-sh
     :ensure t)
+#+END_SRC
+
+* OX-Pandoc
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-pandoc
+    :ensure t
+    :after ox
+    :defer t)
+
+  (use-package toc-org
+    :ensure t)
+#+END_SRC
+
+* GoTo-last-point
+
+#+BEGIN_SRC emacs-lisp
+  (use-package goto-last-point
+    :ensure t
+    :demand t
+    :bind ("H-<" . goto-last-point)
+    :config (goto-last-point-mode))
 #+END_SRC
