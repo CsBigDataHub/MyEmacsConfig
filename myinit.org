@@ -9,6 +9,16 @@
     (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
+    ;; Byte compile directory everytime I start emacs
+    (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
+
+    ;; it can also be done with `C-u 0 M-x byte-recompile-directory`
+    ;; you can also use this from command line
+    ;; emacs --batch --eval '(byte-recompile-directory "~/.emacs.d")'
+    ;; emacs --batch --eval '(byte-compile-file "your-elisp-file.el")'
+
+
+
     ;; Enable defer and ensure by default for use-package
     ;;(setq use-package-always-defer t
     ;;      use-package-always-ensure t)
