@@ -4034,3 +4034,12 @@ Select from xref candidates with ivy
     :bind ("H-<" . goto-last-point)
     :config (goto-last-point-mode))
 #+END_SRC
+* persistent-scrach
+
+#+BEGIN_SRC emacs-lisp
+  ;; persistent-scratch
+  (use-package persistent-scratch
+    :ensure t
+    :config
+    (persistent-scratch-setup-default))
+#+END_SRC
