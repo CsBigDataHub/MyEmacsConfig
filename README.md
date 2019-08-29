@@ -22,6 +22,8 @@
 
 - https://ladicle.com/post/config/#configuration
 
+- https://www.emacswiki.org/emacs/TypographicalPunctuationMarks
+
 - screenshot of the code
  Select a region and do `M-x shell-command-on-region` and run
 `~/.cargo/bin/silicon -l el -o ~/testImage.jpg`

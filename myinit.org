@@ -4043,3 +4043,22 @@ Select from xref candidates with ivy
     :config
     (persistent-scratch-setup-default))
 #+END_SRC
+
+* Empty lines with Tulde
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package  vi-tilde-fringe
+  ;;  :ensure t
+  ;;  :init (add-hook 'prog-mode-hook 'vi-tilde-fringe-mode)
+  ;;  :config (global-vi-tilde-fringe-mode)
+  ;;  )
+
+  (setq-default indicate-empty-lines t)
+#+END_SRC
+* Cheat
+
+#+BEGIN_SRC emacs-lisp
+  (quelpa '(cheat :fetcher git :url "https://github.com/pbellon/cheat.git"))
+  (require 'cheat)
+  (cheat/init)
+#+END_SRC
