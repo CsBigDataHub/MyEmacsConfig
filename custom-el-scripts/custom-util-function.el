@@ -11,6 +11,22 @@
     (delete-file (buffer-file-name))
     (kill-this-buffer)))
 
+
+;;----------------------------------------------------------------------------
+;;https://oremacs.com/2014/12/23/upcase-word-you-silly/
+;;----------------------------------------------------------------------------
+(defadvice upcase-word (before upcase-word-advice activate)
+  (unless (looking-back "\\b")
+    (backward-word)))
+
+(defadvice downcase-word (before downcase-word-advice activate)
+  (unless (looking-back "\\b")
+    (backward-word)))
+
+(defadvice capitalize-word (before capitalize-word-advice activate)
+  (unless (looking-back "\\b")
+    (backward-word)))
+
 ;;----------------------------------------------------------------------------
 ;; Rename the current file
 ;;----------------------------------------------------------------------------
@@ -190,6 +206,7 @@
 
 (global-set-key (kbd "<f8>") 'my/xah-search-current-word)
 
+(require 'ido)
 (defun my/xah-insert-date-time ()
   "Insert current date time.
   Insert date in this format: yyyy-mm-dd.
@@ -864,7 +881,7 @@ region-end is used."
     (modalka-mode 0)))
 
 (bind-keys*
- ("M-o" . my/open-line-above))
+ ("M-o o" . my/open-line-above))
 
 
 (defun my/join-line ()

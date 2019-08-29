@@ -8,6 +8,16 @@
     (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
+    ;; Byte compile directory everytime I start emacs
+    (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
+
+    ;; it can also be done with `C-u 0 M-x byte-recompile-directory`
+    ;; you can also use this from command line
+    ;; emacs --batch --eval '(byte-recompile-directory "~/.emacs.d")'
+    ;; emacs --batch --eval '(byte-compile-file "your-elisp-file.el")'
+
+
+
     ;; Enable defer and ensure by default for use-package
     ;;(setq use-package-always-defer t
     ;;      use-package-always-ensure t)
@@ -180,6 +190,9 @@
 
     ;; Delete trailing-whitespace
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+    ;;saves the buffers whenever emacs loses the window focus.
+    (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
   #+END_SRC
 
 * Theme
@@ -803,6 +816,31 @@
 
   (add-hook 'python-mode-hook 'my/python-mode-hook)
   (setq company-global-modes '(not org-mode))
+  ;; http://oremacs.com/2017/12/27/company-numbers/
+  (setq company-show-numbers t)
+  (let ((map company-active-map))
+    (mapc
+     (lambda (x)
+       (define-key map (format "%d" x) 'ora-company-number))
+     (number-sequence 0 9))
+    (define-key map " " (lambda ()
+                          (interactive)
+                          (company-abort)
+                          (self-insert-command 1)))
+    (define-key map (kbd "<return>") nil))
+
+  (defun ora-company-number ()
+    "Forward to `company-complete-number'.
+
+  Unless the number is potentially part of the candidate.
+  In that case, insert the number."
+    (interactive)
+    (let* ((k (this-command-keys))
+           (re (concat "^" company-prefix k)))
+      (if (cl-find-if (lambda (s) (string-match re s))
+                      company-candidates)
+          (self-insert-command 1)
+        (company-complete-number (string-to-number k)))))
   ;; company box mode
   ;;(use-package company-box
   ;;:ensure t
@@ -1594,6 +1632,38 @@
       (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
       (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
       ))
+
+  ;;;###autoload - http://oremacs.com/2016/02/24/dired-rsync/
+  (defun ora-dired-rsync (dest)
+    (interactive
+     (list
+      (expand-file-name
+       (read-file-name
+        "Rsync to:"
+        (dired-dwim-target-directory)))))
+    ;; store all selected files into "files" list
+    (let ((files (dired-get-marked-files
+                  nil current-prefix-arg))
+          ;; the rsync command
+          (tmtxt/rsync-command
+           "rsync -arvz --progress "))
+      ;; add all selected file names as arguments
+      ;; to the rsync command
+      (dolist (file files)
+        (setq tmtxt/rsync-command
+              (concat tmtxt/rsync-command
+                      (shell-quote-argument file)
+                      " ")))
+      ;; append the destination
+      (setq tmtxt/rsync-command
+            (concat tmtxt/rsync-command
+                    (shell-quote-argument dest)))
+      ;; run the async shell command
+      (async-shell-command tmtxt/rsync-command "*rsync*")
+      ;; finally, switch to that window
+      (other-window 1)))
+
+  (define-key dired-mode-map "Y" 'ora-dired-rsync)
 #+END_SRC
 
 * Projectile
@@ -4280,7 +4350,7 @@ Select from xref candidates with ivy
 
   ;; get rid of `find-file-read-only' and replace it with something
   ;; more useful.
-  (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+  (global-set-key (kbd "C-x C-r") 'counsel-recentf)
 
   ;; enable recent files mode.
   (recentf-mode t)

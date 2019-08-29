@@ -1,5 +1,14 @@
 (use-package go-mode
   :ensure t
+  :mode "\\.go\\'"
+  :mode-hydra
+  (go-mode
+   (:title "Go Commands")
+   ("Doc"
+    (("d" godoc-at-point "doc at point"))
+    "Imports"
+    (("ia" go-import-add "add")
+     ("ir" go-remove-unused-imports "cleanup"))))
   :config
   ;; Use goimports instead of go-fmt
   (setq gofmt-command "goimports")
