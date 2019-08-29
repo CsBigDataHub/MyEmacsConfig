@@ -14,6 +14,28 @@
 
 - Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`
 
+- https://github.com/TommyX12/company-tabnine
+
+- https://fumbling.it/posts/how-i-blog/
+
+- https://ox-hugo.scripter.co/
+
+- https://github.com/georgek/paredit-cheatsheet/blob/master/paredit-cheatsheet.pdf
+
+- https://orgmode.org/guide/
+
+- http://thegreyblog.blogspot.com/2017/12/starting-emacs-daemon-automatically-at.html
+
+- https://www.emacswiki.org/emacs/EmacsAsDaemon
+
+- https://www.emacswiki.org/emacs/MacOSTweaks#toc27
+
+- https://ladicle.com/post/config/#configuration
+
+- screenshot of the code
+ Select a region and do `M-x shell-command-on-region` and run
+`~/.cargo/bin/silicon -l el -o ~/testImage.jpg`
+
 - Method explorer - speedbar-mode
 
 `emacsclient -a "" -c`
@@ -267,9 +289,9 @@ Command 	Key
 Emacs has commands for converting either a single word or any arbitrary range of text to upper case or to lower case.
 
 ```
-`M-l` Convert following word to lower case (downcase-word).
-`M-u` Convert following word to upper case (upcase-word).
-`M-c` Capitalize the following word (capitalize-word).
+`M-l`     Convert following word to lower case (downcase-word).
+`M-u`     Convert following word to upper case (upcase-word).
+`M-c`     Capitalize the following word (capitalize-word).
 `C-x C-l` Convert region to lower case (downcase-region).
 `C-x C-u` Convert region to upper case (upcase-region).
 

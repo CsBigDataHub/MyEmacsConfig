@@ -5,8 +5,12 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+    (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
+    ;; Enable defer and ensure by default for use-package
+    ;;(setq use-package-always-defer t
+    ;;      use-package-always-ensure t)
   #+END_SRC
 
 * Garbage collection
@@ -64,7 +68,11 @@
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
     (fset 'yes-or-no-p 'y-or-n-p)
     (global-auto-revert-mode 1)
+
     (global-set-key (kbd "<f5>") 'revert-buffer)
+    ;;(global-set-key (kbd "C-a") 'move-beginning-of-line)
+    ;;(global-set-key (kbd "C-e") 'move-end-of-line)
+
     (global-auto-revert-mode 1) ;; you might not want this
     (setq auto-revert-verbose nil) ;; or thiS
     ;; using swiper so ido no longer needed
@@ -235,15 +243,17 @@
     ;;  :ensure t)
     ;;
     ;;(use-package faff-theme
-    ;;  :ensure t)
+    ;;:ensure t)
     ;;
     ;;(use-package poet-theme
     ;;  :ensure t)
     ;;
     ;;(use-package tao-theme
-    ;;  :ensure t)
+    ;;:ensure t)
     ;;
     ;;(use-package doom-themes
+    ;;:ensure t)
+    ;;
     ;;  :ensure t)
 
     ;;(use-package color-theme-sanityinc-tomorrow
@@ -492,6 +502,16 @@
 
   #+END_SRC
 
+* Org-Download
+
+ - https://github.com/abo-abo/org-download
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-download
+     :ensure t
+     :config
+     (add-hook 'dired-mode-hook 'org-download-enable))
+ #+END_SRC
+
 * Relative Line number
 
   #+BEGIN_SRC emacs-lisp
@@ -631,6 +651,9 @@
       :ensure t
       :after ivy
       :init (ivy-prescient-mode))
+
+    (setq counsel-grep-base-command
+          "rg -i -M 120 --no-heading --line-number --color never %s %s")
   #+END_SRC
 
 * Avy
@@ -969,6 +992,13 @@
     ;; Link: https://github.com/mola-T/flymd
     (use-package flymd
       :ensure t)
+
+    (use-package ox-gfm
+      :ensure t
+      :after ox
+      :config (require 'ox-gfm))
+
+
   #+END_SRC
 
 * Undo-tree
@@ -2056,7 +2086,6 @@
 #+BEGIN_SRC emacs-lisp
   (use-package exec-path-from-shell
     :ensure t
-    :if (memq window-system '(mac ns))
     :config
     (setq exec-path-from-shell-arguments '("-l"))
     (exec-path-from-shell-initialize)
@@ -2232,6 +2261,7 @@
     (add-hook 'yaml-mode-hook #'lsp))
 
   (load-if-exists "~/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
+  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
 
 #+END_SRC
 
@@ -2438,7 +2468,8 @@
 
   (use-package lsp-mode
     ;; Optional - enable lsp-mode automatically in scala files
-    :hook (scala-mode . lsp)
+    :hook ((sh-mode . lsp)
+           (scala-mode . lsp))
     :config (setq lsp-prefer-flymake nil))
 
   (use-package lsp-ui)
@@ -2509,6 +2540,40 @@
   (load-if-exists "~/.emacs.d/custom-el-scripts/init-hive.el")
 #+END_SRC
 
+* Languaues
+
+#+BEGIN_SRC emacs-lisp
+
+  (add-to-list 'load-path (concat user-emacs-directory "./custom-el-scripts/languages"))
+
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-go.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-ruby.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-php.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-javascript.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-web.el")
+  ;;(load-if-exists "./custom-el-scripts/languages/lang-rust.el")
+
+  (require 'lang-ruby)
+
+  (require 'lang-go)
+
+  (require 'lang-php)
+
+  (require 'lang-javascript)
+
+  (require 'lang-web)
+
+  (require 'lang-rust)
+
+  (require 'lang-c)
+#+END_SRC
+
+* Hive-Mode
+
+#+BEGIN_SRC emacs-lisp
+  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-hive.el")
+#+END_SRC
+
 * Auto-revert
 
 #+BEGIN_SRC emacs-lisp
@@ -2522,40 +2587,41 @@
 * Save Place/ Recentf
 
 #+BEGIN_SRC emacs-lisp
-;; History
-(use-package saveplace
-  :ensure nil
-  :hook (after-init . save-place-mode))
+  ;; History
+  (use-package saveplace
+    :ensure nil
+    :hook (after-init . save-place-mode))
 
-;; Recent files
-(use-package recentf
-  :ensure nil
-  :hook (after-init . recentf-mode)
-  :custom
-  (recentf-max-saved-items 20000000)
-  (recentf-auto-cleanup 'never)
-  (recentf-exclude '((expand-file-name package-user-dir)
-                     ".cache"
-                     "cache"
-                     "recentf"
-                     "COMMIT_EDITMSG\\'"))
-  :preface
-  (defun my/recentf-save-list-silence ()
-    (interactive)
-    (let ((message-log-max nil))
-      (if (fboundp 'shut-up)
-          (shut-up (recentf-save-list))
-        (recentf-save-list)))
-    (message ""))
-  (defun my/recentf-cleanup-silence ()
-    (interactive)
-    (let ((message-log-max nil))
-      (if shutup-p
-          (shut-up (recentf-cleanup))
-        (recentf-cleanup)))
-    (message ""))
-  :hook
-  (focus-out-hook . (my/recentf-save-list-silence my/recentf-cleanup-silence)))
+  ;; Recent files
+  (use-package recentf
+    :ensure nil
+    :hook (after-init . recentf-mode)
+    :custom
+    (recentf-max-saved-items 20000000)
+    (recentf-auto-cleanup 'never)
+    (recentf-exclude '((expand-file-name package-user-dir)
+                       ".cache"
+                       "cache"
+                       "recentf"
+                       "COMMIT_EDITMSG\\'"))
+    :preface
+    (defun my/recentf-save-list-silence ()
+      (interactive)
+      (let ((message-log-max nil))
+        (if (fboundp 'shut-up)
+            (shut-up (recentf-save-list))
+          (recentf-save-list)))
+      (message ""))
+    (defun my/recentf-cleanup-silence ()
+      (interactive)
+      (let ((message-log-max nil))
+        (if shutup-p
+            (shut-up (recentf-cleanup))
+          (recentf-cleanup)))
+      (message ""))
+    :hook
+    (focus-out-hook . (my/recentf-save-list-silence my/recentf-cleanup-silence)))
+
 #+END_SRC
 
 * AG - The silver searcher
@@ -3929,6 +3995,507 @@ Select from xref candidates with ivy
 
   (use-package toc-org
     :ensure t)
+#+END_SRC
+
+* GoTo-last-point
+
+#+BEGIN_SRC emacs-lisp
+  (use-package goto-last-point
+    :ensure t
+    :demand t
+    :bind ("H-<" . goto-last-point)
+    :config (goto-last-point-mode))
+#+END_SRC
+  (use-package frog-jump-buffer
+    :ensure t
+    :bind ("C-x f" . frog-jump-buffer))
+#+END_SRC
+
+* Subword: CamelCase aware editing operations
+
+#+BEGIN_SRC emacs-lisp
+(use-package subword
+  :ensure t
+  :hook ((python-mode yaml-mode go-mode clojure-mode cider-repl-mode java-mode cds-mode js2-mode) . subword-mode))
+#+END_SRC
+
+* EWW
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eww
+    :ensure t
+    ;;:defer t
+    :config
+    (add-hook 'eww-mode-hook 'visual-line-mode)
+    (setq eww-header-line-format nil
+          shr-width 80
+          shr-use-fonts nil
+          shr-color-visible-distance-min 10
+          shr-color-visible-luminance-min 80))
+#+END_SRC
+
+* Shr: Simple html renderer
+
+#+BEGIN_SRC emacs-lisp
+(use-package shr
+  :ensure t
+  :defer t
+  :config
+  (setq shr-width 80)
+  (setq shr-external-browser 'eww-browse-url)
+  (setq shr-color-visible-luminance-min 80))
+#+END_SRC
+
+* Hl-todo: Highlight and navigate TODO keywords
+
+#+BEGIN_SRC emacs-lisp
+(use-package hl-todo
+  :ensure t
+  :defer 2
+  :config (global-hl-todo-mode))
+#+END_SRC
+
+* Automatically remove trailing whitespace (only if I put them there)
+
+#+BEGIN_SRC emacs-lisp
+(use-package ws-butler
+  :ensure t
+  :hook ((text-mode prog-mode) . ws-butler-mode)
+  :config (setq ws-butler-keep-whitespace-before-point nil))
+#+END_SRC
+
+* CRUX
+
+#+BEGIN_SRC emacs-lisp
+  (use-package crux
+    :ensure t
+    :bind (("C-c o" . crux-open-with)
+           ("C-a" . crux-move-beginning-of-line)))
+#+End_SRC
+
+* zop-to-char: Remove multiple characters at once
+
+#+BEGIN_SRC emacs-lisp
+  ;; Replace zap-to-char functionaity with the more powerful zop-to-char
+  (use-package zop-to-char
+    :ensure t
+    :bind (("M-z" . zop-up-to-char)
+           ("M-Z" . zop-to-char)))
+#+END_SRC
+
+* Visual-regex:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package visual-regexp
+    :ensure t
+    :bind (:map mode-specific-map
+                :prefix-map visual-regexp-prefix-map
+                :prefix "r"
+                ("r" . vr/query-replace)
+                ("R" . vr/replace)
+                ))
+
+  (use-package visual-regexp-steroids
+    :after visual-regexp
+    )
+#+END_SRC
+
+* Elisp-demos: Inject elisp demos into help buffer
+
+#+BEGIN_SRC emacs-lisp
+(use-package elisp-demos
+  :ensure t
+  :after helpful
+  :config
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+#+END_SRC
+
+* Imenu
+
+#+BEGIN_SRC emacs-lisp
+(use-package imenu
+  :ensure t
+  :defer t
+  ;;:hook (emacs-lisp-mode . imenu-use-package)
+  :config
+  ;; Recenter window after imenu jump so cursor doesn't end up on the last line
+  (add-hook 'imenu-after-jump-hook 'recenter)  ; or 'reposition-window
+  (set-default 'imenu-auto-rescan t))
+  ;; Use use-package-enable-imenu-support
+  ;;(defun imenu-use-package ()
+  ;;  (add-to-list 'imenu-generic-expression
+  ;;               '("Packages" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))))
+
+(use-package imenu-anywhere
+  :ensure t
+  :bind (("M-I" . ivy-imenu-anywhere)
+         ("C-c i" . ivy-imenu-anywhere)))
+#+END_SRC
+
+* Xref
+Select from xref candidates with ivy
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-xref
+  :ensure t
+  :after (ivy xref)
+  :config
+  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  (setq xref-show-definitions-function #'ivy-xref-show-defs))
+#+END_SRC
+
+* Dicover-My-Mojor
+
+#+BEGIN_SRC emacs-lisp
+  (use-package discover-my-major
+    :ensure t
+    :bind (("C-h C-m" . discover-my-major)))
+#+END_SRC
+
+* Plant-UML Config
+
+#+BEGIN_SRC emacs-lisp
+  ;; active Org-babel languages
+  ;;(org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((shell . t)
+  ;;    (plantuml . t)
+  ;;    (emacs-lisp . t)
+  ;;    (java . t)
+  ;;    (python . t)
+  ;;    (sed . t)
+  ;;    (sql . t)
+  ;;    (awk . t)
+  ;;    (R . t)
+  ;;    (awk . t)
+  ;;    (dot . t)
+  ;;    (ruby . t)
+  ;;    (js . t)
+  ;;    (C . t)))
+  ;;
+  ;;(add-to-list 'org-src-lang-modes (quote ("dot". graphviz-dot)))
+  ;;(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+  ;;(setq org-plantuml-jar-path (expand-file-name "/Users/ckoneru/GitRepos/plantuml.jar"))
+  ;;(add-to-list
+  ;; 'org-src-lang-modes '("plantuml" . plantuml))
+  ;;(use-package plantuml-mode
+  ;;  :ensure t
+  ;;  :custom
+  ;;  (plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar")
+  ;;  :mode "\\.uml\\'")
+  (use-package plantuml-mode
+    :ensure t
+    :mode "\\.uml\\'"
+    :init
+    (setq plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar"))
+  (use-package flycheck-plantuml
+    :ensure t
+    :commands (flycheck-plantuml-setup)
+    :init
+    (with-eval-after-load 'flycheck
+      (flycheck-plantuml-setup)))
+#+END_SRC
+
+* Mermaid-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mermaid-mode
+    :ensure t
+    :config
+    (setq mermaid-mmdc-location "~/GitRepos/node_modules/.bin/mmdc"))
+
+  (use-package ob-mermaid
+    :ensure t
+    :config
+    (setq ob-mermaid-cli-path "~/GitRepos/node_modules/.bin/mmdc")
+    )
+#+END_SRC
+
+* color-identifier
+
+#+BEGIN_SRC emacs-lisp
+  (use-package color-identifiers-mode
+    :ensure t
+    :hook ((after-init . global-color-identifiers-mode)))
+#+END_SRC
+
+* Ranger
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package ranger
+  ;;  :ensure t
+  ;;  :config (setq ranger-width-preview 0.5))
+#+END_SRC
+
+* Super-save
+
+#+BEGIN_SRC emacs-lisp
+  (use-package super-save
+    :ensure t
+    :config
+    (super-save-mode +1))
+#+END_SRC
+
+* BeginEnd
+
+#+BEGIN_SRC emacs-lisp
+  (use-package beginend
+    :ensure t
+    :hook ((after-init . beginend-global-mode)))
+#+END_SRC
+
+* CHT.SH
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package cheat-sh
+     :ensure t)
+ #+END_SRC
+
+* ANZU
+
+#+BEGIN_SRC emacs-lisp
+  (use-package anzu
+    :ensure t
+    :hook ((after-init . global-anzu-mode))
+    :bind ([remap query-replace] . anzu-query-replace-regexp))
+#+END_SRC
+
+* Centaur-tabs
+
+#+BEGIN_SRC emacs-lisp
+  (use-package centaur-tabs
+    :ensure t
+    :demand
+    :config
+    (centaur-tabs-mode t)
+    :bind
+    ("H-t t <left>" . centaur-tabs-backward)
+    ("H-t t <right>" . centaur-tabs-forward))
+#+END_SRC
+
+* Recentf
+
+#+BEGIN_SRC emacs-lisp
+  (require 'recentf)
+
+  ;; get rid of `find-file-read-only' and replace it with something
+  ;; more useful.
+  (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+
+  ;; enable recent files mode.
+  (recentf-mode t)
+
+  ;;  50 files ought to be enough.
+  (setq recentf-max-saved-items 50)
+
+  (defun ido-recentf-open ()
+    "Use `ido-completing-read' to \\[find-file] a recent file"
+    (interactive)
+    (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+        (message "Opening file...")
+      (message "Aborting")))
+#+END_SRC
+
+* AutoInsert
+
+#+BEGIN_SRC emacs-lisp
+  (use-package autoinsert
+    :init
+    (define-auto-insert
+      '("\\.py" . "Python Language")
+      '("Python Language"
+        "#!/usr/bin/env python3\n"
+        "# -*- coding: utf-8 -*-\n"
+        "author   : Chetan Koneru \n"
+        "date     : " (format-time-string "%b %e, %Y") \n
+        "email    : Chetan <>" \n
+        "filename : " (file-name-nondirectory (buffer-file-name)) \n
+        "project  : " (file-name-nondirectory (directory-file-name (or projectile-project-root default-directory))) \n
+        "license  : GPL-3.0+\n\n"
+        "\"\"\"\n")))
+#+END_SRC
+
+* Benchmark-init
+
+#+BEGIN_SRC emacs-lisp
+  (use-package benchmark-init
+    :ensure t
+    :config
+    ;; To disable collection of benchmark data after init is done.
+    (add-hook 'after-init-hook 'benchmark-init/deactivate))
+#+END_SRC
+
+* Highlight's
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hl-line
+    :ensure t
+    :hook ((after-init . global-hl-line-mode)))
+
+  (use-package highlight-indent-guides
+    :straight t
+    :init (setq highlight-indent-guides-responsive 'stack)
+    :hook '(prog-mode-hook text-mode-hook org-mode-hook))
+
+  (use-package highlight-numbers
+    :straight t
+    :hook '(after-init-hook prog-mode-hook text-mode-hook org-mode-hook))
+#+END_SRC
+
+* Rainbow-Mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode
+    :straight t
+    :hook (((after-init
+             text-mode
+             org-mode
+             css-mode
+             html-mode
+             prog-mode). rainbow-mode))
+    :diminish rainbow-mode)
+#+END_SRC
+
+* Popup
+
+#+BEGIN_SRC emacs-lisp
+  (use-package popup :ensure t :defer t)
+  (use-package popwin :ensure t
+               :config
+               (popwin-mode 1)
+               (setq popwin:close-popup-window-timer-interval 0.1)
+               (setq popwin:close-popup-window-timer nil))
+#+END_SRC
+
+* Point History
+
+#+BEGIN_SRC emacs-lisp
+  (use-package point-history
+    :straight (point-history :type git :host github :repo "blue0513/point-history")
+    :hook ((after-init . point-history-mode))
+    :bind (("C-c C-/" . point-history-show))
+    :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
+#+END_SRC
+
+* Undo Propose
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-propose
+    :straight t
+    :config (undo-propose-wrap redo))
+#+END_SRC
+
+* LSP for Bash
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package lsp-mode
+    :commands lsp
+    :hook
+    (sh-mode . lsp))
+#+END_SRC
+
+* MMM-Mode
+
+- MMM mode lets you edit multiple languages within one buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mmm-mode
+    :ensure t
+    :commands mmm-mode
+    :config
+    (use-package mmm-auto
+      :ensure nil))
+#+END_SRC
+
+* Reformatter
+
+#+BEGIN_SRC emacs-lisp
+  (use-package reformatter
+    :straight (reformatter :host github :repo "purcell/reformatter.el"))
+
+  (reformatter-define xml-format
+    :program "xmllint"
+    :args '("--format" "-")
+    :mode nil)
+
+#+END_SRC
+
+* Shell-Pop
+
+#+BEGIN_SRC emacs-lisp
+  (use-package shell-pop
+    :ensure t
+    :bind (("H-x H-t" . shell-pop))
+    :config
+    (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+    (setq shell-pop-term-shell "/bin/zsh")
+    ;; need to do this manually or not picked up by `shell-pop'
+    (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
+#+END_SRC
+
+* Clojure and Cider
+
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode
+    :ensure t
+    :mode (("\\.clj\\'" . clojure-mode)
+           ("\\.edn\\'" . clojure-mode))
+    :init
+    (add-hook 'clojure-mode-hook #'yas-minor-mode)
+    (add-hook 'clojure-mode-hook #'linum-mode)
+    (add-hook 'clojure-mode-hook #'subword-mode)
+    (add-hook 'clojure-mode-hook #'smartparens-mode)
+    (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+    (add-hook 'clojure-mode-hook #'eldoc-mode)
+    (add-hook 'clojure-mode-hook #'idle-highlight-mode))
+
+  (use-package cider
+    :ensure t
+    :defer t
+    :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
+    :diminish subword-mode
+    :config
+    (setq nrepl-log-messages t
+          cider-repl-display-in-current-window t
+          cider-repl-use-clojure-font-lock t
+          cider-prompt-save-file-on-load 'always-save
+          cider-font-lock-dynamically '(macro core function var)
+          nrepl-hide-special-buffers t
+          cider-overlays-use-font-lock t)
+    (cider-repl-toggle-pretty-printing))
+
+  (use-package cider-eval-sexp-fu
+    :defer t)
+
+  (use-package clj-refactor
+    :defer t
+    :ensure t
+    :diminish clj-refactor-mode
+    :config (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+  (use-package clojure-snippets
+    :ensure t)
+#+END_SRC
+
+* Carbon-now-sh
+
+#+BEGIN_SRC emacs-lisp
+  (use-package carbon-now-sh
+    :ensure t)
+#+END_SRC
+
+* OX-Pandoc
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-pandoc
+    :ensure t
+    :after ox
+    :defer t)
+
+  (use-package toc-org
+    :ensure t)
+
 #+END_SRC
 
 * GoTo-last-point
