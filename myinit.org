@@ -172,6 +172,9 @@
 
     ;; Delete trailing-whitespace
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+    ;;saves the buffers whenever emacs loses the window focus.
+    (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
   #+END_SRC
 
 * Theme
@@ -3427,7 +3430,9 @@
 * Frog_Jump_buffer
 
 #+BEGIN_SRC emacs-lisp
-  (use-package frog-jump-buffer :ensure t)
+  (use-package frog-jump-buffer
+    :ensure t
+    :bind ("C-x f" . frog-jump-buffer))
 #+END_SRC
 
 * Subword: CamelCase aware editing operations
@@ -3714,7 +3719,7 @@ Select from xref candidates with ivy
 
   ;; get rid of `find-file-read-only' and replace it with something
   ;; more useful.
-  (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+  (global-set-key (kbd "C-x C-r") 'counsel-recentf)
 
   ;; enable recent files mode.
   (recentf-mode t)
