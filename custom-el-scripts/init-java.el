@@ -37,7 +37,11 @@
   (dap-mode t)
   (dap-ui-mode t))
 
-(use-package dap-java :after (lsp-java))
+(require 'dap-java)
+
+;;(use-package dap-java
+;;  :after (lsp-java))
+
 
 (use-package autodisass-java-bytecode
   :ensure t)

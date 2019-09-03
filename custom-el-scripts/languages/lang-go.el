@@ -47,4 +47,6 @@
       (set (make-local-variable 'compile-command)
            "go build -v && go test -v && go vet")))
 
+(require 'dap-go)
+
 (provide 'lang-go)

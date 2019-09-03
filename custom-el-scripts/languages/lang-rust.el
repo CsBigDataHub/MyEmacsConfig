@@ -10,11 +10,13 @@
   (progn
     ;; add flycheck support for rust
     ;; https://github.com/flycheck/flycheck-rust
-    (use-package flycheck-rust)
+    (use-package flycheck-rust
+      :ensure t)
 
     ;; cargo-mode for all the cargo related operations
     ;; https://github.com/kwrooijen/cargo.el
-    (use-package cargo)
+    (use-package cargo
+      :ensure t)
 
     ;; racer-mode for getting IDE like features for rust-mode
     ;; https://github.com/racer-rust/emacs-racer

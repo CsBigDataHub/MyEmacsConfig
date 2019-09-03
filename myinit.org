@@ -10,16 +10,27 @@
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
     ;; Byte compile directory everytime I start emacs
-    (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
+    ;;(byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 
     ;; it can also be done with `C-u 0 M-x byte-recompile-directory`
     ;; you can also use this from command line
     ;; emacs --batch --eval '(byte-recompile-directory "~/.emacs.d")'
     ;; emacs --batch --eval '(byte-compile-file "your-elisp-file.el")'
 
+    ;; for latest org-mode and org-plus-contrib
+    (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 
-
-    ;; Enable defer and ensure by default for use-package
+    ;; https://github.com/purcell/emacs.d/blob/master/lisp/init-elpa.el#L64
+    ;; (setq package-enable-at-startup nil)
+    ;;(package-initialize)
+    ;;
+    ;;(when (not package-archive-contents)
+    ;;  (package-refresh-contents))
+    ;;
+    ;;(unless (package-installed-p 'use-package)
+    ;;  (package-install 'use-package))
+    ;;
+    ;;;; Enable defer and ensure by default for use-package
     ;;(setq use-package-always-defer t
     ;;      use-package-always-ensure t)
   #+END_SRC
@@ -296,32 +307,36 @@
 
 #+BEGIN_SRC emacs-lisp
   (setq straight-recipes-gnu-elpa-use-mirror t
-        straight-repository-branch           "develop"
-        straight-check-for-modifications     'live
-        straight-vc-git-default-clone-depth  1)
+	straight-repository-branch           "develop"
+	straight-check-for-modifications     'live
+	straight-vc-git-default-clone-depth  1)
 
   (defvar bootstrap-version)
 
   (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
+	 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+	(bootstrap-version 5))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	   'silent 'inhibit-cookies)
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
+  ;;;;  Effectively replace use-package with straight-use-package
+  ;;; https://github.com/raxod502/straight.el/blob/develop/README.md#integration-with-use-package
   (straight-use-package 'use-package)
+  (setq straight-use-package-by-default t)
 #+END_SRC
 
 * Genearl
 
 #+BEGIN_SRC emacs-lisp
   (use-package general
-    :straight t
+    :ensure t
+    ;;:straight t
     :init
     (defalias 'gsetq #'general-setq)
     (defalias 'gsetq-local #'general-setq-local)
@@ -432,10 +447,6 @@
 * Quelpa
 
 #+BEGIN_SRC emacs-lisp
-  (use-package quelpa-use-package
-    :ensure t
-    :init
-    (setq quelpa-update-melpa-p nil))
 
   (package-initialize)
   (if (require 'quelpa nil t)
@@ -444,6 +455,10 @@
       (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
       (eval-buffer)))
 
+  (use-package quelpa-use-package
+    :ensure t
+    :init
+    (setq quelpa-update-melpa-p nil))
   ;;(setq use-package-ensure-function 'quelpa)
 #+END_SRC
 
@@ -476,11 +491,12 @@
 
   #+BEGIN_SRC emacs-lisp
 
+    (setq evil-disable-insert-state-bindings t) ;;full blown emacs in insert mode
     (add-to-list 'load-path "~/.emacs.d/evil")
     (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
     (setq evil-want-keybinding nil)
 
-    (setq evil-disable-insert-state-bindings t) ;;full blown emacs in insert mode
+    ;;(setq evil-disable-insert-state-bindings t) ;;full blown emacs in insert mode
     (require 'evil)
     (evil-mode 1)
 
@@ -957,9 +973,12 @@
       )
 
     ;; package-list-packages like interface for python packages
-    (use-package pippel :defer t)
+    (use-package pippel
+      :ensure t
+      :defer t)
 
     (use-package python-test
+      :ensure t
       :defer t
       :config
       ;; Set default test backend to pytest
@@ -968,12 +987,14 @@
 
     ;; Enable (restructured) syntax highlighting for python docstrings
     (use-package python-docstring
+      :ensure t
       :hook (python-mode . python-docstring-mode))
 
     (use-package pydoc
+      :ensure t
       :after anaconda-mode
       :bind (:map anaconda-mode-map
-                  ("M-?" . pydoc-at-point)))
+		  ("M-?" . pydoc-at-point)))
   #+END_SRC
 
 * White Space and Blank Lines
@@ -1443,12 +1464,12 @@
 * Uniquify For buffer names
 
   #+BEGIN_SRC emacs-lisp
-    (use-package uniquify
-      :ensure nil
-      :config
+    ;;(use-package uniquify
+    ;;  :ensure nil
+    ;;  :config
       (setq uniquify-buffer-name-style 'post-forward-angle-brackets) ;; or "forward"
       ;;(setq uniquify-min-dir-content 3)
-      )
+    ;;  )
   #+END_SRC
 
 * Formatting and white-space
@@ -1477,8 +1498,9 @@
 
 
   (use-package yasnippet-snippets
+    :ensure t
     :defer    t
-    :straight t)
+    )
 #+END_SRC
 
 * Dired
@@ -1689,47 +1711,49 @@
     :ensure t
     :demand t
     :bind* (("M-m m j" . sp-down-sexp)
-            ("M-m m k" . sp-backward-up-sexp)
-            ("M-m m h" . sp-backward-down-sexp)
-            ("M-m m l" . sp-up-sexp)
-            ("M-m m f" . sp-forward-sexp)
-            ("M-m m b" . sp-backward-sexp)
-            ("M-m m a" . sp-beginning-of-sexp)
-            ("M-m m e" . sp-end-of-sexp)
-            ("M-m m n" . sp-next-sexp)
-            ("M-m m p" . sp-previous-sexp)
-            ("M-m m >" . sp-forward-barf-sexp)
-            ("M-m m <" . sp-backward-barf-sexp)
-            ("M-m m )" . sp-forward-slurp-sexp)
-            ("M-m m (" . sp-backward-slurp-sexp)
-            ("M-m m x" . sp-transpose-sexp)
-            ("M-m m d" . sp-kill-sexp)
-            ("M-m m y" . sp-copy-sexp)
-            ("M-m m u" . sp-unwrap-sexp)
-            ("M-m m U" . sp-backward-unwrap-sexp)
-            ("M-m m C" . sp-convolute-sexp)
-            ("M-m m r" . sp-raise-sexp)
-            ("M-m m s" . sp-split-sexp)
-            ("M-m m S" . sp-splice-sexp)
-            ("M-m m F" . sp-splice-sexp-killing-forward)
-            ("M-m m B" . sp-splice-sexp-killing-backward)
-            ("M-m m A" . sp-splice-sexp-killing-around))
+	    ("M-m m k" . sp-backward-up-sexp)
+	    ("M-m m h" . sp-backward-down-sexp)
+	    ("M-m m l" . sp-up-sexp)
+	    ("M-m m f" . sp-forward-sexp)
+	    ("M-m m b" . sp-backward-sexp)
+	    ("M-m m a" . sp-beginning-of-sexp)
+	    ("M-m m e" . sp-end-of-sexp)
+	    ("M-m m n" . sp-next-sexp)
+	    ("M-m m p" . sp-previous-sexp)
+	    ("M-m m >" . sp-forward-barf-sexp)
+	    ("M-m m <" . sp-backward-barf-sexp)
+	    ("M-m m )" . sp-forward-slurp-sexp)
+	    ("M-m m (" . sp-backward-slurp-sexp)
+	    ("M-m m x" . sp-transpose-sexp)
+	    ("M-m m d" . sp-kill-sexp)
+	    ("M-m m y" . sp-copy-sexp)
+	    ("M-m m u" . sp-unwrap-sexp)
+	    ("M-m m U" . sp-backward-unwrap-sexp)
+	    ("M-m m C" . sp-convolute-sexp)
+	    ("M-m m r" . sp-raise-sexp)
+	    ("M-m m s" . sp-split-sexp)
+	    ("M-m m S" . sp-splice-sexp)
+	    ("M-m m F" . sp-splice-sexp-killing-forward)
+	    ("M-m m B" . sp-splice-sexp-killing-backward)
+	    ("M-m m A" . sp-splice-sexp-killing-around))
     :diminish smartparens-mode
     :diminish smartparens-strict-mode
     :config
-    (require 'smartparens-config)
+    ;;(require 'smartparens-config)
     (smartparens-global-mode)
     ;;(smartparens-global-strict-mode)
     (show-smartparens-global-mode)
     (which-key-add-key-based-replacements
       "M-m m" "move prefix"))
 
-  (use-package smartparens-config
-    :ensure nil
-    :straight smartparens
-    :hook ((after-init . show-smartparens-global-mode)
-           (after-init . smartparens-global-mode))
-    :init (gsetq sp-hybrid-kill-entire-symbol nil))
+  ;;(use-package smartparens-config
+    ;;:ensure t
+    ;;:ensure smartparens
+    ;;:hook ((after-init . show-smartparens-global-mode)
+	   ;;(after-init . smartparens-global-mode))
+    ;;:init (gsetq sp-hybrid-kill-entire-symbol nil))
+
+
 #+END_SRC
 
 * Font Scaling
@@ -1800,16 +1824,19 @@
      :color blue))
 
   (use-package gitconfig-mode
+    :ensure t
     :mode "\\.gitconfig\\'"
     :mode "\\.git/config\\'"
     :mode "\\.gitmodules\\'")
 
   (use-package gitignore-mode
+    :ensure t
     :mode "\\.gitignore\\'"
     :mode "\\.dockerignore\\'"
     :mode "\\..elpaignore\\'")
 
   (use-package diffview
+    :ensure t
     :commands (diffview-region diffview-current)
     :preface
     (defun my/diffview-dwim ()
@@ -1820,6 +1847,7 @@
     :bind ("M-g v" . my/diffview-dwim))
 
   (use-package smerge-mode
+    :ensure t
     :diminish
     :preface
     (with-eval-after-load 'hydra
@@ -2313,7 +2341,7 @@
   (use-package yaml-mode
     :ensure t
     :mode (("\\.yaml\\'" . yaml-mode)
-           ("\\.yml\\'" . yaml-mode))
+	   ("\\.yml\\'" . yaml-mode))
     )
 
   (use-package flycheck-yamllint
@@ -2322,13 +2350,13 @@
     :init
     (progn
       (eval-after-load 'flycheck
-        '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
+	'(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
 
-  (use-package lsp-yaml
-    :straight (lsp-yaml :type git :host github :repo "iquiw/lsp-yaml")
-    :after lsp
-    :config
-    (add-hook 'yaml-mode-hook #'lsp))
+  ;;(use-package lsp-yaml
+  ;;  :quelpa (lsp-yaml :fetcher github :repo "iquiw/lsp-yaml")
+  ;;  :after lsp
+  ;;  :config
+  ;;  (add-hook 'yaml-mode-hook #'lsp))
 
   (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
 
@@ -2747,11 +2775,11 @@
                 ([C-tab] . bicycle-cycle)
                 ([S-tab] . bicycle-cycle-global)))
 
-  (use-package prog-mode
-    :config
-    (add-hook 'prog-mode-hook 'outline-minor-mode)
-    (add-hook 'prog-mode-hook 'hs-minor-mode)
-    )
+  ;;(use-package prog-mode
+  ;;:config
+  (add-hook 'prog-mode-hook 'outline-minor-mode)
+  (add-hook 'prog-mode-hook 'hs-minor-mode)
+  ;;)
 #+END_SRC
 
 * Rainbow
@@ -3523,8 +3551,8 @@
 * Cool-Moves
 
 #+BEGIN_SRC emacs-lisp
-  (use-package cool-moves
-    :load-path "~/.emacs.d/cool-moves")
+  ;;(use-package cool-moves
+  ;;  :load-path "~/.emacs.d/cool-moves")
 
   (add-to-list 'load-path "~/.emacs.d/cool-moves")
   (load "cool-moves")
@@ -3860,12 +3888,12 @@ Select from xref candidates with ivy
     :hook ((after-init . global-hl-line-mode)))
 
   (use-package highlight-indent-guides
-    :straight t
+    :ensure t
     :init (setq highlight-indent-guides-responsive 'stack)
     :hook '(prog-mode-hook text-mode-hook org-mode-hook))
 
   (use-package highlight-numbers
-    :straight t
+    :ensure t
     :hook '(after-init-hook prog-mode-hook text-mode-hook org-mode-hook))
 #+END_SRC
 
@@ -3873,7 +3901,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-mode
-    :straight t
+    :ensure t
     :hook (((after-init
              text-mode
              org-mode
@@ -3894,21 +3922,33 @@ Select from xref candidates with ivy
                (setq popwin:close-popup-window-timer nil))
 #+END_SRC
 
-* Point History
+* COMMENT Point History
 
 #+BEGIN_SRC emacs-lisp
+  ;;(use-package point-history
+  ;;  :quelpa (point-history :fetcher github :url "https://github.com/quelpa/quelpa-use-package.git")
+  ;;  :hook (after-init . point-history-mode)
+  ;;  :bind ("C-c C-/" . point-history-show)
+  ;;  :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
+
   (use-package point-history
     :straight (point-history :type git :host github :repo "blue0513/point-history")
-    :hook ((after-init . point-history-mode))
-    :bind (("C-c C-/" . point-history-show))
+    :hook (after-init . point-history-mode)
+    ;;:bind ("C-c C-/" . point-history-show)
+    :config
+    (point-history-mode t)
     :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
+
+  (use-package ivy-point-history
+    :straight (ivy-point-history :type git :host github :repo "SuzumiyaAoba/ivy-point-history")
+    :bind ("C-c C-/" . ivy-point-history))
 #+END_SRC
 
 * Undo Propose
 
 #+BEGIN_SRC emacs-lisp
   (use-package undo-propose
-    :straight t
+    :ensure t
     :config (undo-propose-wrap redo))
 #+END_SRC
 
@@ -3931,21 +3971,19 @@ Select from xref candidates with ivy
     :ensure t
     :commands mmm-mode
     :config
-    (use-package mmm-auto
-      :ensure nil))
+    (require 'mmm-auto))
 #+END_SRC
 
 * Reformatter
 
 #+BEGIN_SRC emacs-lisp
   (use-package reformatter
-    :straight (reformatter :host github :repo "purcell/reformatter.el"))
+    :quelpa (reformatter :fetcher github :repo "purcell/reformatter.el"))
 
   (reformatter-define xml-format
     :program "xmllint"
     :args '("--format" "-")
     :mode nil)
-
 #+END_SRC
 
 * Shell-Pop
@@ -4058,7 +4096,11 @@ Select from xref candidates with ivy
 * Cheat
 
 #+BEGIN_SRC emacs-lisp
-  (quelpa '(cheat :fetcher git :url "https://github.com/pbellon/cheat.git"))
-  (require 'cheat)
-  (cheat/init)
+  ;;(quelpa '(cheat :fetcher github :repo "pbellon/cheat"))
+  ;;(require 'cheat)
+  ;;(cheat/reload-sheets)
+  ;;(use-package
+  ;;    :quelpa (cheat :fetcher github :repo "pbellon/cheat")
+  ;;    :config
+  ;;    (cheat/reload-sheets))
 #+END_SRC
