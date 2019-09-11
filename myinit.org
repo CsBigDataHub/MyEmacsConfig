@@ -2493,6 +2493,20 @@
   (evil-set-initial-state 'eshell-mode 'emacs)
 
   (add-hook 'eshell-mode-hook (lambda () (linum-relative-mode -1)))
+
+  (use-package eshell-toggle
+    :custom
+    (eshell-toggle-size-fraction 3)
+    (eshell-toggle-use-projectile-root t)
+    (eshell-toggle-run-command nil)
+    (eshell-toggle-init-function #'eshell-toggle-init-eshell)
+    :quelpa
+    (eshell-toggle :repo "4DA/eshell-toggle" :fetcher github :version original)
+    :bind
+    ("s-`" . eshell-toggle))
+
+  (use-package eshell-up
+    :ensure t)
 #+END_SRC
 
 * Groovy
@@ -2511,6 +2525,16 @@
   (use-package flycheck-gradle
     :ensure t
     :defer t)
+
+  ;;(load-if-exists "~/.emacs.d/custom-el-scripts/lsp-groovy.el")
+
+  ;;(require 'lsp-mode)
+
+  ;;(require 'lsp-groovy)
+
+  ;;(add-hook 'groovy-mode-hook 'lsp)
+
+  ;;(setq lsp-groovy-server-install-dir "~/.emacs.d/groovy-lsp/")
 #+END_SRC
 
 * Duplicate Things
@@ -3334,12 +3358,21 @@
 * Gradle
 
 #+BEGIN_SRC emacs-lisp
-(use-package gradle-mode
-  :ensure t
-  :config
-  (setq gradle-gradlew-executable "./gradlew"
-        gradle-use-gradlew t)
-  (gradle-mode))
+  (use-package gradle-mode
+    :ensure t
+    :config
+    (setq gradle-gradlew-executable "./gradlew"
+          gradle-use-gradlew t)
+    (gradle-mode))
+
+  (use-package flycheck-gradle
+    :ensure t
+    :commands (flycheck-gradle-setup)
+    :init
+    (mapc
+     (lambda (x)
+       (add-hook x #'flycheck-gradle-setup))
+     '(java-mode-hook kotlin-mode-hook)))
 #+END_SRC
 
 * Winnow
@@ -3922,7 +3955,7 @@ Select from xref candidates with ivy
                (setq popwin:close-popup-window-timer nil))
 #+END_SRC
 
-* COMMENT Point History
+* Point History
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package point-history
@@ -4103,4 +4136,49 @@ Select from xref candidates with ivy
   ;;    :quelpa (cheat :fetcher github :repo "pbellon/cheat")
   ;;    :config
   ;;    (cheat/reload-sheets))
+#+END_SRC
+
+* terminal in emacs setting
+
+#+BEGIN_SRC emacs-lisp
+
+  ;;(add-to-list 'load-path "~/.emacs.d/multi-libvterm")
+  ;;(require 'multi-libvterm)
+
+  (add-to-list 'load-path "~/.emacs.d/emacs-libvterm")
+  (require 'vterm)
+
+  (add-hook 'vterm-mode-hook
+              (lambda ()
+                (setq-local evil-insert-state-cursor 'bar)
+                (evil-insert-state)))
+    (define-key vterm-mode-map [return]                      #'vterm-send-return)
+
+    (setq vterm-keymap-exceptions nil)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-f")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-a")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-v")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-b")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-w")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-u")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-n")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-m")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-p")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-j")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-k")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-r")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-t")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-g")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-c")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-SPC")    #'vterm--self-insert)
+    (evil-define-key 'normal vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
+    ;;(evil-define-key 'normal vterm-mode-map (kbd ",c")       #'multi-libvterm)
+    ;;(evil-define-key 'normal vterm-mode-map (kbd ",n")       #'multi-libvterm-next)
+    ;;(evil-define-key 'normal vterm-mode-map (kbd ",p")       #'multi-libvterm-prev)
+    (evil-define-key 'normal vterm-mode-map (kbd "i")        #'evil-insert-resume)
+    (evil-define-key 'normal vterm-mode-map (kbd "o")        #'evil-insert-resume)
+    (evil-define-key 'normal vterm-mode-map (kbd "<return>") #'evil-insert-resume)
+
 #+END_SRC
