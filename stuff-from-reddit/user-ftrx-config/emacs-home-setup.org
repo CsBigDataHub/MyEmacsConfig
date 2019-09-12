@@ -1,0 +1,197 @@
+#+TITLE: My Emacs "home" setup
+#+SUBTITLE: in replay to rswgnu
+
+* Basic "system" layout
+I'm using NixOS so I have in pure text nearly anything system-related,
+I keep all my config in ~/env taxonomy from NixOS to zsh, Firefox
+profiles, Baikal, mpv, ... Few of them are in org files tangled upon
+changes, I'm going in spare time (really slow, but still progress) to
+port all of them in org-mode.
+
+For instance my desktop setup lay in three org files
+ - preinstall.org :: to create a custom ISO with my NixOS configs
+ - liveinstall.org :: to actually install NixOS thanks to org-babel
+ - postinstall.org :: to complete the deploy via backups
+
+Emacs is in a classic ~/env/emacs linked to ~/.emacs.d with a minimal
+init.el and emacs.org tangled from init for the rest.
+
+* Basic "data" layout
+In years I create my personal taxonomy, stable enough that I practically
+do not change it's structure except for the deepest leafs of it. The
+main layout is
+
+#+BEGIN_SRC sh
+ls ~
+#+END_SRC
+
+#+RESULTS:
+| Desktop  | <= autocreated by unknown X apps, empty
+| docs     | <= personal documents archive
+| env      | <= my configs
+| kl       | <= my personal library
+| mail     | <= my local maildir indexed by notmuch
+| media    | <= photos, music, movies
+| notes    | <= my main org-based taxonomy
+| prjs     | <= personal projects (not only IT related)
+| work     | <= work related taxonomy
+| tmp      | <= tarr pit cleaned up casually, erased once a year
+
+Any (except mail) top level directory (and many subdirs) have an org file
+with the same filename
+
+#+BEGIN_SRC sh
+ls */*.org
+#+END_SRC
+
+#+RESULTS:
+| docs/docs.org   |
+| env/env.org     |
+| kl/kl.org       |
+| media/media.org |
+| notes/notes.org |
+| prjs/prjs.org   |
+| work/index.org  |
+| tmp/tmp.org     |
+
+And all of them are linked in a local heading structure in
+   ~/env/emacs/linkmarks.org
+
+The relevant linkmarks setup, after cloning the repo (I do not use
+straight or similar, but perhaps in the next Emacs config rewrite
+I'll adopt it) is
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/env/emacs/scmpkgs/linkmarks")
+(require 'linkmarks)
+(setq linkmarks-file "~/env/emacs/linkmarks.org")
+(global-set-key (kbd "<XF86AudioStop>") 'linkmarks-select)
+(exwm-input-set-key (kbd "<XF86AudioStop>") #'linkmarks-select)
+#+END_SRC
+
+The "double" bindings is to have it in the rare case I'm log in
+without X. In the next Emacs cleanup I'll wrap all my bindings so
+to have anything in a ~* keybindigs~ heading.
+
+Any top-level org files (and many subfiles) with their headings have
+a drawer with an ~ID~ or ~CUSTOM_ID~ property like
+#+BEGIN_EXAMPLE
+* heading
+:PROPERTIES:
+:CUSTOM_ID: top_level_file_name_in_short:heading_in_short_form
+:END:
+#+END_EXAMPLE
+
+that I use to link it in linkmarks.org with the help of
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "<XF86AudioPlay>") 'org-store-link)
+#+END_SRC
+and classic C-c C-l (org-insert-link) to paste it. Any time I look for
+something I do not already have in linkmarks.org I add it on the go.
+
+Relevant example of linkmarks.org
+#+BEGIN_EXAMPLE
+* env
+[[elisp:(helm-find-files-1%20"~/env")][~/env]]
+
+** Emacs config
+[[file:~/.emacs.d/emacs.org][Emacs org config]]
+
+** Emacs init
+[[file:~/.emacs.d/init.el][Emacs init.el]]
+
+** Mail config
+[[~/env/mail/my_mail_setup.org][my mail setup]]
+
+** NixOS
+*** xws.org
+[[file:~/env/xws/xws.org][xws.org]]
+
+*** configuration.nix
+[[/sudo:root@xws.xnet.lan:/etc/nixos/configuration.nix][configuration.nix]]
+
+...
+
+* notes
+[[elisp:(helm-find-files-1%20"~/notes")][notes]]
+
+...
+#+END_EXAMPLE
+
+* Workflow
+Essentially at startup I get Emacs desktop (EXWM) with org-agenda.
+Most used application X or Emacs indifferently have a dedicated
+function key, with a label glued on the key to ease remembering
+so I can "switch" to anything with a single key. EXWM-x helps the
+switch acting like "jumpapp" wmctrl wrapper. Few relevant bindings
+are:
+#+BEGIN_SRC emacs-lisp
+(exwm-input-set-key (kbd "M-w") #'exwm-workspace-switch-to-buffer)
+(global-set-key (kbd "M-s") 'save-buffer)
+(exwm-input-set-key (kbd "<XF86Calculator>") #'calc)
+(exwm-input-set-key (kbd "<XF86AudioNext>") #'kill-buffer-and-window)
+(global-set-key (kbd "<XF86AudioMute>") 'kill-this-buffer)
+
+;; stealed from https://ambrevar.xyz/emacs2/
+(defun ambrevar/switch-to-last-buffer ()
+  "Switch to last open buffer in current window."
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+(exwm-input-set-key (kbd "<f1>") #'ambrevar/switch-to-last-buffer)
+
+(exwm-input-set-key (kbd "<f2>") #'delete-other-windows)
+(exwm-input-set-key (kbd "<f3>") #'other-window)
+(exwm-input-set-key (kbd "<f4>") #'split-window-below)
+(exwm-input-set-key (kbd "<f5>") #'split-window-right)
+(exwm-input-set-key (kbd "<f9>") #'aweshell-toggle)
+...
+#+END_SRC
+
+My goal is having the most things possible on a single key or a simple
+modifier + single key, for instance
+#+BEGIN_SRC emacs-lisp
+(exwm-input-set-key (kbd "<f6>") #'notmuch)
+(exwm-input-set-key (kbd "S-<f6>") #'notmuch-mua-new-mail)
+...
+#+END_SRC
+
+The main entry-point for my data is a single key (<XF86AudioStop>) that
+popup a helm buffer to navigate linkmarks.org file, normally ANYTHING
+I look for is a few key away, generally
+ <XF86AudioStop> + one/two/three chars + tab or enter
+
+In some documents, for instance a ticket journal log file I may like
+to log an entry with a mail "linked" inside, I can do that simply
+grabbing the relevant message ID (c i in mail buffer) and link it
+with ~notmuch:~ kind of link.
+
+In some documents I may want to attach files, from images (i.e. sshots)
+to pdfs etc. Org-attach do the business, a simple C-c C-a under a
+heading or a D&D action with org-download and that's done. Attachments
+are kept in a ~data~ dir with subdirs at the same place of linked org
+file.
+
+* Issues
+Actually maintained org-attach attachments is not automatic, I mean if
+I delete an attachment from org file (i.e. delete the relevant property
+from a drawer) the actual file is not deleted. I can do it with find +
+grep, but it's still limited, especially if I have multiple org files
+with attachments in the same dir.
+
+If I move a file around links to it does not get updated. And I can
+discover it after even years... My taxonomy does not change much but
+it's still an issue. Memacs offer a nice option to solve this problem
+with tsfile module, but it's raw, limited and especially it change all
+relevant file names adding a timestamp to it, a thing I dislike.
+
+Migrate the precedent system to the actual it's manual work, it pay off
+but it's not much quick...
+
+* Interest about Hyperbole
+The idea of global buttons is really nice, to a certain extent org-wiki
+and org-brain offer similar, limited, concept, but they still do not
+play well with my personal taxonomy, they are designed to be in a single
+directory intended to be managed only by them. I dislike this approach
+since even if I live in Emacs I'd like to keep my taxonomy easily
+traversable with classic unix CLI tools... Maybe Hyperbole can be an
+answer but I still have to figure out how and it's docs... Well does
+not encourage me to read and try anything...
