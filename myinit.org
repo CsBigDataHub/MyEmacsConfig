@@ -3848,17 +3848,47 @@ Select from xref candidates with ivy
     :bind ([remap query-replace] . anzu-query-replace-regexp))
 #+END_SRC
 
+* Awesome-tabs
+
+#+BEGIN_SRC emacs-lisp
+  (use-package awesome-tab
+    :straight (awesome-tab
+               :type git
+               :host github
+               :repo "manateelazycat/awesome-tab")
+    :config
+    (setq awesome-tab-style 'slant
+          awesome-tab-cycle-scope 'tabs)
+    (awesome-tab-mode t)
+    :bind* (("s-<left>"  . awesome-tab-backward)
+            ("s-<right>" . awesome-tab-forward)
+            ("s-<up>"    . awesome-tab-forward-group)
+            ("s-<down>"  . awesome-tab-backward-group)
+            ("s-1" . awesome-tab-select-visible-tab)
+            ("s-2" . awesome-tab-select-visible-tab)
+            ("s-3" . awesome-tab-select-visible-tab)
+            ("s-4" . awesome-tab-select-visible-tab)
+            ("s-5" . awesome-tab-select-visible-tab)
+            ("s-6" . awesome-tab-select-visible-tab)
+            ("s-7" . awesome-tab-select-visible-tab)
+            ("s-8" . awesome-tab-select-visible-tab)
+            ("s-9" . awesome-tab-select-visible-tab)
+            ("H-t t" . awesome-tab-counsel-switch-group)
+            )
+    )
+#+END_SRC
+
 * Centaur-tabs
 
 #+BEGIN_SRC emacs-lisp
-  (use-package centaur-tabs
-    :ensure t
-    :demand
-    :config
-    (centaur-tabs-mode t)
-    :bind
-    ("H-t t <left>" . centaur-tabs-backward)
-    ("H-t t <right>" . centaur-tabs-forward))
+  ;;(use-package centaur-tabs
+  ;;  :ensure t
+  ;;  :demand
+  ;;  :config
+  ;;  (centaur-tabs-mode t)
+  ;;  :bind
+  ;;  ("H-t t <left>" . centaur-tabs-backward)
+  ;;  ("H-t t <right>" . centaur-tabs-forward))
 #+END_SRC
 
 * Recentf
