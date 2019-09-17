@@ -3853,31 +3853,64 @@ Select from xref candidates with ivy
 * Awesome-tabs
 
 #+BEGIN_SRC emacs-lisp
-  (use-package awesome-tab
-    :straight (awesome-tab
-               :type git
-               :host github
-               :repo "manateelazycat/awesome-tab")
-    :config
-    (setq awesome-tab-style 'slant
-          awesome-tab-cycle-scope 'tabs)
-    (awesome-tab-mode t)
-    :bind* (("s-<left>"  . awesome-tab-backward)
-            ("s-<right>" . awesome-tab-forward)
-            ("s-<up>"    . awesome-tab-forward-group)
-            ("s-<down>"  . awesome-tab-backward-group)
-            ("s-1" . awesome-tab-select-visible-tab)
-            ("s-2" . awesome-tab-select-visible-tab)
-            ("s-3" . awesome-tab-select-visible-tab)
-            ("s-4" . awesome-tab-select-visible-tab)
-            ("s-5" . awesome-tab-select-visible-tab)
-            ("s-6" . awesome-tab-select-visible-tab)
-            ("s-7" . awesome-tab-select-visible-tab)
-            ("s-8" . awesome-tab-select-visible-tab)
-            ("s-9" . awesome-tab-select-visible-tab)
-            ("H-t t" . awesome-tab-counsel-switch-group)
-            )
-    )
+  ;;(use-package awesome-tab
+  ;;  :straight (awesome-tab
+  ;;             :type git
+  ;;             :host github
+  ;;             :repo "manateelazycat/awesome-tab")
+  ;;  :config
+  ;;  (setq awesome-tab-style 'slant
+  ;;        awesome-tab-cycle-scope 'tabs)
+  ;;  (awesome-tab-mode t)
+  ;;  :bind* (("s-<left>"  . awesome-tab-backward)
+  ;;          ("s-<right>" . awesome-tab-forward)
+  ;;          ("s-<up>"    . awesome-tab-forward-group)
+  ;;          ("s-<down>"  . awesome-tab-backward-group)
+  ;;          ("s-1" . awesome-tab-select-visible-tab)
+  ;;          ("s-2" . awesome-tab-select-visible-tab)
+  ;;          ("s-3" . awesome-tab-select-visible-tab)
+  ;;          ("s-4" . awesome-tab-select-visible-tab)
+  ;;          ("s-5" . awesome-tab-select-visible-tab)
+  ;;          ("s-6" . awesome-tab-select-visible-tab)
+  ;;          ("s-7" . awesome-tab-select-visible-tab)
+  ;;          ("s-8" . awesome-tab-select-visible-tab)
+  ;;          ("s-9" . awesome-tab-select-visible-tab)
+  ;;          ("H-t t" . awesome-tab-counsel-switch-group)
+  ;;          )
+  ;;  )
+  ;;
+  ;;(defun my-awesome-tab-buffer-groups ()
+  ;;  "`awesome-tab-buffer-groups' control buffers' group rules.
+  ;;
+  ;;Group awesome-tab with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+  ;;All buffer name start with * will group to \"Emacs\".
+  ;;Other buffer group by `awesome-tab-get-group-name' with project name."
+  ;;  (list
+  ;;   (cond
+  ;;    ((or (string-equal "*" (substring (buffer-name) 0 1))
+  ;;         (memq major-mode '(magit-process-mode
+  ;;                            magit-status-mode
+  ;;                            magit-diff-mode
+  ;;                            magit-log-mode
+  ;;                            magit-file-mode
+  ;;                            magit-blob-mode
+  ;;                            magit-blame-mode
+  ;;                            )))
+  ;;     "Emacs")
+  ;;    ((derived-mode-p 'eshell-mode)
+  ;;     "EShell")
+  ;;    ((derived-mode-p 'emacs-lisp-mode)
+  ;;     "Elisp")
+  ;;    ((derived-mode-p 'java-mode)
+  ;;     "Java")
+  ;;    ((derived-mode-p 'dired-mode)
+  ;;     "Dired")
+  ;;    ((memq major-mode '(org-mode org-agenda-mode diary-mode))
+  ;;     "OrgMode")
+  ;;    (t
+  ;;     (awesome-tab-get-group-name (current-buffer))))))
+  ;;
+  ;;(setq awesome-tab-buffer-groups-function 'my-awesome-tab-buffer-groups)
 #+END_SRC
 
 * Centaur-tabs
@@ -3891,6 +3924,88 @@ Select from xref candidates with ivy
   ;;  :bind
   ;;  ("H-t t <left>" . centaur-tabs-backward)
   ;;  ("H-t t <right>" . centaur-tabs-forward))
+
+  (use-package centaur-tabs
+    :ensure t
+    :demand
+    ;;:load-path "~/.emacs.d/other/centaur-tabs"
+    :config
+    (setq centaur-tabs-style "slant"
+          centaur-tabs-height 32
+          centaur-tabs-set-icons t
+          centaur-tabs-set-modified-marker t
+          centaur-tabs-set-bar 'over)
+    (centaur-tabs-headline-match)
+    ;; (setq centaur-tabs-gray-out-icons 'buffer)
+    ;; (centaur-tabs-enable-buffer-reordering)
+    ;; (setq centaur-tabs-adjust-buffer-order t)
+    (centaur-tabs-mode t)
+    (setq uniquify-separator "/")
+    (setq uniquify-buffer-name-style 'forward)
+    (defun centaur-tabs-buffer-groups ()
+      "`centaur-tabs-buffer-groups' control buffers' group rules.
+
+   Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+   All buffer name start with * will group to \"Emacs\".
+   Other buffer group by `centaur-tabs-get-group-name' with project name."
+      (list
+       (cond
+        ((or (string-equal "*" (substring (buffer-name) 0 1))
+             (memq major-mode '(magit-process-mode
+                                magit-status-mode
+                                magit-diff-mode
+                                magit-log-mode
+                                magit-file-mode
+                                magit-blob-mode
+                                magit-blame-mode
+                                )))
+         "Emacs")
+        ((derived-mode-p 'prog-mode)
+         "Editing")
+        ((derived-mode-p 'dired-mode)
+         "Dired")
+        ((memq major-mode '(helpful-mode
+                            help-mode))
+         "Help")
+        ((memq major-mode '(org-mode
+                            org-agenda-clockreport-mode
+                            org-src-mode
+                            org-agenda-mode
+                            org-beamer-mode
+                            org-indent-mode
+                            org-bullets-mode
+                            org-cdlatex-mode
+                            org-agenda-log-mode
+                            diary-mode))
+         "OrgMode")
+        (t
+         (centaur-tabs-get-group-name (current-buffer))))))
+    :hook
+    (dashboard-mode . centaur-tabs-local-mode)
+    (term-mode . centaur-tabs-local-mode)
+    (calendar-mode . centaur-tabs-local-mode)
+    (org-agenda-mode . centaur-tabs-local-mode)
+    (helpful-mode . centaur-tabs-local-mode)
+    :bind
+    ("s-<left>" . centaur-tabs-backward)
+    ("s-<right>" . centaur-tabs-forward)
+    ("s-<up>" . centaur-tabs-forward-group)
+    ("s-<down>" . centaur-tabs-backward-group)
+    ("s-1" . centaur-tabs-select-visible-tab)
+    ("s-2" . centaur-tabs-select-visible-tab)
+    ("s-3" . centaur-tabs-select-visible-tab)
+    ("s-4" . centaur-tabs-select-visible-tab)
+    ("s-5" . centaur-tabs-select-visible-tab)
+    ("s-6" . centaur-tabs-select-visible-tab)
+    ("s-7" . centaur-tabs-select-visible-tab)
+    ("s-8" . centaur-tabs-select-visible-tab)
+    ("s-9" . centaur-tabs-select-visible-tab)
+    ("H-t t t" . centaur-tabs-counsel-switch-group)
+    ("H-t t p" . centaur-tabs-group-by-projectile-project)
+    ("H-t t g" . centaur-tabs-group-buffer-groups)
+    (:map evil-normal-state-map
+          ("g t" . centaur-tabs-forward)
+          ("g T" . centaur-tabs-backward)))
 #+END_SRC
 
 * Recentf
