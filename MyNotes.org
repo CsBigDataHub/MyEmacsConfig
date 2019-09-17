@@ -154,3 +154,12 @@
 |                |                                |
 |                |                                |
 |                |                                |
+
+* find and replace in project
+
+#+BEGIN_SRC
+
+M-x rg-project
+M-x wgrep-change-to-wgrep-mode
+
+#+END_SRC

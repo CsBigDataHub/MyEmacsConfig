@@ -3930,7 +3930,7 @@ Select from xref candidates with ivy
     :demand
     ;;:load-path "~/.emacs.d/other/centaur-tabs"
     :config
-    (setq centaur-tabs-style "slant"
+    (setq centaur-tabs-style "wave"
           centaur-tabs-height 32
           centaur-tabs-set-icons t
           centaur-tabs-set-modified-marker t
