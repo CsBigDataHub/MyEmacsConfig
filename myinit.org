@@ -4404,19 +4404,19 @@ Select from xref candidates with ivy
     (progn
       (advice-add #'pass-insert-generated :override #'my/pass-insert-generated)))
 
-  (use-package auth-source
-    :init
-    (progn
-      (setq auth-source-debug t)
-      (setq auth-source-do-cache nil)))
+  ;;(use-package auth-source
+  ;;  :init
+  ;;  (progn
+  ;;    (setq auth-source-debug t)
+  ;;    (setq auth-source-do-cache nil)))
 
-  (use-package auth-source-pass
-    :ensure t
-    :demand t
-    :after auth-source
-    :init
-    (progn
-      (setq auth-sources '(password-store))))
+  ;;(use-package auth-source-pass
+  ;;  :ensure t
+  ;;  :demand t
+  ;;  :after auth-source
+  ;;  :init
+  ;;  (progn
+  ;;    (setq auth-sources '(password-store))))
 
   (use-package ivy-pass
     :ensure t
