@@ -611,12 +611,21 @@
       :ensure t
       :init (smex-initialize))
 
+    (use-package historian
+      :ensure t)
+    (use-package ivy-historian
+      :ensure t)
+
     (use-package ivy
       :ensure t
+      :init
+      (ivy-mode +1)
+      (historian-mode +1)
       :diminish (ivy-mode)
       :bind (("C-x b" . ivy-switch-buffer))
       :config
-      (ivy-mode 1)
+      ;;(ivy-mode 1)
+      (ivy-historian-mode +1)
       (setq ivy-use-virtual-buffers t)
       (setq ivy-display-style 'fancy))
 
@@ -646,6 +655,7 @@
 
     (use-package swiper
       :ensure t
+      :commands (ivy-dispatching-done)
       ;;This also can be used to bind keys
       ;;:bind (("C-s" . swiper)
       ;;	 ("C-r" . swiper)
@@ -658,7 +668,7 @@
         (setq ivy-use-virtual-buffers t)
         (global-set-key "\C-s" 'swiper)
         (global-set-key (kbd "C-c C-r") 'ivy-resume)
-        (global-set-key (kbd "<f6>") 'ivy-resume)
+        ;;(global-set-key (kbd "<f6>") 'ivy-resume)
         (global-set-key (kbd "M-x") 'counsel-M-x)
         (global-set-key (kbd "C-x C-f") 'counsel-find-file)
         (global-set-key (kbd "<f1> f") 'counsel-describe-function)
@@ -673,6 +683,11 @@
         (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
         (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
         ))
+
+    ;; Define actions in the minibuffer keymap
+    ;; Mimicking the behavior of "C-c i" in helm-mode, but with mode flexibility
+    (define-key ivy-minibuffer-map (kbd "C-c i") 'ivy-dispatching-done)
+
     (use-package prescient
       :ensure t
       :config (prescient-persist-mode))
@@ -1503,6 +1518,9 @@
     :ensure t
     :defer    t
     )
+
+  (use-package ivy-yasnippet
+    :ensure t)
 #+END_SRC
 
 * Dired
@@ -4348,4 +4366,59 @@ Select from xref candidates with ivy
     :config
     ;;; term use zsh
     (setq-when-file-existed sane-term-shell-command (executable-find "/usr/local/bin/zsh")))
+#+END_SRC
+
+* Password-Manager
+
+#+BEGIN_SRC emacs-lisp
+  (use-package password-store
+    :quelpa (password-store :fetcher github :repo "emacsmirror/password-store")
+    ;;:straight (password-store :type git :host github :repo "emacsmirror/password-store")
+    ;;:ensure t
+    :config
+    (progn
+      (setq password-store-password-length 30)))
+
+  (use-package pass
+    :ensure t
+    :commands pass
+    :init
+    (progn
+      (defun my/pass-insert-generated (entry)
+        "Same as pass-insert-generated but with my own template."
+        (interactive (list (read-string "Password entry: ")))
+        (when (or (not (seq-contains (password-store-list) entry))
+                  (yes-or-no-p "Erase existing entry with same name? "))
+          (let ((password (shell-command-to-string
+                           (format "pwgen --secure --symbols %s"
+                                   password-store-password-length))))
+            (password-store-insert
+             entry
+             (format "%s--\nusername: %s\nurl: https://%s\n"
+                     password
+                     user-mail-address
+                     entry))
+            (password-store-edit entry)
+            (pass-update-buffer)))))
+    :config
+    (progn
+      (advice-add #'pass-insert-generated :override #'my/pass-insert-generated)))
+
+  (use-package auth-source
+    :init
+    (progn
+      (setq auth-source-debug t)
+      (setq auth-source-do-cache nil)))
+
+  (use-package auth-source-pass
+    :ensure t
+    :demand t
+    :after auth-source
+    :init
+    (progn
+      (setq auth-sources '(password-store))))
+
+  (use-package ivy-pass
+    :ensure t
+    )
 #+END_SRC
