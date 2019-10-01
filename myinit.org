@@ -2653,7 +2653,7 @@
 
 #+BEGIN_SRC emacs-lisp
 
-  (add-to-list 'load-path (concat user-emacs-directory "./custom-el-scripts/languages"))
+  (add-to-list 'load-path (concat user-emacs-directory "custom-el-scripts/languages"))
 
   ;;(load-if-exists "./custom-el-scripts/languages/lang-go.el")
   ;;(load-if-exists "./custom-el-scripts/languages/lang-ruby.el")
@@ -2830,11 +2830,15 @@
 * Rainbow
 
 #+BEGIN_SRC emacs-lisp
-(use-package rainbow-delimiters
-  :ensure t
-  :hook
-  (prog-mode . rainbow-delimiters-mode))
-
+  (use-package rainbow-delimiters
+    :ensure t
+    :hook
+    (prog-mode . rainbow-delimiters-mode)
+    :config
+    (set-face-attribute 'rainbow-delimiters-unmatched-face nil
+                        :foreground "red"
+                        :inherit 'error
+                        :box t))
 #+END_SRC
 
 * Kubernates
@@ -3730,10 +3734,6 @@
   ;; Recenter window after imenu jump so cursor doesn't end up on the last line
   (add-hook 'imenu-after-jump-hook 'recenter)  ; or 'reposition-window
   (set-default 'imenu-auto-rescan t))
-  ;; Use use-package-enable-imenu-support
-  ;;(defun imenu-use-package ()
-  ;;  (add-to-list 'imenu-generic-expression
-  ;;               '("Packages" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))))
 
 (use-package imenu-anywhere
   :ensure t
@@ -4054,6 +4054,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package autoinsert
+    :ensure t
     :init
     (define-auto-insert
       '("\\.py" . "Python Language")
@@ -4460,13 +4461,13 @@ Select from xref candidates with ivy
   (use-package vdiff-magit
     :ensure t)
 
-  (require 'vdiff-magit)
-  (define-key magit-mode-map "4" 'vdiff-magit-dwim)
-  (define-key magit-mode-map "$" 'vdiff-magit)
-  (transient-suffix-put 'magit-dispatch "4" :description "vdiff (dwim)")
-  (transient-suffix-put 'magit-dispatch "4" :command 'vdiff-magit-dwim)
-  (transient-suffix-put 'magit-dispatch "$" :description "vdiff")
-  (transient-suffix-put 'magit-dispatch "$" :command 'vdiff-magit)
+  ;;(require 'vdiff-magit)
+  ;;(define-key magit-mode-map "4" 'vdiff-magit-dwim)
+  ;;(define-key magit-mode-map "$" 'vdiff-magit)
+  ;;(transient-suffix-put 'magit-dispatch "4" :description "vdiff (dwim)")
+  ;;(transient-suffix-put 'magit-dispatch "4" :command 'vdiff-magit-dwim)
+  ;;(transient-suffix-put 'magit-dispatch "$" :description "vdiff")
+  ;;(transient-suffix-put 'magit-dispatch "$" :command 'vdiff-magit)
 
   ;; This flag will default to using ediff for merges.
   ;; (setq vdiff-magit-use-ediff-for-merges nil)
@@ -4482,4 +4483,13 @@ Select from xref candidates with ivy
 
   ;; Only use two buffers (working file and index) for vdiff-magit-stage
   ;; (setq vdiff-magit-stage-is-2way nil)
+#+END_SRC
+
+* Doremi
+
+#+BEGIN_SRC emacs-lisp
+
+  (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi.el")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi-cmd.el")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/setup-keys.el")
 #+END_SRC
