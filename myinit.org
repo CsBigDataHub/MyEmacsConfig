@@ -582,6 +582,28 @@
 
 * Ace Window
 
+*** Swap and delete window
+    You can swap windows by calling `ace-window` with a prefix argument <kbd>C-u</kbd>.
+    You can delete the selected window by calling `ace-window` with a double prefix argument, i.e. <kbd>C-u C-u</kbd>.
+*** Change the action midway
+    You can also start by calling `ace-window` and then decide to switch the action to `delete` or `swap` etc.  By default the bindings are:
+
+    | kbd | command                                                |
+    |-----+--------------------------------------------------------|
+    | x   | delete window                                          |
+    | m   | swap windows                                           |
+    | M   | move window                                            |
+    | c   | copy window                                            |
+    | j   | select buffer                                          |
+    | n   | select the previous window                             |
+    | u   | select buffer in the other window                      |
+    | c   | split window fairly, either vertically or horizontally |
+    | v   | split window vertically                                |
+    | b   | split window horizontally                              |
+    | o   | maximize current window                                |
+    | ?   | show these command bindings                            |
+
+
   #+BEGIN_SRC emacs-lisp
 
 (use-package ace-window
