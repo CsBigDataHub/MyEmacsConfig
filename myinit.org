@@ -22,6 +22,7 @@
     ;; for latest org-mode and org-plus-contrib
     (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 
+    (setq load-prefer-newer t)
     ;; https://github.com/purcell/emacs.d/blob/master/lisp/init-elpa.el#L64
     ;; (setq package-enable-at-startup nil)
     ;;(package-initialize)
@@ -519,6 +520,7 @@
     (evil-set-initial-state 'ibuffer-mode 'emacs)
     (evil-set-initial-state 'bookmark-bmenu-mode 'emacs)
     (evil-set-initial-state 'dired-mode 'emacs)
+    (evil-set-initial-state 'wgrep-change-to-wgrep-mode 'emacs)
   #+END_SRC
 
 * Org Bullets
@@ -1855,6 +1857,9 @@
     :mode "\\.dockerignore\\'"
     :mode "\\..elpaignore\\'")
 
+  (use-package gitignore-templates
+    :ensure t)
+
   (use-package diffview
     :ensure t
     :commands (diffview-region diffview-current)
@@ -1965,7 +1970,6 @@
   (use-package gist :ensure t)
 
   (use-package browse-at-remote :ensure t)
-
 #+END_SRC
 
 * Better Shell
@@ -1986,11 +1990,18 @@
            ("M-g x" . dumb-jump-go-prefer-external)
            ("M-g z" . dumb-jump-go-prefer-external-other-window))
     :config
-    ;; (setq dumb-jump-selector 'ivy) ;; (setq dumb-jump-selector 'helm)
+    (setq dumb-jump-selector 'ivy) ;; (setq dumb-jump-selector 'helm)
     :init
     (dumb-jump-mode)
-    :ensure
+    :ensure t
     )
+
+  ;;smart-Jump
+
+  (use-package smart-jump
+    :ensure t
+    :config
+    (smart-jump-setup-default-registers))
 #+END_SRC
 
 * Origami folding
@@ -2362,7 +2373,7 @@
   (use-package yaml-mode
     :ensure t
     :mode (("\\.yaml\\'" . yaml-mode)
-	   ("\\.yml\\'" . yaml-mode))
+           ("\\.yml\\'" . yaml-mode))
     )
 
   (use-package flycheck-yamllint
@@ -2371,7 +2382,7 @@
     :init
     (progn
       (eval-after-load 'flycheck
-	'(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
+        '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
 
   ;;(use-package lsp-yaml
   ;;  :quelpa (lsp-yaml :fetcher github :repo "iquiw/lsp-yaml")
@@ -2381,6 +2392,11 @@
 
   (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
 
+  (use-package yaml-imenu
+    :ensure t
+    :init
+    (yaml-imenu-enable)
+    )
 #+END_SRC
 
 * Docker-Mode
@@ -2528,6 +2544,13 @@
 
   (use-package eshell-up
     :ensure t)
+
+  ;; TODO - Do not use it until a '.bash_aliases' file is crated
+  ;;(use-package load-bash-alias
+  ;;  :ensure t
+  ;;  :config
+  ;;  (setq load-bash-alias-bashrc-file "~/.bashrc")
+  ;;  (setq load-bash-alias-exclude-aliases-regexp "^alias magit\\|^alias oc"))
 #+END_SRC
 
 * Groovy
@@ -3745,12 +3768,18 @@
 Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
-(use-package ivy-xref
-  :ensure t
-  :after (ivy xref)
-  :config
-  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  (setq xref-show-definitions-function #'ivy-xref-show-defs))
+  ;;(use-package ivy-xref
+  ;;  :ensure t
+  ;;  :after (ivy xref)
+  ;;  :config
+  ;;  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  ;;  (setq xref-show-definitions-function #'ivy-xref-show-defs))
+
+  (use-package ivy-xref
+    :ensure t
+    :init (if (< emacs-major-version 27)
+              (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+            (setq xref-show-definitions-function #'ivy-xref-show-defs)))
 #+END_SRC
 
 * Dicover-My-Mojor
@@ -3843,6 +3872,12 @@ Select from xref candidates with ivy
     :ensure t
     :config
     (super-save-mode +1))
+  (setq super-save-auto-save-when-idle t)
+
+  ;; save on find-file
+  (add-to-list 'super-save-hook-triggers 'find-file-hook)
+
+  (setq super-save-remote-files nil)
 #+END_SRC
 
 * BeginEnd
@@ -4319,7 +4354,7 @@ Select from xref candidates with ivy
               (lambda ()
                 (setq-local evil-insert-state-cursor 'bar)
                 (evil-insert-state)))
-    (define-key vterm-mode-map [return]                      #'vterm-send-return)
+    ;;(define-key vterm-mode-map [return]                      #'vterm-send-return)
 
     (setq vterm-keymap-exceptions nil)
     (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)
@@ -4492,4 +4527,154 @@ Select from xref candidates with ivy
   (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi.el")
   (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi-cmd.el")
   (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/setup-keys.el")
+#+END_SRC
+* Golden-ratio
+
+#+BEGIN_SRC emacs-lisp
+  ;; Golden Ratio
+  (use-package golden-ratio                 ; Auto resize windows
+    :ensure t
+    :diminish golden-ratio-mode
+    :init
+    (golden-ratio-mode 1)
+    (setq golden-ratio-auto-scale t)
+    :config
+    (setq golden-ratio-extra-commands
+          (append golden-ratio-extra-commands
+                  '(evil-window-left
+                    evil-window-right
+                    evil-window-up
+                    evil-window-down)))
+    )
+#+END_SRC
+
+* reveal-in-osx-finder
+
+#+BEGIN_SRC emacs-lisp
+  (use-package reveal-in-osx-finder
+    :ensure t)
+#+END_SRC
+
+* Multiple-files editing in one buffer
+
+#+BEGIN_SRC emacs-lisp
+  (use-package multifiles
+    :ensure t
+    :bind ("C-!" . mf/mirror-region-in-multifile))
+#+END_SRC
+
+* Sort-words
+
+#+BEGIN_SRC emacs-lisp
+  (use-package sort-words
+    :ensure t)
+#+END_SRC
+
+* Smart-forward
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-forward
+    :ensure t
+    :config
+    (global-set-key (kbd "H-<up>") 'smart-up)
+    (global-set-key (kbd "H-<down>") 'smart-down)
+    (global-set-key (kbd "H-<left>") 'smart-backward)
+    (global-set-key (kbd "H-<right>") 'smart-forward)
+    )
+#+END_SRC
+
+* PacMan
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pacmacs :ensure t)
+#+END_SRC
+
+* Isolate - surround string or region with delimiters
+
+#+BEGIN_SRC emacs-lisp
+  (use-package isolate
+    :ensure t
+    )
+  (defun activate-mark-hook@set-transient-map ()
+    (set-transient-map
+     (let ((map (make-sparse-keymap)))
+       (define-key map "s" #'isolate-quick-add)
+       (define-key map "S" #'isolate-long-add)
+       (define-key map "d" #'isolate-quick-delete)
+       (define-key map "D" #'isolate-long-delete)
+       (define-key map "c" #'isolate-quick-change)
+       (define-key map "C" #'isolate-long-change)
+       map)
+     #'region-active-p))
+
+  (add-hook 'activate-mark-hook #'activate-mark-hook@set-transient-map)
+#+END_SRC
+
+* Terraform-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package terraform-mode
+    :ensure t
+    )
+#+END_SRC
+
+* Region Convert
+
+#+BEGIN_SRC emacs-lisp
+  (use-package region-convert
+    :ensure t
+    :bind
+    ("C-c C" . region-convert)
+    )
+#+END_SRC
+
+* Kotlin-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package kotlin-mode
+    :ensure t
+    )
+#+END_SRC
+
+* Auto-compile
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package auto-compile
+  ;;  :ensure t
+  ;;  :config
+  ;;  (auto-compile-on-load-mode)
+  ;;  (auto-compile-on-save-mode))
+#+END_SRC
+
+* Gherkin-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gherkin-mode
+    :ensure t)
+#+END_SRC
+
+* World-time-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package world-time-mode
+    :ensure t)
+#+END_SRC
+
+* Swap region
+
+#+BEGIN_SRC emacs-lisp
+  (use-package swap-regions
+    :ensure t)
+#+END_SRC
+
+* Project abbrev
+
+#+BEGIN_SRC emacs-lisp
+  (use-package project-abbrev
+    :ensure t
+    :bind
+    ("C-<return>" . project-abbrev-complete-word)
+    :config
+    (setq project-abbrev-config-file "project-abbrev.config")
+    )
 #+END_SRC
