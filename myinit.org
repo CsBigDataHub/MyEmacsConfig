@@ -746,13 +746,23 @@
 
   #+BEGIN_SRC emacs-lisp
 
-  (use-package auto-complete
-    :ensure t
-    :init
-    (progn
-      (ac-config-default)
-      (global-auto-complete-mode t)
-      ))
+    (use-package auto-complete
+      :ensure t
+      :init
+      (progn
+        (ac-config-default)
+        (global-auto-complete-mode t)
+        (ac-fuzzy-complete)
+        (setq ac-auto-start t)
+        (setq ac-ignore-case 'smart)
+        (setq-default
+         ac-sources '(
+                      ac-source-words-in-all-buffer
+                      ac-source-words-in-buffer
+                      ac-source-files-in-current-dir
+                      )
+         )
+        ))
   #+END_SRC
 
 * Company
