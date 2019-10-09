@@ -4613,6 +4613,17 @@ Select from xref candidates with ivy
                     evil-window-right
                     evil-window-up
                     evil-window-down)))
+
+    (setq golden-ratio-exclude-buffer-names '("*Org Select*")
+          golden-ratio-exclude-modes '(messages-buffer-mode
+                                       fundamental-mode
+                                       ediff-mode
+                                       calendar-mode
+                                       wget-mode
+                                       calc-mode
+                                       calc-trail-mode
+                                       )
+          golden-ratio-recenter t)
     )
 #+END_SRC
 
