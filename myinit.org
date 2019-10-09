@@ -1163,7 +1163,9 @@
     (use-package expand-region
       :ensure t
       :config
-      (global-set-key (kbd "C-=") 'er/expand-region))
+      (global-set-key (kbd "C-=") 'er/expand-region)
+      (global-set-key (kbd "C-+") 'er/contract-region)
+      )
 
 
     (defhydra my/hydra-expand (:pre (er/mark-word)
