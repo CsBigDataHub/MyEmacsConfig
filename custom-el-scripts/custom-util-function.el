@@ -1882,6 +1882,19 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
           (replace-match "" nil nil))
         (message (format "%d ^M removed from buffer." remove-count))))))
 
+(defun flush-kill-lines (regex)
+  "Flush lines matching REGEX and append to kill ring.  Restrict to \
+region if active. http://xenodium.com/fishing-with-emacs/"
+  (interactive "sFlush kill regex: ")
+  (save-excursion
+    (save-restriction
+      (when (use-region-p)
+        (narrow-to-region (point) (mark))
+        (goto-char 0))
+      (while (search-forward-regexp regex nil t)
+        (move-beginning-of-line nil)
+        (kill-whole-line)))))
+
 (defun markdown-to-html ()
   "Compiles the current file to HTML using Pandoc."
   (interactive)

@@ -163,3 +163,16 @@ M-x rg-project
 M-x wgrep-change-to-wgrep-mode
 
 #+END_SRC
+
+* Remove empty lines from buffer
+
+http://xenodium.com/flushing-empty-lines-in-emacs/
+
+#+BEGIN_SRC
+
+M-x flush-lines RET ^$ RET
+
+#+END_SRC
+* Some links
+[[https://protesilaos.com/dotemacs/][protesilaos DOTMACS]]
+[[http://xenodium.com/][Álvaro Ramírez website]]

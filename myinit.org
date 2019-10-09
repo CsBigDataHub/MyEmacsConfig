@@ -1566,6 +1566,21 @@
      (setq dired-use-ls-dired t
            insert-directory-program "/usr/local/bin/gls"))
   (setq dired-listing-switches "-aBhl --group-directories-first")
+
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+
+  (use-package diredfl
+    :ensure t
+    :config
+    (add-hook 'dired-mode-hook 'diredfl-mode))
+
+  (use-package dired-git-info
+    ;;:quelpa (dired-git-info :fetcher github :repo "clemera/dired-git-info")
+    :straight (dired-git-info :type git :host github :repo "clemera/dired-git-info")
+    ;;:ensure t
+    :bind (:map dired-mode-map
+                (")" . dired-git-info-mode)))
+
   (use-package dired-narrow
     :ensure t
     :config
@@ -1739,6 +1754,13 @@
       (other-window 1)))
 
   (define-key dired-mode-map "Y" 'ora-dired-rsync)
+
+  ;;http://xenodium.com/drill-down-emacs-dired-with-dired-subtree/
+  (use-package dired-subtree :ensure t
+               :after dired
+               :config
+               (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
+               (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 #+END_SRC
 
 * Projectile
@@ -2002,6 +2024,20 @@
   (use-package gist :ensure t)
 
   (use-package browse-at-remote :ensure t)
+
+  (defun my/git-commit-search-message-history ()
+    "Search and insert commit message from history.
+     http://xenodium.com/m-r-history-search-in-git-commit-mode/"
+    (interactive)
+    (insert (completing-read "History: "
+                             ;; Remove unnecessary newlines from beginning and end.
+                             (mapcar (lambda (text)
+                                       (string-trim text))
+                                     (ring-elements log-edit-comment-ring)))))
+
+  (bind-key "M-r" #'my/git-commit-search-message-history git-commit-mode-map)
+  (add-to-list 'savehist-additional-variables log-edit-comment-ring)
+  (savehist-mode +1)
 #+END_SRC
 
 * Better Shell
@@ -4709,4 +4745,23 @@ Select from xref candidates with ivy
     :config
     (setq project-abbrev-config-file "project-abbrev.config")
     )
+#+END_SRC
+
+* Highlight symbol
+
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight-symbol
+    :ensure t
+    :bind
+    (("M-g h" . highlight-symbol)
+     ("M-p" . highlight-symbol-prev)
+     ("M-n" . highlight-symbol-next))
+    :config
+    (set-face-attribute 'highlight-symbol-face nil
+                        :background "default"
+                        :foreground "#FA009A")
+    (setq highlight-symbol-idle-delay 0)
+    (setq highlight-symbol-on-navigation-p t)
+    (add-hook 'prog-mode-hook #'highlight-symbol-mode)
+    (add-hook 'prog-mode-hook #'highlight-symbol-nav-mode))
 #+END_SRC
