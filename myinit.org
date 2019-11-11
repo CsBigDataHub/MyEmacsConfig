@@ -1595,8 +1595,8 @@
     :ensure t
     :after dired
     :config
-    (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
-    (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
+    (bind-key "t" #'dired-subtree-toggle dired-mode-map)
+    (bind-key "T" #'dired-subtree-cycle dired-mode-map))
 
 
   (use-package peep-dired
@@ -2459,6 +2459,9 @@
   ;;  :after lsp
   ;;  :config
   ;;  (add-hook 'yaml-mode-hook #'lsp))
+  (use-package lsp-mode
+    :ensure t)
+
 
   (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
 
@@ -4777,4 +4780,11 @@ Select from xref candidates with ivy
     (setq highlight-symbol-on-navigation-p t)
     (add-hook 'prog-mode-hook #'highlight-symbol-mode)
     (add-hook 'prog-mode-hook #'highlight-symbol-nav-mode))
+#+END_SRC
+
+* Downplay Mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package downplay-mode
+    :ensure t)
 #+END_SRC
