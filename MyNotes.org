@@ -176,3 +176,35 @@ M-x flush-lines RET ^$ RET
 * Some links
 [[https://protesilaos.com/dotemacs/][protesilaos DOTMACS]]
 [[http://xenodium.com/][Álvaro Ramírez website]]
+
+* Speeding up your Emacs start up time
+**** [[https://medium.com/@holzman.simon/emacs-on-macos-catalina-10-15-in-2019-79ff713c1ccc][Speedup emacs]]
+
+#+BEGIN_SRC bash
+
+#!/bin/bash
+# Note: X windows are referred as frames, since for emacs a window is a split of a frame. This script is called em.
+# The help part.
+# If I type in help, or -h... I get something at least.
+if [ “$1” == “help” ] || [ “$1” == “ — help” ] || [ “$1” == “-h” ]; then
+ echo “A dumb script to deal with Emacs Client Frame”
+ echo “Open a file in the existing frame or create a frame if none”
+ echo “If multiple frames are open, the file will be opened in the last focused frame”
+ echo “”
+ echo “usage: em <name of file> [w]”
+ echo “ — \”w\” forces the creation of a frame even if there is already one”
+exit
+fi
+# Now the meat part.
+# We use the command emacsclient. Get the state of the emacsclient, ‘nil’ if no frame is opened and ‘t’ if a is frame is opened
+state=”$(emacsclient -qn -e “(if (> (length (frame-list)) 1) ‘t)”)”
+# If the server is off OR if there is no frame already opened OR if we explicitly ask for a frame using the suffix “w”
+if [ “$state” == “” ] || [ “$state” == “nil” ] || [ “$2” == “w” ] ; then
+ # Create a frame and open the file within it
+ emacsclient -a ‘’ -cqn $1
+else
+ # Open the file in the existing frame
+ emacsclient -qn $1
+fi
+
+#+END_SRC

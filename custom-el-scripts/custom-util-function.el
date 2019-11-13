@@ -12,6 +12,18 @@
     (kill-this-buffer)))
 
 
+;; Diff last two kills
+
+(defun diff-last-two-kills ()
+  "Write the last two kills to temporary files and diff them."
+  (interactive)
+  (let ((old "/tmp/old-kill") (new "/tmp/new-kill"))
+    (with-temp-file new
+      (insert (current-kill 0 t)))
+    (with-temp-file old
+      (insert (current-kill 1 t)))
+    (diff old new "-u" t)))
+
 ;;----------------------------------------------------------------------------
 ;;https://oremacs.com/2014/12/23/upcase-word-you-silly/
 ;;----------------------------------------------------------------------------

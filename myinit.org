@@ -173,7 +173,17 @@
     (setq search-whitespace-regexp ".*?")
 
     ;;Persistent history
-    (savehist-mode)
+    ;; commented due to exit errors
+    ;;(savehist-mode)
+    (setq savehist-file "~/.emacs.d/savehist")
+    (savehist-mode 1)
+    (setq history-length t)
+    (setq history-delete-duplicates t)
+    (setq savehist-save-minibuffer-history 1)
+    (setq savehist-additional-variables
+          '(kill-ring
+            search-ring
+            regexp-search-ring))
 
     ;; Added this to build pdf tools
     (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
@@ -208,6 +218,9 @@
 
     ;;saves the buffers whenever emacs loses the window focus.
     (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
+
+    (setq desktop-path '("~/.emacs.d/desktop-mode-cache/"))
+    (desktop-save-mode 1)
   #+END_SRC
 
 * Theme
@@ -2038,8 +2051,8 @@
                                      (ring-elements log-edit-comment-ring)))))
 
   (bind-key "M-r" #'my/git-commit-search-message-history git-commit-mode-map)
-  (add-to-list 'savehist-additional-variables log-edit-comment-ring)
-  (savehist-mode +1)
+  ;;(add-to-list 'savehist-additional-variables log-edit-comment-ring)
+  ;;(savehist-mode +1)
 #+END_SRC
 
 * Better Shell
@@ -4787,4 +4800,12 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   (use-package downplay-mode
     :ensure t)
+#+END_SRC
+
+* Broadcast-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package broadcast
+    :ensure t
+    :commands broadcast-mode)
 #+END_SRC
