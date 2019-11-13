@@ -4809,3 +4809,12 @@ Select from xref candidates with ivy
     :ensure t
     :commands broadcast-mode)
 #+END_SRC
+
+* Lsp-Ivy
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ivy
+    :ensure t
+    :bind (("C-?" . lsp-ivy-workspace-symbol))
+    :config)
+#+END_SRC
