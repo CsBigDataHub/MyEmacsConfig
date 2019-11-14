@@ -221,6 +221,9 @@
 
     (setq desktop-path '("~/.emacs.d/desktop-mode-cache/"))
     (desktop-save-mode 1)
+
+    ;;cursor color to white
+    (set-cursor-color "#ffffff")
   #+END_SRC
 
 * Theme
