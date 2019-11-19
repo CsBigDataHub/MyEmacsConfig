@@ -176,6 +176,7 @@ M-x flush-lines RET ^$ RET
 * Some links
 [[https://protesilaos.com/dotemacs/][protesilaos DOTMACS]]
 [[http://xenodium.com/][Álvaro Ramírez website]]
+[[https://thomashartmann.dev/][tech blog by Thomas Hartmann]]
 
 * Speeding up your Emacs start up time
 **** [[https://medium.com/@holzman.simon/emacs-on-macos-catalina-10-15-in-2019-79ff713c1ccc][Speedup emacs]]
