@@ -11,6 +11,18 @@
     (delete-file (buffer-file-name))
     (kill-this-buffer)))
 
+;; Diff last two kills
+
+(defun diff-last-two-kills ()
+  "Write the last two kills to temporary files and diff them."
+  (interactive)
+  (let ((old "/tmp/old-kill") (new "/tmp/new-kill"))
+    (with-temp-file new
+      (insert (current-kill 0 t)))
+    (with-temp-file old
+      (insert (current-kill 1 t)))
+    (diff old new "-u" t)))
+
 ;;----------------------------------------------------------------------------
 ;;https://oremacs.com/2014/12/23/upcase-word-you-silly/
 ;;----------------------------------------------------------------------------
@@ -1862,6 +1874,36 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
   (kill-buffer (current-buffer)))
 
 (global-set-key (kbd "C-x k") 'my/kill-this-buffer)
+
+(defun my/dos2unix ()
+  "Not exactly but it's easier to remember"
+  (interactive)
+  (set-buffer-file-coding-system 'unix 't) )
+
+(defun my/remove-control-M ()
+  "Remove ^M at end of line in the whole buffer."
+  (interactive)
+  (save-match-data
+    (save-excursion
+      (let ((remove-count 0))
+        (goto-char (point-min))
+        (while (re-search-forward (concat (char-to-string 13) "$") (point-max) t)
+          (setq remove-count (+ remove-count 1))
+          (replace-match "" nil nil))
+        (message (format "%d ^M removed from buffer." remove-count))))))
+
+(defun flush-kill-lines (regex)
+  "Flush lines matching REGEX and append to kill ring.  Restrict to \
+region if active. http://xenodium.com/fishing-with-emacs/"
+  (interactive "sFlush kill regex: ")
+  (save-excursion
+    (save-restriction
+      (when (use-region-p)
+        (narrow-to-region (point) (mark))
+        (goto-char 0))
+      (while (search-forward-regexp regex nil t)
+        (move-beginning-of-line nil)
+        (kill-whole-line)))))
 
 (defun markdown-to-html ()
   "Compiles the current file to HTML using Pandoc."

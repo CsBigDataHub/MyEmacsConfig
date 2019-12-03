@@ -1,3 +1,5 @@
+#+TITLE: My Emacs Mac set-up
+#+AUTHOR: Chetan Koneru
 #+STARTUP: overview
 #+PROPERTY: header-args :comments yes :results silent
 
@@ -6,6 +8,7 @@
   #+BEGIN_SRC emacs-lisp
 
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+(setq load-prefer-newer t)
 
   #+END_SRC
 
@@ -140,7 +143,16 @@
     (setq search-whitespace-regexp ".*?")
 
     ;;Persistent history
-    (savehist-mode)
+    ;;(savehist-mode)
+    (setq savehist-file "~/.emacs.d/savehist")
+    (savehist-mode 1)
+    (setq history-length t)
+    (setq history-delete-duplicates t)
+    (setq savehist-save-minibuffer-history 1)
+    (setq savehist-additional-variables
+          '(kill-ring
+            search-ring
+            regexp-search-ring))
 
     ;; Added this to build pdf tools
     ;;(setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
@@ -175,6 +187,9 @@
 
     ;;saves the buffers whenever emacs loses the window focus.
     (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
+
+    (setq desktop-path '("~/.emacs.d/desktop-mode-cache/"))
+    (desktop-save-mode 1)
   #+END_SRC
 
 * Theme
@@ -362,6 +377,8 @@
     :ensure t
     :bind
     ("M-SPC" . major-mode-hydra))
+
+  (require 'major-mode-hydra)
 #+END_SRC
 
 * All the Icons
@@ -482,6 +499,7 @@
     (evil-set-initial-state 'ibuffer-mode 'emacs)
     (evil-set-initial-state 'bookmark-bmenu-mode 'emacs)
     (evil-set-initial-state 'dired-mode 'emacs)
+    (evil-set-initial-state 'wgrep-change-to-wgrep-mode 'emacs)
   #+END_SRC
 
 * Org Bullets
@@ -533,6 +551,27 @@
 
 * Ace Window
 
+*** Swap and delete window
+    You can swap windows by calling `ace-window` with a prefix argument <kbd>C-u</kbd>.
+    You can delete the selected window by calling `ace-window` with a double prefix argument, i.e. <kbd>C-u C-u</kbd>.
+*** Change the action midway
+    You can also start by calling `ace-window` and then decide to switch the action to `delete` or `swap` etc.  By default the bindings are:
+
+    | kbd | command                                                |
+    |-----+--------------------------------------------------------|
+    | x   | delete window                                          |
+    | m   | swap windows                                           |
+    | M   | move window                                            |
+    | c   | copy window                                            |
+    | j   | select buffer                                          |
+    | n   | select the previous window                             |
+    | u   | select buffer in the other window                      |
+    | c   | split window fairly, either vertically or horizontally |
+    | v   | split window vertically                                |
+    | b   | split window horizontally                              |
+    | o   | maximize current window                                |
+    | ?   | show these command bindings                            |
+
   #+BEGIN_SRC emacs-lisp
 
 (use-package ace-window
@@ -564,12 +603,21 @@
       :ensure t
       :init (smex-initialize))
 
+    (use-package historian
+      :ensure t)
+    (use-package ivy-historian
+      :ensure t)
+
     (use-package ivy
       :ensure t
+      :init
+      (ivy-mode +1)
+      (historian-mode +1)
       :diminish (ivy-mode)
       :bind (("C-x b" . ivy-switch-buffer))
       :config
-      (ivy-mode 1)
+      ;;(ivy-mode 1)
+      (ivy-historian-mode +1)
       (setq ivy-use-virtual-buffers t)
       (setq ivy-display-style 'fancy))
 
@@ -599,6 +647,7 @@
 
     (use-package swiper
       :ensure t
+      :commands (ivy-dispatching-done)
       ;;This also can be used to bind keys
       ;;:bind (("C-s" . swiper)
       ;;	 ("C-r" . swiper)
@@ -611,7 +660,7 @@
         (setq ivy-use-virtual-buffers t)
         (global-set-key "\C-s" 'swiper)
         (global-set-key (kbd "C-c C-r") 'ivy-resume)
-        (global-set-key (kbd "<f6>") 'ivy-resume)
+        ;; (global-set-key (kbd "<f6>") 'ivy-resume)
         (global-set-key (kbd "M-x") 'counsel-M-x)
         (global-set-key (kbd "C-x C-f") 'counsel-find-file)
         (global-set-key (kbd "<f1> f") 'counsel-describe-function)
@@ -626,6 +675,11 @@
         (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
         (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
         ))
+
+    ;; Define actions in the minibuffer keymap
+    ;; Mimicking the behavior of "C-c i" in helm-mode, but with mode flexibility
+    (define-key ivy-minibuffer-map (kbd "C-c i") 'ivy-dispatching-done)
+
     (use-package prescient
       :ensure t
       :config (prescient-persist-mode))
@@ -634,6 +688,9 @@
       :ensure t
       :after ivy
       :init (ivy-prescient-mode))
+
+    (use-package ivy-yasnippet
+      :ensure t)
   #+END_SRC
 
 * Avy
@@ -657,13 +714,23 @@
 
   #+BEGIN_SRC emacs-lisp
 
-  (use-package auto-complete
-    :ensure t
-    :init
-    (progn
-      (ac-config-default)
-      (global-auto-complete-mode t)
-      ))
+    (use-package auto-complete
+      :ensure t
+      :init
+      (progn
+        (ac-config-default)
+        (global-auto-complete-mode t)
+        (ac-fuzzy-complete)
+        (setq ac-auto-start t)
+        (setq ac-ignore-case 'smart)
+        (setq-default
+         ac-sources '(
+                      ac-source-words-in-all-buffer
+                      ac-source-words-in-buffer
+                      ac-source-files-in-current-dir
+                      )
+         )
+        ))
   #+END_SRC
 
 * Company
@@ -1027,7 +1094,10 @@
     (use-package expand-region
       :ensure t
       :config
-      (global-set-key (kbd "C-=") 'er/expand-region))
+      (global-set-key (kbd "C-=") 'er/expand-region)
+      (global-set-key (kbd "C-=") 'er/expand-region)
+      (global-set-key (kbd "C-+") 'er/contract-region)
+      )
 
 
     (defhydra my/hydra-expand (:pre (er/mark-word)
@@ -1216,7 +1286,8 @@
 
     (setq display-time-24hr-format t)
     (display-time-mode +1)
-
+    ;; to get past error - https://github.com/seagle0128/doom-modeline/issues/274
+    (fset 'battery-update #'ignore)
     (use-package doom-modeline
       :ensure t
       :config
@@ -1276,6 +1347,9 @@
     ;; Hooks that run before/after the modeline version string is updated
     (setq doom-modeline-before-update-env-hook nil)
     (setq doom-modeline-after-update-env-hook nil)
+
+    ;; to get past error - https://github.com/seagle0128/doom-modeline/issues/274
+    (fset 'battery-update #'ignore)
 
     (doom-modeline-def-modeline 'main
       '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
@@ -1426,6 +1500,22 @@
      (setq dired-use-ls-dired t
            insert-directory-program "/usr/local/bin/gls"))
   (setq dired-listing-switches "-aBhl --group-directories-first")
+
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+
+  (use-package diredfl
+    :ensure t
+    :config
+    (add-hook 'dired-mode-hook 'diredfl-mode))
+
+  (use-package dired-git-info
+    ;;:quelpa (dired-git-info :fetcher github :repo "clemera/dired-git-info")
+    :straight (dired-git-info :type git :host github :repo "clemera/dired-git-info")
+    ;;:ensure t
+    :bind (:map dired-mode-map
+                (")" . dired-git-info-mode)))
+
+
   (use-package dired-narrow
     :ensure t
     :config
@@ -1438,8 +1528,8 @@
     :ensure t
     :after dired
     :config
-    (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
-    (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
+    (bind-key "t" #'dired-subtree-toggle dired-mode-map)
+    (bind-key "T" #'dired-subtree-cycle dired-mode-map))
 
 
   (use-package peep-dired
@@ -1567,6 +1657,45 @@
       (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
       (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
       ))
+
+  ;;;###autoload - http://oremacs.com/2016/02/24/dired-rsync/
+  (defun ora-dired-rsync (dest)
+    (interactive
+     (list
+      (expand-file-name
+       (read-file-name
+        "Rsync to:"
+        (dired-dwim-target-directory)))))
+    ;; store all selected files into "files" list
+    (let ((files (dired-get-marked-files
+                  nil current-prefix-arg))
+          ;; the rsync command
+          (tmtxt/rsync-command
+           "rsync -arvz --progress "))
+      ;; add all selected file names as arguments
+      ;; to the rsync command
+      (dolist (file files)
+        (setq tmtxt/rsync-command
+              (concat tmtxt/rsync-command
+                      (shell-quote-argument file)
+                      " ")))
+      ;; append the destination
+      (setq tmtxt/rsync-command
+            (concat tmtxt/rsync-command
+                    (shell-quote-argument dest)))
+      ;; run the async shell command
+      (async-shell-command tmtxt/rsync-command "*rsync*")
+      ;; finally, switch to that window
+      (other-window 1)))
+
+  (define-key dired-mode-map "Y" 'ora-dired-rsync)
+
+  ;;http://xenodium.com/drill-down-emacs-dired-with-dired-subtree/
+  (use-package dired-subtree :ensure t
+               :after dired
+               :config
+               (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
+               (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 #+END_SRC
 
 * Projectile
@@ -1678,13 +1807,13 @@
   (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
                                         :hint nil)
     "
-    Git gutter:
-      _j_: next hunk        _s_tage hunk     _q_uit
-      _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
-      ^ ^                   _p_opup hunk
-      _h_: first hunk
-      _l_: last hunk        set start _R_evision
-    "
+      Git gutter:
+        _j_: next hunk        _s_tage hunk     _q_uit
+        _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
+        ^ ^                   _p_opup hunk
+        _h_: first hunk
+        _l_: last hunk        set start _R_evision
+      "
     ("j" git-gutter:next-hunk)
     ("k" git-gutter:previous-hunk)
     ("h" (progn (goto-char (point-min))
@@ -1704,14 +1833,19 @@
      :color blue))
 
   (use-package gitconfig-mode
+    :ensure t
     :mode "\\.gitconfig\\'"
     :mode "\\.git/config\\'"
     :mode "\\.gitmodules\\'")
 
   (use-package gitignore-mode
+    :ensure t
     :mode "\\.gitignore\\'"
     :mode "\\.dockerignore\\'"
     :mode "\\..elpaignore\\'")
+
+  (use-package gitignore-templates
+    :ensure t)
 
   (use-package diffview
     :commands (diffview-region diffview-current)
@@ -1730,14 +1864,14 @@
       (defhydra smerge-hydra
         (:color pink :hint nil :post (smerge-auto-leave))
         "
-  ^Move^       ^Keep^               ^Diff^                 ^Other^
-  ^^-----------^^-------------------^^---------------------^^-------
-  _n_ext       _b_ase               _<_: upper/base        _C_ombine
-  _p_rev       _u_pper              _=_: upper/lower       _r_esolve
-  ^^           _l_ower              _>_: base/lower        _k_ill current
-  ^^           _a_ll                _R_efine
-  ^^           _RET_: current       _E_diff
-  "
+    ^Move^       ^Keep^               ^Diff^                 ^Other^
+    ^^-----------^^-------------------^^---------------------^^-------
+    _n_ext       _b_ase               _<_: upper/base        _C_ombine
+    _p_rev       _u_pper              _=_: upper/lower       _r_esolve
+    ^^           _l_ower              _>_: base/lower        _k_ill current
+    ^^           _a_ll                _R_efine
+    ^^           _RET_: current       _E_diff
+    "
         ("n" smerge-next)
         ("p" smerge-prev)
         ("b" smerge-keep-base)
@@ -1815,12 +1949,26 @@
   (use-package magithub
     :ensure t
     :after (:all magit ghub ghub+)
-    :config (magithub-feature-autoinject t))
+    :config (magithub-feature-autoinject t)
+    (setq magithub-clone-default-directory "~/github"))
 
   (use-package gist :ensure t)
 
   (use-package browse-at-remote :ensure t)
 
+  (defun my/git-commit-search-message-history ()
+    "Search and insert commit message from history.
+       http://xenodium.com/m-r-history-search-in-git-commit-mode/"
+    (interactive)
+    (insert (completing-read "History: "
+                             ;; Remove unnecessary newlines from beginning and end.
+                             (mapcar (lambda (text)
+                                       (string-trim text))
+                                     (ring-elements log-edit-comment-ring)))))
+
+  (bind-key "M-r" #'my/git-commit-search-message-history git-commit-mode-map)
+  ;;(add-to-list 'savehist-additional-variables log-edit-comment-ring)
+  ;;(savehist-mode +1)
 #+END_SRC
 
 * Better Shell
@@ -1841,10 +1989,10 @@
            ("M-g x" . dumb-jump-go-prefer-external)
            ("M-g z" . dumb-jump-go-prefer-external-other-window))
     :config
-    ;; (setq dumb-jump-selector 'ivy) ;; (setq dumb-jump-selector 'helm)
+    (setq dumb-jump-selector 'ivy) ;; (setq dumb-jump-selector 'helm)
     :init
     (dumb-jump-mode)
-    :ensure
+    :ensure t
     )
 #+END_SRC
 
@@ -2228,14 +2376,22 @@
       (eval-after-load 'flycheck
         '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup))))
 
-  (use-package lsp-yaml
-    :straight (lsp-yaml :type git :host github :repo "iquiw/lsp-yaml")
-    :after lsp
-    :config
-    (add-hook 'yaml-mode-hook #'lsp))
+  ;;(use-package lsp-yaml
+  ;;  :straight (lsp-yaml :type git :host github :repo "iquiw/lsp-yaml")
+  ;;  :after lsp
+  ;;  :config
+  ;;  (add-hook 'yaml-mode-hook #'lsp))
+
+  (use-package lsp-mode
+    :ensure t)
 
   (load-if-exists "~/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
 
+  (use-package yaml-imenu
+    :ensure t
+    :init
+    (yaml-imenu-enable)
+    )
 #+END_SRC
 
 * Docker-Mode
@@ -2369,6 +2525,20 @@
   (evil-set-initial-state 'eshell-mode 'emacs)
 
   (add-hook 'eshell-mode-hook (lambda () (linum-relative-mode -1)))
+
+  (use-package eshell-toggle
+    :custom
+    (eshell-toggle-size-fraction 3)
+    (eshell-toggle-use-projectile-root t)
+    (eshell-toggle-run-command nil)
+    (eshell-toggle-init-function #'eshell-toggle-init-eshell)
+    :quelpa
+    (eshell-toggle :repo "4DA/eshell-toggle" :fetcher github :version original)
+    :bind
+    ("H-`" . eshell-toggle))
+
+  (use-package eshell-up
+    :ensure t)
 #+END_SRC
 
 * Groovy
@@ -2603,7 +2773,7 @@
   (dashboard-mode page-break-lines-mode)
   :custom
   (dashboard-center-content t)
-  (dashboard-startup-banner 2)
+  (dashboard-startup-banner 'logo)
   (dashboard-items '((recents . 15)
                      (projects . 5)
                      (bookmarks . 5)))
@@ -3203,12 +3373,21 @@
 * Gradle
 
 #+BEGIN_SRC emacs-lisp
-(use-package gradle-mode
-  :ensure t
-  :config
-  (setq gradle-gradlew-executable "./gradlew"
-        gradle-use-gradlew t)
-  (gradle-mode))
+  (use-package gradle-mode
+    :ensure t
+    :config
+    (setq gradle-gradlew-executable "./gradlew"
+          gradle-use-gradlew t)
+    (gradle-mode))
+
+  (use-package flycheck-gradle
+    :ensure t
+    :commands (flycheck-gradle-setup)
+    :init
+    (mapc
+     (lambda (x)
+       (add-hook x #'flycheck-gradle-setup))
+     '(java-mode-hook kotlin-mode-hook)))
 #+END_SRC
 
 * Winnow
@@ -3560,12 +3739,18 @@
 Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
-(use-package ivy-xref
-  :ensure t
-  :after (ivy xref)
-  :config
-  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  (setq xref-show-definitions-function #'ivy-xref-show-defs))
+  ;;(use-package ivy-xref
+  ;;  :ensure t
+  ;;  :after (ivy xref)
+  ;;  :config
+  ;;  (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  ;;  (setq xref-show-definitions-function #'ivy-xref-show-defs))
+
+  (use-package ivy-xref
+    :ensure t
+    :init (if (< emacs-major-version 27)
+              (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
+            (setq xref-show-definitions-function #'ivy-xref-show-defs)))
 #+END_SRC
 
 * Dicover-My-Mojor
@@ -3673,6 +3858,13 @@ Select from xref candidates with ivy
     :ensure t
     :config
     (super-save-mode +1))
+
+  (setq super-save-auto-save-when-idle t)
+
+  ;; save on find-file
+  (add-to-list 'super-save-hook-triggers 'find-file-hook)
+
+  (setq super-save-remote-files nil)
 #+END_SRC
 
 * BeginEnd
@@ -3705,11 +3897,84 @@ Select from xref candidates with ivy
   (use-package centaur-tabs
     :ensure t
     :demand
+    ;;:load-path "~/.emacs.d/other/centaur-tabs"
     :config
+    (setq centaur-tabs-style "wave"
+          centaur-tabs-height 32
+          centaur-tabs-set-icons t
+          centaur-tabs-set-modified-marker t
+          centaur-tabs-set-bar 'over)
+    (centaur-tabs-headline-match)
+    ;; (setq centaur-tabs-gray-out-icons 'buffer)
+    ;; (centaur-tabs-enable-buffer-reordering)
+    ;; (setq centaur-tabs-adjust-buffer-order t)
     (centaur-tabs-mode t)
+    (setq uniquify-separator "/")
+    (setq uniquify-buffer-name-style 'forward)
+    (defun centaur-tabs-buffer-groups ()
+      "`centaur-tabs-buffer-groups' control buffers' group rules.
+
+   Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+   All buffer name start with * will group to \"Emacs\".
+   Other buffer group by `centaur-tabs-get-group-name' with project name."
+      (list
+       (cond
+        ((or (string-equal "*" (substring (buffer-name) 0 1))
+             (memq major-mode '(magit-process-mode
+                                magit-status-mode
+                                magit-diff-mode
+                                magit-log-mode
+                                magit-file-mode
+                                magit-blob-mode
+                                magit-blame-mode
+                                )))
+         "Emacs")
+        ((derived-mode-p 'prog-mode)
+         "Editing")
+        ((derived-mode-p 'dired-mode)
+         "Dired")
+        ((memq major-mode '(helpful-mode
+                            help-mode))
+         "Help")
+        ((memq major-mode '(org-mode
+                            org-agenda-clockreport-mode
+                            org-src-mode
+                            org-agenda-mode
+                            org-beamer-mode
+                            org-indent-mode
+                            org-bullets-mode
+                            org-cdlatex-mode
+                            org-agenda-log-mode
+                            diary-mode))
+         "OrgMode")
+        (t
+         (centaur-tabs-get-group-name (current-buffer))))))
+    :hook
+    (dashboard-mode . centaur-tabs-local-mode)
+    (term-mode . centaur-tabs-local-mode)
+    (calendar-mode . centaur-tabs-local-mode)
+    (org-agenda-mode . centaur-tabs-local-mode)
+    (helpful-mode . centaur-tabs-local-mode)
     :bind
-    ("H-t t <left>" . centaur-tabs-backward)
-    ("H-t t <right>" . centaur-tabs-forward))
+    ("H-<left>" . centaur-tabs-backward)
+    ("H-<right>" . centaur-tabs-forward)
+    ("H-<up>" . centaur-tabs-forward-group)
+    ("H-<down>" . centaur-tabs-backward-group)
+    ("H-1" . centaur-tabs-select-visible-tab)
+    ("H-2" . centaur-tabs-select-visible-tab)
+    ("H-3" . centaur-tabs-select-visible-tab)
+    ("H-4" . centaur-tabs-select-visible-tab)
+    ("H-5" . centaur-tabs-select-visible-tab)
+    ("H-6" . centaur-tabs-select-visible-tab)
+    ("H-7" . centaur-tabs-select-visible-tab)
+    ("H-8" . centaur-tabs-select-visible-tab)
+    ("H-9" . centaur-tabs-select-visible-tab)
+    ("H-t t t" . centaur-tabs-counsel-switch-group)
+    ("H-t t p" . centaur-tabs-group-by-projectile-project)
+    ("H-t t g" . centaur-tabs-group-buffer-groups)
+    (:map evil-normal-state-map
+          ("g t" . centaur-tabs-forward)
+          ("g T" . centaur-tabs-backward)))
 #+END_SRC
 
 * Recentf
@@ -3814,6 +4079,10 @@ Select from xref candidates with ivy
     :hook ((after-init . point-history-mode))
     :bind (("C-c C-/" . point-history-show))
     :init (gsetq point-history-ignore-buffer "^ \\*Minibuf\\|^ \\*point-history-show*"))
+
+  (use-package ivy-point-history
+    :straight (ivy-point-history :type git :host github :repo "SuzumiyaAoba/ivy-point-history")
+    :bind ("C-c C-/" . ivy-point-history))
 #+END_SRC
 
 * Undo Propose
@@ -3944,4 +4213,418 @@ Select from xref candidates with ivy
     :demand t
     :bind ("H-<" . goto-last-point)
     :config (goto-last-point-mode))
+#+END_SRC
+
+* persistent-scrach
+
+#+BEGIN_SRC emacs-lisp
+  ;; persistent-scratch
+  (use-package persistent-scratch
+    :ensure t
+    :config
+    (persistent-scratch-setup-default))
+#+END_SRC
+
+* Empty lines with Tulde
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package  vi-tilde-fringe
+  ;;  :ensure t
+  ;;  :init (add-hook 'prog-mode-hook 'vi-tilde-fringe-mode)
+  ;;  :config (global-vi-tilde-fringe-mode)
+  ;;  )
+
+  (setq-default indicate-empty-lines t)
+#+END_SRC
+* Cheat
+
+#+BEGIN_SRC emacs-lisp
+  (quelpa '(cheat :fetcher git :url "https://github.com/pbellon/cheat.git"))
+  (require 'cheat)
+  (cheat/init)
+#+END_SRC
+
+* terminal in emacs setting
+
+#+BEGIN_SRC emacs-lisp
+
+  ;;(add-to-list 'load-path "~/.emacs.d/multi-libvterm")
+  ;;(require 'multi-libvterm)
+
+  (add-to-list 'load-path "~/.emacs.d/emacs-libvterm")
+  (require 'vterm)
+
+  (add-hook 'vterm-mode-hook
+              (lambda ()
+                (setq-local evil-insert-state-cursor 'bar)
+                (evil-insert-state)))
+    ;;(define-key vterm-mode-map [return]                      #'vterm-send-return)
+
+    (setq vterm-keymap-exceptions nil)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-f")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-a")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-v")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-b")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-w")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-u")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-n")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-m")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-p")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-j")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-k")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-r")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-t")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-g")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-c")      #'vterm--self-insert)
+    (evil-define-key 'insert vterm-mode-map (kbd "C-SPC")    #'vterm--self-insert)
+    (evil-define-key 'normal vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
+    ;;(evil-define-key 'normal vterm-mode-map (kbd ",c")       #'multi-libvterm)
+    ;;(evil-define-key 'normal vterm-mode-map (kbd ",n")       #'multi-libvterm-next)
+    ;;(evil-define-key 'normal vterm-mode-map (kbd ",p")       #'multi-libvterm-prev)
+    (evil-define-key 'normal vterm-mode-map (kbd "i")        #'evil-insert-resume)
+    (evil-define-key 'normal vterm-mode-map (kbd "o")        #'evil-insert-resume)
+    (evil-define-key 'normal vterm-mode-map (kbd "<return>") #'evil-insert-resume)
+
+#+END_SRC
+
+* Sane term
+
+#+BEGIN_SRC emacs-lisp
+  ;;----------------------------------------------------------------------------
+  ;; Check filename before call setq
+  ;;----------------------------------------------------------------------------
+  (defmacro setq-when-file-existed (sym filename)
+    "Set SYM when FILENAME is existed."
+    (declare (indent 1) (debug t))
+    `(when (file-exists-p ,filename)
+       (setq ,sym (expand-file-name ,filename))))
+
+  (use-package sane-term
+    :commands sane-term
+    :bind (("H-t s" . sane-term))
+    :config
+    ;;; term use zsh
+    (setq-when-file-existed sane-term-shell-command (executable-find "/usr/local/bin/zsh")))
+#+END_SRC
+
+* Password-Manager
+
+#+BEGIN_SRC emacs-lisp
+  (use-package password-store
+    :quelpa (password-store :fetcher github :repo "emacsmirror/password-store")
+    ;;:straight (password-store :type git :host github :repo "emacsmirror/password-store")
+    ;;:ensure t
+    :config
+    (progn
+      (setq password-store-password-length 30)))
+
+  (use-package pass
+    :ensure t
+    :commands pass
+    :init
+    (progn
+      (defun my/pass-insert-generated (entry)
+        "Same as pass-insert-generated but with my own template."
+        (interactive (list (read-string "Password entry: ")))
+        (when (or (not (seq-contains (password-store-list) entry))
+                  (yes-or-no-p "Erase existing entry with same name? "))
+          (let ((password (shell-command-to-string
+                           (format "pwgen --secure --symbols %s"
+                                   password-store-password-length))))
+            (password-store-insert
+             entry
+             (format "%s--\nusername: %s\nurl: https://%s\n"
+                     password
+                     user-mail-address
+                     entry))
+            (password-store-edit entry)
+            (pass-update-buffer)))))
+    :config
+    (progn
+      (advice-add #'pass-insert-generated :override #'my/pass-insert-generated)))
+
+ ;; (use-package auth-source
+ ;;   :init
+ ;;   (progn
+ ;;     (setq auth-source-debug t)
+ ;;     (setq auth-source-do-cache nil)))
+
+ ;; (use-package auth-source-pass
+ ;;   :ensure t
+ ;;   :demand t
+ ;;   :after auth-source
+ ;;   :init
+ ;;   (progn
+ ;;     (setq auth-sources '(password-store))))
+
+  (use-package ivy-pass
+    :ensure t
+    )
+#+END_SRC
+
+* Nyan-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package nyan-mode
+    :ensure t
+    :init (setq nyan-animate-nyancat t
+                nyan-bar-length 16
+                nyan-wavy-trail t)
+    :custom
+    (nyan-cat-face-number 4)
+    (nyan-animate-nyancat t)
+    :hook
+    (after-init . nyan-mode)
+    (doom-modeline-mode . nyan-mode))
+#+END_SRC
+
+* Copyit
+
+#+BEGIN_SRC emacs-lisp
+  (use-package copyit
+    :ensure t)
+#+END_SRC
+
+* Vdiff
+
+#+BEGIN_SRC emacs-lisp
+  (use-package vdiff
+    :ensure t
+    :commands (vdiff-files
+               vdiff-files3
+               vdiff-buffers
+               vdiff-buffers3))
+
+  (use-package vdiff-magit
+    :ensure t)
+
+  (require 'vdiff-magit)
+  (define-key magit-mode-map "4" 'vdiff-magit-dwim)
+  (define-key magit-mode-map "$" 'vdiff-magit)
+  (transient-suffix-put 'magit-dispatch "4" :description "vdiff (dwim)")
+  (transient-suffix-put 'magit-dispatch "4" :command 'vdiff-magit-dwim)
+  (transient-suffix-put 'magit-dispatch "$" :description "vdiff")
+  (transient-suffix-put 'magit-dispatch "$" :command 'vdiff-magit)
+
+  ;; This flag will default to using ediff for merges.
+  ;; (setq vdiff-magit-use-ediff-for-merges nil)
+
+  ;; Whether vdiff-magit-dwim runs show variants on hunks.  If non-nil,
+  ;; vdiff-magit-show-staged or vdiff-magit-show-unstaged are called based on what
+  ;; section the hunk is in.  Otherwise, vdiff-magit-dwim runs vdiff-magit-stage
+  ;; when point is on an uncommitted hunk.
+  ;; (setq vdiff-magit-dwim-show-on-hunks nil)
+
+  ;; Whether vdiff-magit-show-stash shows the state of the index.
+  ;; (setq vdiff-magit-show-stash-with-index t)
+
+  ;; Only use two buffers (working file and index) for vdiff-magit-stage
+  ;; (setq vdiff-magit-stage-is-2way nil)
+#+END_SRC
+
+* Golden-ratio
+
+#+BEGIN_SRC emacs-lisp
+  ;; Golden Ratio
+  (use-package golden-ratio                 ; Auto resize windows
+    :ensure t
+    :diminish golden-ratio-mode
+    :init
+    (golden-ratio-mode 1)
+    (setq golden-ratio-auto-scale t)
+    :config
+    (setq golden-ratio-extra-commands
+          (append golden-ratio-extra-commands
+                  '(evil-window-left
+                    evil-window-right
+                    evil-window-up
+                    evil-window-down)))
+
+    (setq golden-ratio-exclude-buffer-names '("*Org Select*")
+          golden-ratio-exclude-modes '(messages-buffer-mode
+                                       fundamental-mode
+                                       ediff-mode
+                                       calendar-mode
+                                       wget-mode
+                                       calc-mode
+                                       calc-trail-mode
+                                       )
+          golden-ratio-recenter t)
+    )
+#+END_SRC
+
+* reveal-in-osx-finder
+
+#+BEGIN_SRC emacs-lisp
+  (use-package reveal-in-osx-finder
+    :ensure t)
+#+END_SRC
+
+* Multiple-files editing in one buffer
+
+#+BEGIN_SRC emacs-lisp
+  (use-package multifiles
+    :ensure t
+    :bind ("C-!" . mf/mirror-region-in-multifile))
+#+END_SRC
+
+* Sort-words
+
+#+BEGIN_SRC emacs-lisp
+  (use-package sort-words
+    :ensure t)
+#+END_SRC
+
+* Smart-forward
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-forward
+    :ensure t
+    :config
+    (global-set-key (kbd "H-<up>") 'smart-up)
+    (global-set-key (kbd "H-<down>") 'smart-down)
+    (global-set-key (kbd "H-<left>") 'smart-backward)
+    (global-set-key (kbd "H-<right>") 'smart-forward)
+    )
+#+END_SRC
+
+* PacMan
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pacmacs :ensure t)
+#+END_SRC
+
+* Isolate - surround string or region with delimiters
+
+#+BEGIN_SRC emacs-lisp
+  (use-package isolate
+    :ensure t
+    )
+  (defun activate-mark-hook@set-transient-map ()
+    (set-transient-map
+     (let ((map (make-sparse-keymap)))
+       (define-key map "s" #'isolate-quick-add)
+       (define-key map "S" #'isolate-long-add)
+       (define-key map "d" #'isolate-quick-delete)
+       (define-key map "D" #'isolate-long-delete)
+       (define-key map "c" #'isolate-quick-change)
+       (define-key map "C" #'isolate-long-change)
+       map)
+     #'region-active-p))
+
+  (add-hook 'activate-mark-hook #'activate-mark-hook@set-transient-map)
+#+END_SRC
+
+* Terraform-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package terraform-mode
+    :ensure t
+    )
+#+END_SRC
+
+* Region Convert
+
+#+BEGIN_SRC emacs-lisp
+  (use-package region-convert
+    :ensure t
+    :bind
+    ("C-c C" . region-convert)
+    )
+#+END_SRC
+
+* Kotlin-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package kotlin-mode
+    :ensure t
+    )
+#+END_SRC
+
+* Auto-compile
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package auto-compile
+  ;;  :ensure t
+  ;;  :config
+  ;;  (auto-compile-on-load-mode)
+  ;;  (auto-compile-on-save-mode))
+#+END_SRC
+
+* Gherkin-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gherkin-mode
+    :ensure t)
+#+END_SRC
+
+* World-time-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package world-time-mode
+    :ensure t)
+#+END_SRC
+
+* Swap region
+
+#+BEGIN_SRC emacs-lisp
+  (use-package swap-regions
+    :ensure t)
+#+END_SRC
+
+* Project abbrev
+
+#+BEGIN_SRC emacs-lisp
+  (use-package project-abbrev
+    :ensure t
+    :bind
+    ("C-<return>" . project-abbrev-complete-word)
+    :config
+    (setq project-abbrev-config-file "project-abbrev.config")
+    )
+#+END_SRC
+
+* Highlight symbol
+
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight-symbol
+    :ensure t
+    :bind
+    (("M-g h" . highlight-symbol)
+     ("M-p" . highlight-symbol-prev)
+     ("M-n" . highlight-symbol-next))
+    :config
+    (set-face-attribute 'highlight-symbol-face nil
+                        :background "default"
+                        :foreground "#FA009A")
+    (setq highlight-symbol-idle-delay 0)
+    (setq highlight-symbol-on-navigation-p t)
+    (add-hook 'prog-mode-hook #'highlight-symbol-mode)
+    (add-hook 'prog-mode-hook #'highlight-symbol-nav-mode))
+#+END_SRC
+
+* Downplay Mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package downplay-mode
+    :ensure t)
+#+END_SRC
+
+* Broadcast-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package broadcast
+    :ensure t
+    :commands broadcast-mode)
+#+END_SRC
+
+* Lsp-Ivy
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ivy
+    :ensure t
+    :bind (("C-?" . lsp-ivy-workspace-symbol))
+    :config)
 #+END_SRC
