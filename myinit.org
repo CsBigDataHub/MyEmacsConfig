@@ -3795,6 +3795,9 @@
           shr-use-fonts nil
           shr-color-visible-distance-min 10
           shr-color-visible-luminance-min 80))
+
+  (load-if-exists "~/.emacs.d/custom-el-scripts/org-eww.el")
+  (require 'org-eww)
 #+END_SRC
 
 * Shr: Simple html renderer
@@ -4415,6 +4418,13 @@ Select from xref candidates with ivy
 * OX-Pandoc
 
 #+BEGIN_SRC emacs-lisp
+  (use-package pandoc-mode
+    :ensure t
+    :hook
+    (markdown-mode . pandoc-mode)
+    (pandoc-mode-hook . pandoc-load-default-settings)
+    )
+
   (use-package ox-pandoc
     :ensure t
     :after ox
@@ -4422,7 +4432,6 @@ Select from xref candidates with ivy
 
   (use-package toc-org
     :ensure t)
-
 #+END_SRC
 
 * GoTo-last-point
@@ -4855,7 +4864,22 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-ivy
-    :ensure t
+    :quelpa (lsp-ivy :fetcher github :repo "emacs-lsp/lsp-ivy")
+    ;;:ensure t
     :bind (("C-?" . lsp-ivy-workspace-symbol))
-    :config)
+    )
+#+END_SRC
+
+* ADOC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package adoc-mode
+    :ensure t
+    :mode "\\.adoc\\'"
+    :config
+    (add-hook 'adoc-mode-hook
+              #'(lambda ()
+                  (auto-fill-mode -1)
+                  (visual-line-mode 1)
+                  (visual-fill-column-mode 1))))
 #+END_SRC
