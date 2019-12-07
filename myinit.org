@@ -3007,9 +3007,12 @@
     :ensure t
     :hook (k8s-mode . yas-minor-mode)
     :config
+    ;;(setq k8s-search-documentation-browser-function 'browse-url-firefox)
     (setq k8s-site-docs-url "https://kubernetes.io/docs/reference/generated/kubernetes-api/")
     (setq k8s-site-docs-version "v1.13")
     )
+
+  (add-hook 'k8s-mode-hook 'yas-minor-mode)
 
   (use-package kubernetes-tramp
     :ensure t)
@@ -3563,34 +3566,36 @@
 * Images
 
 #+BEGIN_SRC emacs-lisp
-(use-package image+
-  :ensure t
-  :init
-  (add-hook 'image-mode-hook
-            '(lambda ()
-               (require 'image+)
-               (imagex-sticky-mode)))
+  (use-package image+
+    :ensure t
+    :init
+    (add-hook 'image-mode-hook
+              '(lambda ()
+                 (require 'image+)
+                 (imagex-sticky-mode)))
 
-  :bind (:map image-mode-map
-              ("=" . imagex-sticky-zoom-in)
-              ("-" . imagex-sticky-zoom-out)
-              ("m" . imagex-sticky-maximize)
-              ("g" . imagex-sticky-restore-original)
-              ("S" . imagex-sticky-save-image)
-              ("r" . imagex-sticky-rotate-right)
-              ("l" . imagex-sticky-rotate-left)
-              ("/" . imagex-sticky-binding/body))
+    :bind (:map image-mode-map
+                ("=" . imagex-sticky-zoom-in)
+                ("-" . imagex-sticky-zoom-out)
+                ("m" . imagex-sticky-maximize)
+                ("g" . imagex-sticky-restore-original)
+                ("S" . imagex-sticky-save-image)
+                ("r" . imagex-sticky-rotate-right)
+                ("l" . imagex-sticky-rotate-left)
+                ("/" . imagex-sticky-binding/body))
 
-  :config
+    :config
     (defhydra imagex-sticky-binding () ;; global-map "C-x C-l")
-    "Manipulating Image"
-    ("+" imagex-sticky-zoom-in "zoom in")
-    ("-" imagex-sticky-zoom-out "zoom out")
-    ("M" imagex-sticky-maximize "maximize")
-    ("O" imagex-sticky-restore-original "restore original")
-    ("S" imagex-sticky-save-image "save file")
-    ("r" imagex-sticky-rotate-right "rotate right")
-    ("l" imagex-sticky-rotate-left "rotate left")))
+      "Manipulating Image"
+      ("+" imagex-sticky-zoom-in "zoom in")
+      ("-" imagex-sticky-zoom-out "zoom out")
+      ("M" imagex-sticky-maximize "maximize")
+      ("O" imagex-sticky-restore-original "restore original")
+      ("S" imagex-sticky-save-image "save file")
+      ("r" imagex-sticky-rotate-right "rotate right")
+      ("l" imagex-sticky-rotate-left "rotate left")))
+
+  (eval-after-load 'image+ '(imagex-global-sticky-mode 1))
 #+END_SRC
 
 * System Monitoring
@@ -4184,6 +4189,8 @@ Select from xref candidates with ivy
     ("s-7" . centaur-tabs-select-visible-tab)
     ("s-8" . centaur-tabs-select-visible-tab)
     ("s-9" . centaur-tabs-select-visible-tab)
+    ("s-<" . centaur-tabs-move-current-tab-to-left)
+    ("s->" . centaur-tabs-move-current-tab-to-right)
     ("H-t t t" . centaur-tabs-counsel-switch-group)
     ("H-t t p" . centaur-tabs-group-by-projectile-project)
     ("H-t t g" . centaur-tabs-group-buffer-groups)
