@@ -11,15 +11,7 @@
     (delete-file (buffer-file-name))
     (kill-this-buffer)))
 
-(defun markdown-convert-buffer-to-org ()
-  "Convert the current buffer's content from markdown to orgmode format and save it with the current buffer's file name but with .org extension."
-  (interactive)
-  (shell-command-on-region (point-min) (point-max)
-                           (format "pandoc -f markdown -t org -o %s"
-                                   (concat (file-name-sans-extension (buffer-file-name)) ".org"))))
-
 ;; Diff last two kills
-
 (defun diff-last-two-kills ()
   "Write the last two kills to temporary files and diff them."
   (interactive)
@@ -1932,6 +1924,44 @@ region if active. http://xenodium.com/fishing-with-emacs/"
     (shell-command-on-region
      (point-min) (point-max)
      (concat "pandoc -f markdown -Ss --toc --chapters --number-sections --variable papersize:a4paper --variable documentclass:article --variable colorlinks:blue -o " output-file " " input-file))))
+
+(defun markdown-convert-buffer-to-org ()
+  "Convert the current buffer's content from markdown to orgmode format and save it with the current buffer's file name but with .org extension."
+  (interactive)
+  (shell-command-on-region (point-min) (point-max)
+                           (format "pandoc -f markdown -t org -o %s"
+                                   (concat (file-name-sans-extension (buffer-file-name)) ".org"))))
+
+(defun convert-yaml-yml-buffer-region-to-json ()
+  "Convert the current buffer's selected region from yaml to json format and save it with the current buffer's file name but with .json extension."
+  (interactive)
+  (let ((output-dir (read-directory-name "Output directory: "))
+	(input-file (file-name-nondirectory buffer-file-name)))
+    (setq output-file (concat output-dir (file-name-sans-extension input-file) "-buffer-region.json"))
+    (shell-command-on-region
+     (region-beginning) (region-end)
+     (concat "yq r -j - | jq  > " (shell-quote-argument output-file)))
+    ))
+
+(defun convert-yaml-yml-buffer-to-json ()
+  "Convert the current buffer's content from yaml to json format and save it with the current buffer's file name but with .json extension."
+  (interactive)
+  (let ((output-dir (read-directory-name "Output directory: "))
+	(input-file (file-name-nondirectory buffer-file-name)))
+    (setq output-file (concat output-dir (file-name-sans-extension input-file) ".json"))
+    (shell-command
+     (concat "yq r " input-file " -j | jq . > " (shell-quote-argument output-file)))
+    ))
+
+(defun my-toggle-fold ()
+  "Toggle fold all lines larger than indentation on current line"
+  (interactive)
+  (let ((col 1))
+    (save-excursion
+      (back-to-indentation)
+      (setq col (+ 1 (current-column)))
+      (set-selective-display
+       (if selective-display nil (or col 1))))))
 
 (defun duplicate-line ()
   (interactive)
