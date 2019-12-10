@@ -4906,3 +4906,12 @@ Select from xref candidates with ivy
     ("s-]" . smart-shift-left)
     )
 #+END_SRC
+
+* Highlight2clipboard
+
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight2clipboard
+    :ensure t
+    :config
+    (highlight2clipboard-mode 1))
+#+END_SRC
