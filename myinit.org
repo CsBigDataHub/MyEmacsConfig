@@ -135,15 +135,15 @@
     ;; to speed up tramp
     (setq remote-file-name-inhibit-cache nil)
     (setq vc-ignore-dir-regexp
-          (format "%s\\|%s"
-                  vc-ignore-dir-regexp
-                  tramp-file-name-regexp))
+	  (format "%s\\|%s"
+		  vc-ignore-dir-regexp
+		  tramp-file-name-regexp))
     (setq tramp-verbose 1)
 
     (setq mouse-drag-copy-region nil
-          x-select-enable-primary nil
-          x-select-enable-clipboard t
-          select-active-regions t)
+	  x-select-enable-primary nil
+	  x-select-enable-clipboard t
+	  select-active-regions t)
 
     ;;Keyboard tweaks
     ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
@@ -160,7 +160,7 @@
 
     ;;Ediff mode is a UNIX patching tool and my version controlling package uses this to help resolve merge conflicts and having some better defaults will be useful for this.
     (setq ediff-window-setup-function 'ediff-setup-windows-plain
-          ediff-split-window-function 'split-window-horizontally)
+	  ediff-split-window-function 'split-window-horizontally)
 
     ;;`'subword-mode`' is a built-in mode that helps moving over camelCase words correctly.
     (setq sentence-end-double-space nil)
@@ -181,9 +181,9 @@
     (setq history-delete-duplicates t)
     (setq savehist-save-minibuffer-history 1)
     (setq savehist-additional-variables
-          '(kill-ring
-            search-ring
-            regexp-search-ring))
+	  '(kill-ring
+	    search-ring
+	    regexp-search-ring))
 
     ;; Added this to build pdf tools
     (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
@@ -224,6 +224,7 @@
 
     ;;cursor color to white
     (set-cursor-color "#ffffff")
+
   #+END_SRC
 
 * Theme
@@ -269,11 +270,15 @@
     (use-package moe-theme
       :ensure t
       :config
-      (setq moe-theme-highlight-buffer-id t)
       ;; (Available colors: blue, orange, green ,magenta, yellow, purple, red, cyan, w/b.)
       ;; Choose a color for mode-line.(Default: blue)
       ;;(moe-theme-set-color 'cyan)
       (moe-theme-set-color 'w/b)
+      ;; Resize titles (optional).
+      (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+      (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
+      (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
+
 
       ;; Show highlighted buffer-id as decoration. (Default: nil)
       (setq moe-theme-highlight-buffer-id t)
@@ -543,11 +548,16 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+    (use-package org-bullets
+      :ensure t
+      :config
+      (setq org-bullets-bullet-list '("☯" "☢" "❀" "◉" "○" "✸" "✿" "~"))
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+      )
 
+    ;;(require 'org-bullets)
+    ;;(setq org-bullets-bullet-list '("☯" "◉" "☢" "❀" "○" "✸" "✿" "~"))
+    ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   #+END_SRC
 
 * Org-Download
@@ -1123,7 +1133,10 @@
       :after ox
       :config (require 'ox-gfm))
 
-
+    (use-package grip-mode
+      :ensure t
+      :hook ((markdown-mode org-mode adoc-mode) . grip-mode)
+      )
   #+END_SRC
 
 * Undo-tree
@@ -4452,6 +4465,7 @@ Select from xref candidates with ivy
     :bind ("H-<" . goto-last-point)
     :config (goto-last-point-mode))
 #+END_SRC
+
 * persistent-scrach
 
 #+BEGIN_SRC emacs-lisp
@@ -4473,6 +4487,7 @@ Select from xref candidates with ivy
 
   (setq-default indicate-empty-lines t)
 #+END_SRC
+
 * Cheat
 
 #+BEGIN_SRC emacs-lisp
@@ -4673,6 +4688,7 @@ Select from xref candidates with ivy
   (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi-cmd.el")
   (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/setup-keys.el")
 #+END_SRC
+
 * Golden-ratio
 
 #+BEGIN_SRC emacs-lisp
@@ -4872,11 +4888,11 @@ Select from xref candidates with ivy
 * Lsp-Ivy
 
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-ivy
-    :quelpa (lsp-ivy :fetcher github :repo "emacs-lsp/lsp-ivy")
-    ;;:ensure t
-    :bind (("C-?" . lsp-ivy-workspace-symbol))
-    )
+ ;; (use-package lsp-ivy
+ ;;   :quelpa (lsp-ivy :fetcher github :repo "emacs-lsp/lsp-ivy")
+ ;;   ;;:ensure t
+ ;;   :bind (("C-?" . lsp-ivy-workspace-symbol))
+ ;;   )
 #+END_SRC
 
 * ADOC
