@@ -1217,7 +1217,7 @@
     (use-package multiple-cursors
       :ensure t
       :config
-      (global-set-key (kbd "C-S-l C-S-l") 'my/hydra-multiple-cursors/body)
+      (global-set-key (kbd "C-c h m") 'my/hydra-multiple-cursors/body)
       (global-set-key (kbd "C->") 'mc/mark-next-like-this)
       (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
       (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
