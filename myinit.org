@@ -834,6 +834,23 @@
     (use-package company-posframe
       :ensure t
       :hook (company-mode . company-posframe-mode))
+
+    (use-package company-fuzzy
+      :ensure t
+      :defer t
+      :init
+      (setq company-fuzzy-sorting-backend 'flx)
+      (setq company-fuzzy-prefix-ontop nil)
+      (with-eval-after-load 'company
+        (global-company-fuzzy-mode t)))
+
+    (use-package company-shell
+      :ensure t
+      :config
+      (add-to-list 'company-backends '(company-shell
+                                       company-shell-env
+                                       company-fish-shell)))
+
     ;; Show pretty icons
     (use-package company-box
       :ensure t
@@ -4798,7 +4815,15 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   (use-package terraform-mode
     :ensure t
+    :mode "\\.tf$"
+    :config
+    (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
     )
+
+  (use-package company-terraform
+    :ensure t
+    :after company
+    :hook (terraform-mode . company-terraform-init))
 #+END_SRC
 
 * Region Convert
