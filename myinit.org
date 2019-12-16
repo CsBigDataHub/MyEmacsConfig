@@ -810,6 +810,9 @@
     :custom
     (company-idle-delay 0)
     (company-echo-delay 0)
+    (company-show-numbers t)
+    (company-begin-commands '(self-insert-command))
+    (company-tooltip-align-annotations 't)
     (company-minimum-prefix-length 1)
     :hook
     (after-init . global-company-mode)
@@ -828,9 +831,9 @@
                                       )))))
     :config
     ;; using child frame
-   (use-package company-posframe
+    (use-package company-posframe
       :ensure t
-     :hook (company-mode . company-posframe-mode))
+      :hook (company-mode . company-posframe-mode))
     ;; Show pretty icons
     (use-package company-box
       :ensure t
@@ -934,6 +937,7 @@
                       company-candidates)
           (self-insert-command 1)
         (company-complete-number (string-to-number k)))))
+
   ;; company box mode
   ;;(use-package company-box
   ;;:ensure t
