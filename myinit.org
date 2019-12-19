@@ -1183,15 +1183,15 @@
 
 * Beacon Mode
   #+BEGIN_SRC emacs-lisp
-; flashes the cursor's line when you scroll
-  (use-package beacon
-    :ensure t
-    :config
-    (beacon-mode 1)
-; this color looks good for the zenburn theme but not for the one
-; I'm using for the videos
-(setq beacon-color "#666600")
-    )
+    ;; flashes the cursor's line when you scroll
+    (use-package beacon
+      :ensure t
+      :config
+      (beacon-mode 1)
+      ;; this color looks good for the zenburn theme but not for the one
+      ;; I'm using for the videos
+      (setq beacon-color "#666600")
+      )
   #+END_SRC
 
 * Hungy Delete Mode
@@ -1331,22 +1331,22 @@
 * Parantasis/brackets
 ** Highlight matching pair
    #+BEGIN_SRC emacs-lisp
-;; Complete pair
-;; auto close bracket insertion. New in emacs 24
-(electric-pair-mode 1)
-(setq electric-pair-preserve-balance nil)
+     ;; Complete pair
+     ;; auto close bracket insertion. New in emacs 24
+     (electric-pair-mode 1)
+     (setq electric-pair-preserve-balance nil)
 
-;; turn on highlight matching brackets when cursor is on one
-(show-paren-mode 1)
+     ;; turn on highlight matching brackets when cursor is on one
+     (show-paren-mode 1)
 
-;; highlight brackets
-(setq show-paren-style 'parenthesis)
+     ;; highlight brackets
+     (setq show-paren-style 'parenthesis)
 
-;; highlight entire expression
-;;(setq show-paren-style 'expression)
+     ;; highlight entire expression
+     ;;(setq show-paren-style 'expression)
 
-;; highlight brackets if visible, else entire expression
-;;(setq show-paren-style 'mixed)
+     ;; highlight brackets if visible, else entire expression
+     ;;(setq show-paren-style 'mixed)
    #+END_SRC
 
 * string-inflection for string manipulation
@@ -3635,7 +3635,7 @@
                 ("/" . imagex-sticky-binding/body))
 
     :config
-    (defhydra imagex-sticky-binding () ;; global-map "C-x C-l")
+    (defhydra imagex-sticky-binding () ;; global-map "C-x C-l"
       "Manipulating Image"
       ("+" imagex-sticky-zoom-in "zoom in")
       ("-" imagex-sticky-zoom-out "zoom out")
@@ -4285,7 +4285,7 @@ Select from xref candidates with ivy
         "# -*- coding: utf-8 -*-\n"
         "author   : Chetan Koneru \n"
         "date     : " (format-time-string "%b %e, %Y") \n
-        "email    : Chetan <>" \n
+        "email    : Chetan " \n
         "filename : " (file-name-nondirectory (buffer-file-name)) \n
         "project  : " (file-name-nondirectory (directory-file-name (or projectile-project-root default-directory))) \n
         "license  : GPL-3.0+\n\n"
