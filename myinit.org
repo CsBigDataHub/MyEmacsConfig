@@ -135,15 +135,15 @@
     ;; to speed up tramp
     (setq remote-file-name-inhibit-cache nil)
     (setq vc-ignore-dir-regexp
-	  (format "%s\\|%s"
-		  vc-ignore-dir-regexp
-		  tramp-file-name-regexp))
+          (format "%s\\|%s"
+                  vc-ignore-dir-regexp
+                  tramp-file-name-regexp))
     (setq tramp-verbose 1)
 
     (setq mouse-drag-copy-region nil
-	  x-select-enable-primary nil
-	  x-select-enable-clipboard t
-	  select-active-regions t)
+          x-select-enable-primary nil
+          x-select-enable-clipboard t
+          select-active-regions t)
 
     ;;Keyboard tweaks
     ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
@@ -160,7 +160,7 @@
 
     ;;Ediff mode is a UNIX patching tool and my version controlling package uses this to help resolve merge conflicts and having some better defaults will be useful for this.
     (setq ediff-window-setup-function 'ediff-setup-windows-plain
-	  ediff-split-window-function 'split-window-horizontally)
+          ediff-split-window-function 'split-window-horizontally)
 
     ;;`'subword-mode`' is a built-in mode that helps moving over camelCase words correctly.
     (setq sentence-end-double-space nil)
@@ -181,9 +181,9 @@
     (setq history-delete-duplicates t)
     (setq savehist-save-minibuffer-history 1)
     (setq savehist-additional-variables
-	  '(kill-ring
-	    search-ring
-	    regexp-search-ring))
+          '(kill-ring
+            search-ring
+            regexp-search-ring))
 
     ;; Added this to build pdf tools
     (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
@@ -225,6 +225,8 @@
     ;;cursor color to white
     (set-cursor-color "#ffffff")
 
+    (setq max-specpdl-size 1300000)
+    (setq max-lisp-eval-depth 100000)
   #+END_SRC
 
 * Theme
@@ -750,6 +752,11 @@
 
     (setq counsel-grep-base-command
           "rg -i -M 120 --no-heading --line-number --color never %s %s")
+
+    ;; https://oremacs.com/2016/01/06/ivy-flx/
+    ;;(setq ivy-re-builders-alist
+    ;;      '((ivy-switch-buffer . ivy--regex-plus)
+    ;;        (t . ivy--regex-fuzzy)))
   #+END_SRC
 
 * Avy
@@ -4966,4 +4973,19 @@ Select from xref candidates with ivy
     :ensure t
     :config
     (highlight2clipboard-mode 1))
+#+END_SRC
+
+* Ellocate - a locate alternative -
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ellocate
+    :ensure t
+    :config
+    (setq ellocate-scan-dirs
+          '(("/Users/ckoneru/GitRepos" "/Users/ckoneru/locate_dbs/GitReposDB")
+            ("/Users/ckoneru/IdeaProjects" "/Users/ckoneru/locate_dbs/IdeaProjectsDB")
+            ("/Users/ckoneru/.emacs.d" "/Users/ckoneru/locate_dbs/emacssDB")
+            ("/Users/ckoneru/" "/Users/ckoneru/locate_dbs/ellocate-home-db")
+            ("/Users/ckoneru/Downloads" "/Users/ckoneru/locate_dbs/DownloadsDB")))
+    :commands (ellocate))
 #+END_SRC

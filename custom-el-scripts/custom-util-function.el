@@ -2024,6 +2024,69 @@ region if active. http://xenodium.com/fishing-with-emacs/"
      (region-beginning) (region-end)
      (concat "yq r -j - | jq  > " (shell-quote-argument output-file)))
     ))
+(defun xah-check-parens-balance ()
+  "Check if there are unbalanced parentheses/brackets/quotes in current bufffer or selection.
+If so, place cursor there, print error to message buffer.
+
+URL `http://ergoemacs.org/emacs/emacs_check_parens_balance.html'
+Version 2018-07-03"
+  (interactive)
+  (let* (
+         ($bracket-alist
+          '( (?“ . ?”) (?‹ . ?›) (?« . ?») (?【 . ?】) (?〖 . ?〗) (?〈 . ?〉) (?《 . ?》) (?「 . ?」) (?『 . ?』) (?{ . ?}) (?\[ . ?\]) (?\( . ?\))))
+         ;; regex string of all pairs to search.
+         ($bregex
+          (let (($tempList nil))
+            (mapc
+             (lambda (x)
+               (push (char-to-string (car x)) $tempList)
+               (push (char-to-string (cdr x)) $tempList))
+             $bracket-alist)
+            (regexp-opt $tempList )))
+         $p1
+         $p2
+         ;; each entry is a vector [char position]
+         ($stack '())
+         ($char nil)
+         $pos
+         $is-closing-char-p
+         $matched-open-char
+         )
+    (if (region-active-p)
+        (setq $p1 (region-beginning) $p2 (region-end))
+      (setq $p1 (point-min) $p2 (point-max)))
+
+    (save-excursion
+      (save-restriction
+        (narrow-to-region $p1 $p2)
+        (progn
+          (goto-char 1)
+          (while (re-search-forward $bregex nil "move")
+            (setq $pos (point))
+            (setq $char (char-before))
+            (progn
+              (setq $is-closing-char-p (rassoc $char $bracket-alist))
+              (if $is-closing-char-p
+                  (progn
+                    (setq $matched-open-char
+                          (if $is-closing-char-p
+                              (car $is-closing-char-p)
+                            (error "logic error 64823. The char %s has no matching pair."
+                                   (char-to-string $char))))
+                    (if $stack
+                        (if (eq (aref (car $stack) 0) $matched-open-char )
+                            (pop $stack)
+                          (push (vector $char $pos) $stack ))
+                      (progn
+                        (goto-char $pos)
+                        (error "First mismtach found. the char %s has no matching pair."
+                               (char-to-string $char)))))
+                (push (vector $char $pos) $stack ))))
+          (if $stack
+              (progn
+                (goto-char (aref (car $stack) 1))
+                (message "Mismtach found. The char %s has no matching pair." $stack))
+            (print "All brackets/quotes match.")))))))
 
 (defun convert-yaml-yml-buffer-to-json ()
   "Convert the current buffer's content from yaml to json format and save it with the current buffer's file name but with .json extension."
