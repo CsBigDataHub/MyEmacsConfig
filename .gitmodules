@@ -1,0 +1,3 @@
+[submodule "custom-el-scripts/org-mime"]
+	path = custom-el-scripts/org-mime
+	url = https://github.com/org-mime/org-mime.git

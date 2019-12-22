@@ -1,0 +1,95 @@
+* Setting up email in emacs
+*** Some useful Links
+    - https://abhixec.com/posts/passwordmanagement.html
+    - https://cestlaz.github.io/posts/using-emacs-39-mu4e/ (Very useful)
+    - http://www.macs.hw.ac.uk/~rs46/posts/2014-01-13-mu4e-email-client.html
+    - https://blog.danielgempesaw.com/post/43467552978/installing-mu-and-mu4e-with-homebrew-with-emacs
+    - http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
+    - http://pragmaticemacs.com/mu4e-tutorials/
+    - http://pragmaticemacs.com/emacs/master-your-inbox-with-mu4e-and-org-mode/
+    - https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/
+    - https://www.reddit.com/r/emacs/comments/8q84dl/tip_how_to_easily_manage_your_emails_with_mu4e/
+    - http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+    - http://www.cachestocaches.com/2016/9/my-workflow-org-agenda/
+    - https://gist.github.com/areina/3879626
+    - https://www.ict4g.net/adolfo/notes/2014/12/27/emacs-imap.html
+    - http://www.djcbsoftware.nl/code/mu/cheatsheet.html
+    - https://www.ict4g.net/adolfo/notes/2014/12/27/emacs-imap.html
+    - http://wenshanren.org/?p=111
+    - https://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html#Gmail-configuration
+    -
+
+** Step 1
+   1. Install mu4e and mu
+      #+BEGIN_SRC sh
+      sudo apt install mu4e
+      # this will install emacs in the following path - /usr/share/emacs/site-lisp/mu4e
+      #+END_SRC
+
+   2. Install other dependencies
+      #+BEGIN_SRC sh
+      $ sudo apt-get install libgmime-3.0-dev libxapian-dev
+      # get emacs 25 or higher if you don't have it yet
+      $ sudo apt-get install emacs
+
+      # optional
+      $ sudo apt-get install guile-2.0-dev html2text xdg-utils
+
+      # optional: only needed for msg2pdf and mug (toy gtk+ frontend)
+      $ sudo apt-get install libwebkitgtk-3.0-dev
+
+      $ sudo apt-get install -y getmail4
+      $ sudo apt install offlineimp
+
+      $ sudo apt install isync (I am using MBSYNC)
+
+      # isync latest version needs to be build and installed from git repo
+      git clone https://git.code.sf.net/p/isync/isync isync-isync
+      ./autogen.sh
+      ./configure
+      sudo make
+      sudo make install
+      #+END_SRC
+
+** Step 2
+
+   The missing manual for setting up
+   The installation of pass was quite straight forward pacman -S pass. But then the initial setup wasn’t as straight forward as mentioned on the website.
+
+   If you followed the website then, the next step after installing is running
+
+   ~pass init "<name for pass store>"~~
+   and then
+
+   ~pass insert <nameofwebsite>/<account_name/email>~
+   Which will prompt you to enter the password. But doing that resulted in following error on my arch machine.
+
+   gpg: Password store: skipped: No public key
+   gpg: [stdin]: encryption failed: No public key
+   Password encryption aborted.
+   So to solve this problem I had to perform the following operations:
+
+   #+BEGIN_SRC
+   Create a gpg key
+   $ gpg --full-gen-key
+   I use the defaults for most of the options that was prompted.
+
+   Export the key
+   $ gpg --export-secret-keys > ~/keyfile
+   Import it in gpg2.
+   $ gpg2 --import ~/keyfile
+   this will print a keyname to prompt.
+
+   Edit the key to set the trust level for the key
+   $ gpg2 --edit-key "<Keyname>"
+   use the keyname from the prompt that printed from running the previous command. You can also use $ gpg --list-keys to get the keyname. After typing the above command it will take to you gpg shell/command kind of environment. Type trust
+
+   gpg> trust
+   [...]
+   Your decision? 5
+   Do you really want to set this key to ultimate trust? (y/N) y
+   [...]
+   gpg> save
+   Lastly run
+   $ pass init <gpg_keyname>
+   #+END_SRC
