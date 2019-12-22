@@ -93,3 +93,75 @@
    Lastly run
    $ pass init <gpg_keyname>
    #+END_SRC
+
+** keyboard shortcuts
+
+    Next: [[http://www.djcbsoftware.nl/code/mu/mu4e/HV-Marking.html#HV-Marking][HV Marking]], Previous: [[http://www.djcbsoftware.nl/code/mu/mu4e/HV-Overview.html#HV-Overview][HV Overview]], Up: [[http://www.djcbsoftware.nl/code/mu/mu4e/Headers-view.html#Headers-view][Headers view]]   [[[http://www.djcbsoftware.nl/code/mu/mu4e/index.html#SEC_Contents][Contents]]]
+
+    --------------------------------------------------------------------------------
+
+    4.2 Keybindings
+
+    Using the below key bindings, you can do various things with these messages;
+    these actions are also listed in the Headers menu in the emacs menu bar.
+
+    key          description
+    ===========================================================
+    n,p          view the next, previous message
+    ],[          move to the next, previous unread message
+    y            select the message view (if it's visible)
+    RET          open the message at point in the message view
+
+    searching
+    ---------
+    s            search
+    S            edit last query
+    /            narrow the search
+    b            search bookmark
+    B            edit bookmark before search
+    j            jump to maildir
+    M-left,\     previous query
+    M-right      next query
+
+    O            change sort order
+    P            toggle threading
+    Q            toggle full-search
+    V            toggle skip-duplicates
+    W            toggle include-related
+
+    marking
+    -------
+    d            mark for moving to the trash folder
+    =            mark for removing trash flag ('untrash')
+    DEL,D        mark for complete deletion
+    m            mark for moving to another maildir folder
+    r            mark for refiling
+    +,-          mark for flagging/unflagging
+    ?,!          mark message as unread, read
+
+    u            unmark message at point
+    U            unmark *all* messages
+
+    %            mark based on a regular expression
+    T,t          mark whole thread, subthread
+
+    <insert>,*   mark for 'something' (decide later)
+    #            resolve deferred 'something' marks
+
+    x            execute actions for the marked messages
+
+    composition
+    -----------
+    R,F,C        reply/forward/compose
+    E            edit (only allowed for draft messages)
+
+
+    misc
+    ----
+    ;            switch context
+    a            execute some custom action on a header
+    |            pipe message through shell command
+    C-+,C--      increase / decrease the number of headers shown
+    H            get help
+    C-S-u        update mail & reindex
+    q            leave the headers buffer

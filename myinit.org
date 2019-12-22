@@ -240,7 +240,10 @@
       ;; Choose a color for mode-line.(Default: blue)
       ;;(moe-theme-set-color 'cyan)
       (moe-theme-set-color 'w/b)
-
+      ;; Resize titles (optional).
+      (setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+      (setq moe-theme-resize-org-title '(1.5 1.4 1.3 1.2 1.1 1.0 1.0 1.0 1.0))
+      (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
       ;; Show highlighted buffer-id as decoration. (Default: nil)
       (setq moe-theme-highlight-buffer-id t)
       :init (load-theme 'moe-dark t)
@@ -506,11 +509,12 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
+    (use-package org-bullets
+      :ensure t
+      :hook (org-mode . org-bullets-mode)
+      :config
+      (setq org-bullets-bullet-list '("☯" "☢" "❀" "◉" "○" "✸" "✿" "~"))
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   #+END_SRC
 
 * Relative Line number
@@ -752,6 +756,9 @@
     (company-idle-delay 0)
     (company-echo-delay 0)
     (company-minimum-prefix-length 1)
+    (company-show-numbers t)
+    (company-begin-commands '(self-insert-command))
+    (company-tooltip-align-annotations 't)
     :hook
     (after-init . global-company-mode)
     (plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
@@ -769,9 +776,26 @@
                                       )))))
     :config
     ;; using child frame
-   (use-package company-posframe
+    (use-package company-posframe
       :ensure t
-     :hook (company-mode . company-posframe-mode))
+      :hook (company-mode . company-posframe-mode))
+
+    (use-package company-fuzzy
+      :ensure t
+      :defer t
+      :init
+      (setq company-fuzzy-sorting-backend 'flx)
+      (setq company-fuzzy-prefix-ontop nil)
+      (with-eval-after-load 'company
+        (global-company-fuzzy-mode t)))
+
+    (use-package company-shell
+      :ensure t
+      :config
+      (add-to-list 'company-backends '(company-shell
+                                       company-shell-env
+                                       company-fish-shell)))
+
     ;; Show pretty icons
     (use-package company-box
       :ensure t
@@ -1039,6 +1063,16 @@
     ;; Link: https://github.com/mola-T/flymd
     (use-package flymd
       :ensure t)
+
+    (use-package ox-gfm
+      :ensure t
+      :after ox
+      :config (require 'ox-gfm))
+
+    (use-package grip-mode
+      :ensure t
+      :hook ((markdown-mode org-mode adoc-mode) . grip-mode)
+      )
   #+END_SRC
 
 * Undo-tree
@@ -2208,6 +2242,13 @@
   (use-package exec-path-from-shell
     :ensure t
     :if (memq window-system '(mac ns))
+    :init
+    (progn
+      (setq exec-path-from-shell-variables '("JAVA_HOME"
+                                             "PATH"
+                                             "WORKON_HOME"
+                                             "MANPATH"))
+      (exec-path-from-shell-initialize))
     :config
     (setq exec-path-from-shell-arguments '("-l"))
     (exec-path-from-shell-initialize)
@@ -2851,6 +2892,8 @@
     (setq k8s-site-docs-version "v1.13")
     )
 
+  (add-hook 'k8s-mode-hook 'yas-minor-mode)
+
   (use-package kubernetes-tramp
     :ensure t)
 
@@ -2934,7 +2977,9 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package indent-tools
-    :ensure t)
+    :ensure t
+    :bind
+    ("C-c h i" . indent-tools-hydra/body))
 #+END_SRC
 
 * Move-text
@@ -3635,6 +3680,9 @@
           shr-use-fonts nil
           shr-color-visible-distance-min 10
           shr-color-visible-luminance-min 80))
+
+  (load-if-exists "~/.emacs.d/custom-el-scripts/org-eww.el")
+  (require 'org-eww)
 #+END_SRC
 
 * Shr: Simple html renderer
@@ -3969,6 +4017,8 @@ Select from xref candidates with ivy
     ("H-7" . centaur-tabs-select-visible-tab)
     ("H-8" . centaur-tabs-select-visible-tab)
     ("H-9" . centaur-tabs-select-visible-tab)
+    ("s-<" . centaur-tabs-move-current-tab-to-left)
+    ("s->" . centaur-tabs-move-current-tab-to-right)
     ("H-t t t" . centaur-tabs-counsel-switch-group)
     ("H-t t p" . centaur-tabs-group-by-projectile-project)
     ("H-t t g" . centaur-tabs-group-buffer-groups)
@@ -4196,6 +4246,13 @@ Select from xref candidates with ivy
 * OX-Pandoc
 
 #+BEGIN_SRC emacs-lisp
+  (use-package pandoc-mode
+    :ensure t
+    :hook
+    (markdown-mode . pandoc-mode)
+    (pandoc-mode-hook . pandoc-load-default-settings)
+    )
+
   (use-package ox-pandoc
     :ensure t
     :after ox
@@ -4522,6 +4579,9 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   (use-package terraform-mode
     :ensure t
+    :mode "\\.tf$"
+    :config
+    (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
     )
 #+END_SRC
 
@@ -4632,8 +4692,45 @@ Select from xref candidates with ivy
 * Email Setup
 
 #+BEGIN_SRC emacs-lisp
-  (load-if-exists "~/.emacs.d/custom-el-scripts/mu")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/mu4econfig-setup.el")
   (use-package mu4e-conversation
     :ensure t
     )
+#+END_SRC
+
+* ADOC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package adoc-mode
+    :ensure t
+    :mode "\\.adoc\\'"
+    :config
+    (add-hook 'adoc-mode-hook
+              #'(lambda ()
+                  (auto-fill-mode -1)
+                  (visual-line-mode 1)
+                  (visual-fill-column-mode 1))))
+#+END_SRC
+
+* Smart-shift
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-shift
+    :ensure t
+    :config
+    (global-smart-shift-mode 1)
+    (setq smart-shift-indentation-level 2)
+    :bind
+    ("s-[" . smart-shift-right)
+    ("s-]" . smart-shift-left)
+    )
+#+END_SRC
+
+* Highlight2clipboard
+
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight2clipboard
+    :ensure t
+    :config
+    (highlight2clipboard-mode 1))
 #+END_SRC

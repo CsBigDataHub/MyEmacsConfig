@@ -13,9 +13,9 @@
 (setq mail-user-agent 'mu4e-user-agent)
 
 ;; default
-(setq mu4e-maildir "~/email/")
+(setq mu4e-maildir "~/Maildir")
 
-(setq mu4e-get-mail-command "mbsync -c ~/.mbsyncrc -a"
+(setq mu4e-get-mail-command "offlineimap"
       ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
       mu4e-view-prefer-html t
       mu4e-update-interval 180
@@ -40,6 +40,14 @@
 (setq mu4e-sent-folder   "/[Gmail].Sent Mail")
 (setq mu4e-trash-folder  "/[Gmail].Trash")
 
+(setq
+ user-mail-address "hadoopchetan@gmail.com"
+ user-full-name  "hadoop chetan"
+ mu4e-compose-signature
+ (concat
+  "Hadoop Chetan\n"
+  "this is my hadoop gmail\n"))
+
 ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
 ;;(setq mu4e-sent-messages-behavior 'delete)
 
@@ -56,6 +64,26 @@
       '( ("/INBOX"               . ?i)
          ("/[Gmail].Sent Mail"   . ?s)
          ("/[Gmail].Trash"       . ?t)
+         ("/[Gmail].Important"   . ?I)
          ("/[Gmail].All Mail"    . ?a)))
 
+(require 'smtpmail)
+(setq message-send-mail-function 'smtpmail-send-it
+      starttls-use-gnutls t
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+      smtpmail-auth-credentials
+      '(("smtp.gmail.com" 587 "hadoopchetan@gmail.com" nil))
+      smtpmail-default-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587)
+
+;; alternatively, for emacs-24 you can use:
+;;(setq message-send-mail-function 'smtpmail-send-it
+;;     smtpmail-stream-type 'starttls
+;;     smtpmail-default-smtp-server "smtp.gmail.com"
+;;     smtpmail-smtp-server "smtp.gmail.com"
+;;     smtpmail-smtp-service 587)
+
+;; don't keep message buffers around
+(setq message-kill-buffer-on-exit t)
 (provide 'mu4econfig-setup)

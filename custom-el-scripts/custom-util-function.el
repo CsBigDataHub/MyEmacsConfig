@@ -1281,8 +1281,7 @@ Links, footnotes  C-c C-a    _L_: link          _U_: uri        _F_: footnote   
   ("R" markdown-insert-reference-link-dwim :color blue)
   )
 
-
-(global-set-key [f9] 'my/hydra-markdown-mode/body)
+(define-key markdown-mode-map (kbd "<f9>") 'my/hydra-markdown-mode/body)
 
 (defhydra my/hydra-projectile-other-window (:color teal)
   "projectile-other-window"
@@ -1415,14 +1414,14 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
                                 (when defining-kbd-macro
                                   (kmacro-end-macro 1)))
   "
-  ^Create-Cycle^   ^Basic^           ^Insert^        ^Save^         ^Edit^
-╭─────────────────────────────────────────────────────────────────────────╯
-     ^_i_^           [_e_] execute    [_n_] insert    [_b_] name      [_'_] previous
-     ^^↑^^           [_d_] delete     [_t_] set       [_K_] key       [_,_] last
- _j_ ←   → _l_       [_o_] edit       [_a_] add       [_x_] register
-     ^^↓^^           [_r_] region     [_f_] format    [_B_] defun
-     ^_k_^           [_m_] step
-    ^^   ^^          [_s_] swap
+         ^Create-Cycle^                          ^Basic^           ^Insert^        ^Save^         ^Edit^
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+            ^[_i_] cycle-ring-previous^          [_e_] execute    [_n_] insert    [_b_] name      [_'_] previous
+             ^^↑^^                               [_d_] delete     [_t_] set       [_K_] key       [_,_] last
+ [_j_] start ←   → [_l_] end                     [_o_] edit       [_a_] add       [_x_] register
+             ^^↓^^                               [_r_] region     [_f_] format    [_B_] defun
+            ^[_k_] cycle-ring-next^              [_m_] step
+            ^^   ^^                              [_s_] swap                                       [_q_] quit
 "
   ("j" kmacro-start-macro :color blue)
   ("l" kmacro-end-or-call-macro-repeat)
@@ -1608,6 +1607,29 @@ _SPC_ cancel	_o_nly this     _d_elete
   ("SPC" nil)
   )
 
+(defhydra hydra-lsp (:exit t :hint nil)
+  "
+ Buffer^^               Server^^                   Symbol
+-------------------------------------------------------------------------------------
+ [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
+ [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
+ [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
+  ("d" lsp-find-declaration)
+  ("D" lsp-ui-peek-find-definitions)
+  ("R" lsp-ui-peek-find-references)
+  ("i" lsp-ui-peek-find-implementation)
+  ("t" lsp-find-type-definition)
+  ("s" lsp-signature-help)
+  ("o" lsp-describe-thing-at-point)
+  ("r" lsp-rename)
+
+  ("f" lsp-format-buffer)
+  ("m" lsp-ui-imenu)
+  ("x" lsp-execute-code-action)
+
+  ("M-s" lsp-describe-session)
+  ("M-r" lsp-restart-workspace)
+  ("S" lsp-shutdown-workspace))
 
 (defun my/package-upgrade-all ()
   "Upgrade all packages automatically without showing *Packages* buffer."
@@ -1836,6 +1858,63 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
   ("x" cool-moves/sexp-forward)
   ("X" cool-moves/sexp-backward))
 
+(defhydra hydra-ediff (:color blue :hint nil)
+  "
+ediff
+^Buffers           Files                 VC                   Ediff regions
+--------------------------------------------------------------------------------
+_b_uffers           _f_iles (_=_)        _r_evisions                _l_inewise
+_B_uffers (3-way)   _F_iles (3-way)                             _w_ordwise
+                  _c_urrent file
+_q_ quit
+"
+  ("b" ediff-buffers)
+  ("B" ediff-buffers3)
+  ("=" ediff-files)
+  ("f" ediff-files)
+  ("F" ediff-files3)
+  ("c" ediff-current-file)
+  ("r" ediff-revision)
+  ("l" ediff-regions-linewise)
+  ("w" ediff-regions-wordwise)
+  ("q" nil))
+
+(global-set-key (kbd "C-c h d") 'hydra-ediff/body)
+
+(defhydra hydra-hide-show (:idle 1.0)
+  "
+Hide^^            ^Show^            ^Toggle^    ^Navigation^
+----------------------------------------------------------------
+_h_ hide all      _s_ show all      _t_oggle    _n_ext line
+_d_ hide block    _a_ show block              _p_revious line
+_l_ hide level
+_q_ cancel
+"
+  ("s" hs-show-all)
+  ("h" hs-hide-all)
+  ("a" hs-show-block)
+  ("d" hs-hide-block)
+  ("t" hs-toggle-hiding)
+  ("l" hs-hide-level)
+  ("n" forward-line)
+  ("p" (forward-line -1))
+  ("q" nil :color blue)
+  )
+
+(global-set-key (kbd "C-c h @") 'hydra-hide-show/body)
+
+(global-set-key (kbd "C-c h t")
+                (defhydra hydra-transpose (:color red)
+                  "Transpose"
+                  ("c" transpose-chars "characters")
+                  ("w" transpose-words "words")
+                  ("o" org-transpose-words "Org mode words")
+                  ("l" transpose-lines "lines")
+                  ("s" transpose-sentences "sentences")
+                  ("e" org-transpose-elements "Org mode elements")
+                  ("p" transpose-paragraphs "paragraphs")
+                  ("t" org-table-transpose-table-at-point "Org mode table")
+                  ("q" nil "cancel" :color blue)))
 
 (require 'iimage)
 (autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
@@ -1924,6 +2003,44 @@ region if active. http://xenodium.com/fishing-with-emacs/"
     (shell-command-on-region
      (point-min) (point-max)
      (concat "pandoc -f markdown -Ss --toc --chapters --number-sections --variable papersize:a4paper --variable documentclass:article --variable colorlinks:blue -o " output-file " " input-file))))
+
+(defun markdown-convert-buffer-to-org ()
+  "Convert the current buffer's content from markdown to orgmode format and save it with the current buffer's file name but with .org extension."
+  (interactive)
+  (shell-command-on-region (point-min) (point-max)
+                           (format "pandoc -f markdown -t org -o %s"
+                                   (concat (file-name-sans-extension (buffer-file-name)) ".org"))))
+
+(defun convert-yaml-yml-buffer-region-to-json ()
+  "Convert the current buffer's selected region from yaml to json format and save it with the current buffer's file name but with .json extension."
+  (interactive)
+  (let ((output-dir (read-directory-name "Output directory: "))
+	(input-file (file-name-nondirectory buffer-file-name)))
+    (setq output-file (concat output-dir (file-name-sans-extension input-file) "-buffer-region.json"))
+    (shell-command-on-region
+     (region-beginning) (region-end)
+     (concat "yq r -j - | jq  > " (shell-quote-argument output-file)))
+    ))
+
+(defun convert-yaml-yml-buffer-to-json ()
+  "Convert the current buffer's content from yaml to json format and save it with the current buffer's file name but with .json extension."
+  (interactive)
+  (let ((output-dir (read-directory-name "Output directory: "))
+	(input-file (file-name-nondirectory buffer-file-name)))
+    (setq output-file (concat output-dir (file-name-sans-extension input-file) ".json"))
+    (shell-command
+     (concat "yq r " input-file " -j | jq . > " (shell-quote-argument output-file)))
+    ))
+
+(defun my-toggle-fold ()
+  "Toggle fold all lines larger than indentation on current line"
+  (interactive)
+  (let ((col 1))
+    (save-excursion
+      (back-to-indentation)
+      (setq col (+ 1 (current-column)))
+      (set-selective-display
+       (if selective-display nil (or col 1))))))
 
 (defun duplicate-line ()
   (interactive)
