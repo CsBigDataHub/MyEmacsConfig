@@ -4628,3 +4628,12 @@ Select from xref candidates with ivy
     :bind (("C-?" . lsp-ivy-workspace-symbol))
     :config)
 #+END_SRC
+
+* Email Setup
+
+#+BEGIN_SRC emacs-lisp
+  (load-if-exists "~/.emacs.d/custom-el-scripts/mu")
+  (use-package mu4e-conversation
+    :ensure t
+    )
+#+END_SRC
