@@ -17,7 +17,7 @@
     - https://www.ict4g.net/adolfo/notes/2014/12/27/emacs-imap.html
     - http://wenshanren.org/?p=111
     - https://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html#Gmail-configuration
-    -
+    - https://sachachua.com/blog/2008/05/geek-how-to-use-offlineimap-and-the-dovecot-mail-server-to-read-your-gmail-in-emacs-efficiently/
 
 ** Step 1
    1. Install mu4e and mu
