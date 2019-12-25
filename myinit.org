@@ -2791,9 +2791,11 @@
 
   ;; Enable scala-mode and sbt-mode
   (use-package scala-mode
+    :ensure t
     :mode "\\.s\\(cala\\|bt\\)$")
 
   (use-package sbt-mode
+    :ensure t
     :commands sbt-start sbt-command
     :config
     ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
@@ -2805,18 +2807,22 @@
 
   ;; Enable nice rendering of diagnostics like compile errors.
   (use-package flycheck
+    :ensure t
     :init (global-flycheck-mode))
 
   (use-package lsp-mode
+    :ensure t
     ;; Optional - enable lsp-mode automatically in scala files
     :hook ((sh-mode . lsp)
            (scala-mode . lsp))
     :config (setq lsp-prefer-flymake nil))
 
-  (use-package lsp-ui)
+  (use-package lsp-ui :ensure t)
+
+  (use-package lsp-treemacs :ensure t :commands lsp-treemacs-errors-list)
 
   ;; Add company-lsp backend for metals
-  (use-package company-lsp)
+  (use-package company-lsp :ensure t)
 
   ;;; Config for Eglot
 
