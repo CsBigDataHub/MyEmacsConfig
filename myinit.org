@@ -422,6 +422,7 @@
     :ensure t
     :bind
     ("M-SPC" . major-mode-hydra))
+  (require 'major-mode-hydra)
 #+END_SRC
 
 * All the Icons
@@ -518,7 +519,7 @@
   #+BEGIN_SRC emacs-lisp
 
     (setq evil-disable-insert-state-bindings t) ;;full blown emacs in insert mode
-    (add-to-list 'load-path "~/.emacs.d/evil")
+    (add-to-list 'load-path "~/.emacs.d/custom-el-scripts/evil")
     (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
     (setq evil-want-keybinding nil)
 
@@ -2523,11 +2524,11 @@
 * Sunrise Commander
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
-(require 'sunrise-commander)
-(require 'sunrise-x-buttons)
-(require 'sunrise-x-modeline)
-(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
+;;(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
+;;(require 'sunrise-commander)
+;;(require 'sunrise-x-buttons)
+;;(require 'sunrise-x-modeline)
+;;(add-to-list 'auto-mode-alist '("\\.srvm\\'" . sr-virtual-mode))
 #+END_SRC
 
 * EditorConfig
@@ -2637,7 +2638,7 @@
   (use-package eshell-did-you-mean
     :ensure t)
 
-  (add-to-list 'load-path (expand-file-name "/Users/ckoneru/.emacs.d/aweshell"))
+  (add-to-list 'load-path (expand-file-name "~/.emacs.d/custom-el-scripts/aweshell"))
   (require 'aweshell)
 
   ;; Increase eshell history size from default of only 128
@@ -3817,7 +3818,7 @@
   ;;(use-package cool-moves
   ;;  :load-path "~/.emacs.d/cool-moves")
 
-  (add-to-list 'load-path "~/.emacs.d/cool-moves")
+  (add-to-list 'load-path "~/.emacs.d/custom-el-scripts/cool-moves")
   (load "cool-moves")
 #+END_SRC
 
@@ -4542,7 +4543,7 @@ Select from xref candidates with ivy
   ;;(add-to-list 'load-path "~/.emacs.d/multi-libvterm")
   ;;(require 'multi-libvterm)
 
-  (add-to-list 'load-path "~/.emacs.d/emacs-libvterm")
+  (add-to-list 'load-path "~/.emacs.d/custom-el-scripts/emacs-libvterm")
   (require 'vterm)
 
   (add-hook 'vterm-mode-hook
@@ -4985,7 +4986,7 @@ Select from xref candidates with ivy
           '(("/Users/ckoneru/GitRepos" "/Users/ckoneru/locate_dbs/GitReposDB")
             ("/Users/ckoneru/IdeaProjects" "/Users/ckoneru/locate_dbs/IdeaProjectsDB")
             ("/Users/ckoneru/.emacs.d" "/Users/ckoneru/locate_dbs/emacssDB")
-            ("/Users/ckoneru/" "/Users/ckoneru/locate_dbs/ellocate-home-db")
+            ;;("/Users/ckoneru/" "/Users/ckoneru/locate_dbs/ellocate-home-db")
             ("/Users/ckoneru/Downloads" "/Users/ckoneru/locate_dbs/DownloadsDB")))
     :commands (ellocate))
 #+END_SRC
