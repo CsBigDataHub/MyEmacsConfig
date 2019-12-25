@@ -38,7 +38,6 @@ flycheck_*.el
 # network security
 /network-security.data
 # End of https://www.gitignore.io/api/emacs
-evil
 elpa
 *.dat
 myinit.el
