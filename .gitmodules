@@ -1,0 +1,12 @@
+[submodule "custom-el-scripts/aweshell"]
+	path = custom-el-scripts/aweshell
+	url = https://github.com/manateelazycat/aweshell.git
+[submodule "custom-el-scripts/cool-moves"]
+	path = custom-el-scripts/cool-moves
+	url = https://github.com/mrbig033/cool-moves.git
+[submodule "custom-el-scripts/emacs-libvterm"]
+	path = custom-el-scripts/emacs-libvterm
+	url = https://github.com/akermu/emacs-libvterm.git
+[submodule "custom-el-scripts/evil"]
+	path = custom-el-scripts/evil
+	url = https://github.com/emacs-evil/evil.git
