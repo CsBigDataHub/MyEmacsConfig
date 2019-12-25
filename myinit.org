@@ -4761,13 +4761,15 @@ Select from xref candidates with ivy
           golden-ratio-recenter t)
     )
 
-  (with-eval-after-load 'golden-ratio
-    (defun my-refresh-golden-ratio (&rest _)
-      "Queue a refresh of the `golden-ratio' proportions."
-      (when golden-ratio-mode
-        ;; Refresh the golden-ratio proportions after a small delay.
-        (run-with-idle-timer 0.02 nil 'golden-ratio))))
-  (advice-add 'select-window :after 'my-refresh-golden-ratio)
+  (add-to-list 'golden-ratio-extra-commands 'ace-window)
+
+  ;;(with-eval-after-load 'golden-ratio
+  ;;  (defun my-refresh-golden-ratio (&rest _)
+  ;;    "Queue a refresh of the `golden-ratio' proportions."
+  ;;    (when golden-ratio-mode
+  ;;      ;; Refresh the golden-ratio proportions after a small delay.
+  ;;      (run-with-idle-timer 0.02 nil 'golden-ratio))))
+  ;;(advice-add 'select-window :after 'my-refresh-golden-ratio)
 #+END_SRC
 
 * reveal-in-osx-finder
