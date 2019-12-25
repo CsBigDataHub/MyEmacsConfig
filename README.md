@@ -292,3 +292,9 @@ Emacs has commands for converting either a single word or any arbitrary range of
 ### I-edit
 
 `C-;` mark all the marked words
+
+
+#### Emacs daemon mac os
+   - [Emacs Daemon App](https://coderwall.com/p/vbndzq/emacs-daemon-macosx-workflow)
+   - http://thegreyblog.blogspot.com/2017/12/starting-emacs-daemon-automatically-at.html
+   - https://medium.com/@mchirico/emacs-daemon-emacsclient-on-os-x-1cc379e0c309
