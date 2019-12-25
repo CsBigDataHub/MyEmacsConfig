@@ -65,3 +65,14 @@ smex-items
 
 # Undo-tree save-files
 *.~undo-tree
+
+.historian
+.last-package-update-day
+bm-repository
+ede-projects.el
+quelpa
+savehist
+straight
+var
+myinit.el
+projectile-bookmarks.eld
