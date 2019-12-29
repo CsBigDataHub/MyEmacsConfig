@@ -1,1 +1,3 @@
-[-f $HOME/.xmodmap] && xmodmap $HOME/.xmodmap
+if [ -s ~/.Xmodmap ]; then
+    xmodmap ~/.Xmodmap
+fi
