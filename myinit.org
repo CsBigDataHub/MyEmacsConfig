@@ -684,7 +684,8 @@
       (setq ivy-display-style 'fancy))
 
 
-    (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
 
     ;; Enhance fuzzy matching
     (use-package flx
@@ -758,6 +759,8 @@
     ;;(setq ivy-re-builders-alist
     ;;      '((ivy-switch-buffer . ivy--regex-plus)
     ;;        (t . ivy--regex-fuzzy)))
+
+    (setq counsel-fzf-cmd "fd -HLia -t f --color never --exclude .git | fzf -f \"%s\"")
   #+END_SRC
 
 * Avy
