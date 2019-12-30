@@ -29,7 +29,7 @@
 ;;; Code:
 (require 'counsel)
 
-(defcustom counsel-fd-base-command "fd -L -I --hidden -a --color never "
+(defcustom counsel-fd-base-command "fd -HLIia --color never "
   "FD command to invoke."
   :type 'string
   :group 'ivy)
