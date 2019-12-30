@@ -627,6 +627,7 @@
 
 
     (load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    (load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
 
     ;; Enhance fuzzy matching
     (use-package flx
