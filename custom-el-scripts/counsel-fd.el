@@ -29,7 +29,7 @@
 ;;; Code:
 (require 'counsel)
 
-(defcustom counsel-fd-base-command "fd -HLIia --color never "
+(defcustom counsel-fd-base-command "fd -HLia -t f --color never --exclude .git "
   "FD command to invoke."
   :type 'string
   :group 'ivy)
