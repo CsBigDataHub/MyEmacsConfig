@@ -695,6 +695,8 @@
 
     (use-package ivy-yasnippet
       :ensure t)
+
+    (setq counsel-fzf-cmd "fd --type f | /home/mypc/.fzf/bin/fzf -f \"%s\"")
   #+END_SRC
 
 * Avy
@@ -2236,7 +2238,7 @@
 * FZF
 
 #+BEGIN_SRC emacs-lisp
-(use-package fzf :ensure t)
+  (use-package fzf :ensure t)
 #+END_SRC
 
 * RipGrep
