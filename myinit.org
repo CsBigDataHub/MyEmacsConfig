@@ -4325,7 +4325,7 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   (quelpa '(cheat :fetcher git :url "https://github.com/pbellon/cheat.git"))
   (require 'cheat)
-  (cheat/init)
+  (cheat--setup)
 #+END_SRC
 
 * terminal in emacs setting
@@ -4491,10 +4491,10 @@ Select from xref candidates with ivy
   (require 'vdiff-magit)
   (define-key magit-mode-map "4" 'vdiff-magit-dwim)
   (define-key magit-mode-map "$" 'vdiff-magit)
-  (transient-suffix-put 'magit-dispatch "4" :description "vdiff (dwim)")
-  (transient-suffix-put 'magit-dispatch "4" :command 'vdiff-magit-dwim)
-  (transient-suffix-put 'magit-dispatch "$" :description "vdiff")
-  (transient-suffix-put 'magit-dispatch "$" :command 'vdiff-magit)
+  ;;(transient-suffix-put 'magit-dispatch "4" :description "vdiff (dwim)")
+  ;;(transient-suffix-put 'magit-dispatch "4" :command 'vdiff-magit-dwim)
+  ;;(transient-suffix-put 'magit-dispatch "$" :description "vdiff")
+  ;;(transient-suffix-put 'magit-dispatch "$" :command 'vdiff-magit)
 
   ;; This flag will default to using ediff for merges.
   ;; (setq vdiff-magit-use-ediff-for-merges nil)
@@ -4731,10 +4731,19 @@ Select from xref candidates with ivy
 * Email Setup
 
 #+BEGIN_SRC emacs-lisp
+
+  ;;(setq load-path (cons (expand-file-name "/usr/local/share/emacs/site-lisp/mu4e")
+  ;;                      load-path))
+  ;;(require 'mu4e)
+  ;;(setq load-path (cons (expand-file-name "~/.emacs.d/custom-el-scripts/org-mime")
+  ;;                      load-path))
+  ;;(require 'org-mime)
+
   (load-if-exists "~/.emacs.d/custom-el-scripts/mu4econfig-setup.el")
-  (require 'mu4e)
   (use-package mu4e-conversation
     :ensure t
+    :config
+    ;;(setq mu4e-view-func 'mu4e-conversation)
     )
   (defhydra hydra-mu4e-headers (:color blue :hint nil)
     "
@@ -4817,7 +4826,7 @@ Select from xref candidates with ivy
 
    ("{" . mu4e-headers-query-prev)             ; differs from built-in
    ("}" . mu4e-headers-query-next)             ; differs from built-in
-   ("o" . my/org-capture-mu4e)                 ; differs from built-in
+   ;;("o" . my/org-capture-mu4e)                 ; differs from built-in
 
    ("A" . mu4e-headers-mark-for-action)        ; differs from built-in
 
@@ -4826,19 +4835,19 @@ Select from xref candidates with ivy
    ("." . hydra-mu4e-headers/body))
 
 
-  (defun my/org-capture-mu4e ()
-    (interactive)
-    "Capture a TODO item via email."
-    (org-capture nil "o"))
-
-
-  (add-to-list
-   'org-capture-templates
-   '("o"
-     "TODO respond to email"
-     entry
-     (file YOUR_TODO_FILE.org)
-     "* TODO %^{Description}\n%A\n%?\n"))
+  ;;(defun my/org-capture-mu4e ()
+  ;;  (interactive)
+  ;;  "Capture a TODO item via email."
+  ;;  (org-capture nil "o"))
+  ;;
+  ;;
+  ;;(add-to-list
+  ;; 'org-capture-templates
+  ;; '("o"
+  ;;   "TODO respond to email"
+  ;;   entry
+  ;;   (file YOUR_TODO_FILE.org)
+  ;;   "* TODO %^{Description}\n%A\n%?\n"))
 #+END_SRC
 
 * Notmuch
@@ -4874,13 +4883,4 @@ Select from xref candidates with ivy
     ("s-[" . smart-shift-right)
     ("s-]" . smart-shift-left)
     )
-#+END_SRC
-
-* Highlight2clipboard
-
-#+BEGIN_SRC emacs-lisp
-  (use-package highlight2clipboard
-    :ensure t
-    :config
-    (highlight2clipboard-mode 1))
 #+END_SRC

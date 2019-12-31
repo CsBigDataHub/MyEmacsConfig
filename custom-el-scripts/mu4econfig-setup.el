@@ -1,13 +1,28 @@
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-(add-to-list 'load-path "/home/mypc/.emacs.d/custom-el-scripts/org-mime")
-
-(require 'org-mu4e)
-
+;;; mu4econfig-setup.el
+;;; Commentary: Emacs Startup File --- initialization for Emacs
+;;
+(add-to-list 'load-path (expand-file-name "/usr/local/share/emacs/site-lisp/mu4e"))
+(require 'mu4e)
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/custom-el-scripts/org-mime"))
 (require 'org-mime)
 
-(require 'mu4e)
+(require 'org-mu4e)
+(setq org-mu4e-convert-to-html t)
 
 (require 'smtpmail)
+(use-package mu4e-alert
+  :ensure t)
+
+
+(mu4e-alert-set-default-style 'libnotify)
+(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+
+
+
+
+;;need this for hash access
+(require 'subr-x)
 
 ;; use mu4e for e-mail in emacs
 (setq mail-user-agent 'mu4e-user-agent)
@@ -27,6 +42,8 @@
 (add-to-list 'mu4e-view-actions
              '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
+;; use 'fancy' non-ascii characters in various places in mu4e
+(setq mu4e-use-fancy-chars t)
 ;; enable inline images
 (setq mu4e-view-show-images t)
 ;; use imagemagick, if available
@@ -86,4 +103,5 @@
 
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
+
 (provide 'mu4econfig-setup)
