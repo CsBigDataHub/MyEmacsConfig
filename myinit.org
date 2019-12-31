@@ -482,11 +482,17 @@
       (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
       (eval-buffer)))
 
-  (use-package quelpa-use-package
-    :ensure t
-    :init
-    (setq quelpa-update-melpa-p nil))
+  ;;(use-package quelpa-use-package
+  ;;  :ensure t
+  ;;  :init
+  ;;  (setq quelpa-update-melpa-p nil))
   ;;(setq use-package-ensure-function 'quelpa)
+  (quelpa
+   '(quelpa-use-package
+     :fetcher git
+     :url "https://github.com/quelpa/quelpa-use-package.git"))
+  (require 'quelpa-use-package)
+  (setq use-package-ensure-function 'quelpa)
 #+END_SRC
 
 * Which key
@@ -4537,12 +4543,14 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   ;;(quelpa '(cheat :fetcher github :repo "pbellon/cheat"))
-  ;;(require 'cheat)
-  ;;(cheat/reload-sheets)
+  (quelpa '(cheat :fetcher github :url "https://github.com/pbellon/cheat.git"))
+  (require 'cheat)
+  (cheat--setup)
+
   ;;(use-package
   ;;    :quelpa (cheat :fetcher github :repo "pbellon/cheat")
   ;;    :config
-  ;;    (cheat/reload-sheets))
+  ;;    (cheat--setup))
 #+END_SRC
 
 * terminal in emacs setting
@@ -5003,14 +5011,14 @@ Select from xref candidates with ivy
 * Ellocate - a locate alternative -
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ellocate
-    :ensure t
-    :config
-    (setq ellocate-scan-dirs
-          '(("/Users/ckoneru/GitRepos" "/Users/ckoneru/locate_dbs/GitReposDB")
-            ("/Users/ckoneru/IdeaProjects" "/Users/ckoneru/locate_dbs/IdeaProjectsDB")
-            ("/Users/ckoneru/.emacs.d" "/Users/ckoneru/locate_dbs/emacssDB")
-            ;;("/Users/ckoneru/" "/Users/ckoneru/locate_dbs/ellocate-home-db")
-            ("/Users/ckoneru/Downloads" "/Users/ckoneru/locate_dbs/DownloadsDB")))
-    :commands (ellocate))
+ ;; (use-package ellocate
+ ;;   :ensure t
+ ;;   :config
+ ;;   (setq ellocate-scan-dirs
+ ;;         '(("/Users/ckoneru/GitRepos" "/Users/ckoneru/locate_dbs/GitReposDB")
+ ;;           ("/Users/ckoneru/IdeaProjects" "/Users/ckoneru/locate_dbs/IdeaProjectsDB")
+ ;;           ("/Users/ckoneru/.emacs.d" "/Users/ckoneru/locate_dbs/emacssDB")
+ ;;           ;;("/Users/ckoneru/" "/Users/ckoneru/locate_dbs/ellocate-home-db")
+ ;;           ("/Users/ckoneru/Downloads" "/Users/ckoneru/locate_dbs/DownloadsDB")))
+ ;;   :commands (ellocate))
 #+END_SRC
