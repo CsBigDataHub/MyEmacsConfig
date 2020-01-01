@@ -433,11 +433,6 @@
 * Quelpa
 
 #+BEGIN_SRC emacs-lisp
-  (use-package quelpa-use-package
-    :ensure t
-    :init
-    (setq quelpa-update-melpa-p nil))
-
   (package-initialize)
   (if (require 'quelpa nil t)
       (quelpa-self-upgrade)
@@ -445,7 +440,17 @@
       (url-insert-file-contents "https://framagit.org/steckerhalter/quelpa/raw/master/bootstrap.el")
       (eval-buffer)))
 
-  ;;(setq use-package-ensure-function 'quelpa)
+  ;;(use-package quelpa-use-package
+  ;;  :ensure t
+  ;;  :init
+  ;;  (setq quelpa-update-melpa-p nil))
+
+  (quelpa
+   '(quelpa-use-package
+     :fetcher git
+     :url "https://github.com/quelpa/quelpa-use-package.git"))
+  (require 'quelpa-use-package)
+  (setq use-package-ensure-function 'quelpa)
 #+END_SRC
 
 * Which key
