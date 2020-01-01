@@ -795,7 +795,8 @@
       :defer t
       :config
       (
-       (setq company-fuzzy-show-annotation t))
+       ;;(setq company-fuzzy-show-annotation t)
+       )
       :init
       (setq company-fuzzy-sorting-backend 'flx)
       (setq company-fuzzy-prefix-ontop nil)
