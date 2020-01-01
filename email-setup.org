@@ -96,8 +96,6 @@
 
 ** keyboard shortcuts
 
-    Next: [[http://www.djcbsoftware.nl/code/mu/mu4e/HV-Marking.html#HV-Marking][HV Marking]], Previous: [[http://www.djcbsoftware.nl/code/mu/mu4e/HV-Overview.html#HV-Overview][HV Overview]], Up: [[http://www.djcbsoftware.nl/code/mu/mu4e/Headers-view.html#Headers-view][Headers view]]   [[[http://www.djcbsoftware.nl/code/mu/mu4e/index.html#SEC_Contents][Contents]]]
-
     --------------------------------------------------------------------------------
 
     4.2 Keybindings

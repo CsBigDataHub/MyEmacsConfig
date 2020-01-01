@@ -190,6 +190,8 @@
 
     (setq desktop-path '("~/.emacs.d/desktop-mode-cache/"))
     (desktop-save-mode 1)
+
+    (setq org-ellipsis "↴") ;;▼, ↴, ⬎, ⤷,⤵
   #+END_SRC
 
 * Theme
@@ -791,6 +793,9 @@
     (use-package company-fuzzy
       :ensure t
       :defer t
+      :config
+      (
+       (setq company-fuzzy-show-annotation t))
       :init
       (setq company-fuzzy-sorting-backend 'flx)
       (setq company-fuzzy-prefix-ontop nil)
@@ -968,8 +973,19 @@
 
     (use-package elpy
       :ensure t
+      :init
+      (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
       :config
-      (elpy-enable))
+      ((setq elpy-rpc-backend "jedi")
+       ;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+       ;;flycheck-python-flake8-executable "/usr/local/bin/flake8"
+       (elpy-enable)
+       )
+      :bind (:map elpy-mode-map
+                  ("M-." . elpy-goto-definition)
+                  ("M-," . pop-tag-mark)
+                  )
+      )
 
     (use-package virtualenvwrapper
       :ensure t
@@ -1013,9 +1029,11 @@
       :hook (python-mode . python-docstring-mode))
 
     (use-package pydoc
-      :after anaconda-mode
-      :bind (:map anaconda-mode-map
+      :ensure t
+      :bind (:map pyhton-mode-map
                   ("M-?" . pydoc-at-point)))
+
+    (use-package counsel-pydoc :ensure t)
   #+END_SRC
 
 * White Space and Blank Lines
@@ -2687,12 +2705,19 @@
     :hook (scala-mode . lsp)
     :config (setq lsp-prefer-flymake nil))
 
-  (use-package lsp-ui)
+  (use-package lsp-ui
+    :ensure t
+    :hook (lsp-mode . lsp-ui-mode)
+    )
 
   ;; Add company-lsp backend for metals
-  (use-package company-lsp)
+  (use-package company-lsp
+    :ensure t
+    :config
+    (push 'company-lsp company-backends))
 
-  ;;; Config for Eglot
+
+    ;;; Config for Eglot
 
   ;; Enable scala-mode and sbt-mode
   ;;(use-package scala-mode
@@ -4325,6 +4350,7 @@ Select from xref candidates with ivy
 
   (setq-default indicate-empty-lines t)
 #+END_SRC
+
 * Cheat
 
 #+BEGIN_SRC emacs-lisp
@@ -4627,6 +4653,13 @@ Select from xref candidates with ivy
     :config
     (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
     )
+
+  (use-package terraform-doc
+    :ensure t)
+
+  (use-package company-terraform
+    :ensure t
+    :hook (terraform-mode . company-terraform-init))
 #+END_SRC
 
 * Region Convert
@@ -4888,4 +4921,19 @@ Select from xref candidates with ivy
     ("s-[" . smart-shift-right)
     ("s-]" . smart-shift-left)
     )
+#+END_SRC
+
+* page-break-line
+
+#+BEGIN_SRC emacs-lisp
+  (use-package page-break-lines)
+#+END_SRC
+
+* reset GC
+
+#+BEGIN_SRC emacs-lisp
+  ;;; end
+  ;; reset GC
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1)
 #+END_SRC
