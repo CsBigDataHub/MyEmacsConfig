@@ -393,10 +393,11 @@
 * FlySpell
 
 #+BEGIN_SRC emacs-lisp
-  (use-pckage flyspell
-    :diminish
-    :hook ((prog-mode . flyspell-prog-mode)
-           (org-mode text-mode . flyspell-mode)))
+  (use-package flyspell
+    ;;:diminish
+    ;;:hook ((prog-mode . flyspell-prog-mode)
+    ;;       (text-mode . flyspell-mode))
+           )
 
   (setq ispell-program-name "/usr/local/bin/aspell")
   (setq ispell-dictionary "en_US") ;; set the default dictionary
