@@ -5135,15 +5135,6 @@ Select from xref candidates with ivy
   (use-package page-break-lines)
 #+END_SRC
 
-* reset GC
-
-#+BEGIN_SRC emacs-lisp
-  ;;; end
-  ;; reset GC
-  (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1)
-#+END_SRC
-
 * Write good mode
 
 #+BEGIN_SRC emacs-lisp
@@ -5176,4 +5167,13 @@ Select from xref candidates with ivy
     (setq buffer-backed-up nil))
 
   (add-hook 'before-save-hook  'my/force-backup-of-buffer)
+#+END_SRC
+
+* reset GC
+
+#+BEGIN_SRC emacs-lisp
+  ;;; end
+  ;; reset GC
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1)
 #+END_SRC
