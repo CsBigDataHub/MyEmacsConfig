@@ -222,11 +222,32 @@
     (setq desktop-path '("~/.emacs.d/desktop-mode-cache/"))
     (desktop-save-mode 1)
 
+    ;;(setq org-ellipsis "↴") ;;▼, ↴, ⬎, ⤷,⤵
+    (setq org-ellipsis "⇲") ;;▼, ↴, ⬎, ⤷,⤵
+
+    (setq desktop-restore-eager 10)
+
     ;;cursor color to white
     (set-cursor-color "#ffffff")
 
     (setq max-specpdl-size 1300000)
     (setq max-lisp-eval-depth 100000)
+
+    ;; Provides only the command “restart-emacs”.
+    (use-package restart-emacs
+      :demand t
+      ;; Let's define an alias so there's no need to remember the order.
+      :config (defalias 'emacs-restart #'restart-emacs))
+
+    (setq-default save-place  t)
+    (setq save-place-file "~/.emacs.d/etc/saveplace")
+
+    ;;Text selected with the mouse is automatically copied to clipboard.
+    (setq mouse-drag-copy-region t)
+
+    ;; C-n, next line, inserts newlines when at the end of the buffer
+    (setq next-line-add-newlines t)
+
   #+END_SRC
 
 * Theme
@@ -369,6 +390,18 @@
     (defalias 'gsetq-default #'general-setq-default))
 #+END_SRC
 
+* FlySpell
+
+#+BEGIN_SRC emacs-lisp
+  (use-pckage flyspell
+    :diminish
+    :hook ((prog-mode . flyspell-prog-mode)
+           (org-mode text-mode . flyspell-mode)))
+
+  (setq ispell-program-name "/usr/local/bin/aspell")
+  (setq ispell-dictionary "en_US") ;; set the default dictionary
+#+END_SRC
+
 * Hydra
 
 #+BEGIN_SRC emacs-lisp
@@ -376,7 +409,7 @@
     :ensure hydra
     :init
     (global-set-key
-     (kbd "C-x t")
+     (kbd "C-c h h t")
      (defhydra toggle (:color blue)
        "toggle"
        ("a" abbrev-mode "abbrev")
@@ -388,7 +421,7 @@
        ("w" whitespace-mode "whitespace")
        ("q" nil "cancel")))
     (global-set-key
-     (kbd "C-x j")
+     (kbd "C-c h h g")
      (defhydra gotoline
        ( :pre (linum-mode 1)
               :post (linum-mode -1))
@@ -403,7 +436,7 @@
        ("g" goto-line "goto-line")
        ))
     (global-set-key
-     (kbd "C-c t")
+     (kbd "C-c h o t")
      (defhydra hydra-global-org (:color blue)
        "Org"
        ("t" org-timer-start "Start Timer")
@@ -552,6 +585,18 @@
     (evil-set-initial-state 'dired-mode 'emacs)
     (evil-set-initial-state 'wgrep-change-to-wgrep-mode 'emacs)
   #+END_SRC
+
+* Org-sticky-header
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-sticky-header
+    :hook (org-mode . org-sticky-header-mode)
+    :config
+    (setq-default
+     org-sticky-header-full-path 'full
+     ;; Child and parent headings are seperated by a /.
+     org-sticky-header-outline-path-separator " / "))
+#+END_SRC
 
 * Org Bullets
 
@@ -847,6 +892,31 @@
                                       ;; company-dabbrev-code
                                       )))))
     :config
+    (setq ;; Only 2 letters required for completion to activate.
+     company-minimum-prefix-length 2
+
+     ;; Search other buffers for compleition candidates
+     company-dabbrev-other-buffers t
+     company-dabbrev-code-other-buffers t
+
+     ;; Allow (lengthy) numbers to be eligible for completion.
+     company-complete-number t
+
+     ;; M-⟪num⟫ to select an option according to its number.
+     company-show-numbers t
+
+     ;; Edge of the completion list cycles around.
+     company-selection-wrap-around t
+
+     ;; Do not downcase completions by default.
+     company-dabbrev-downcase nil
+
+     ;; Even if I write something with the ‘wrong’ case,
+     ;; provide the ‘correct’ casing.
+     company-dabbrev-ignore-case t
+
+     ;; Immediately activate completion.
+     company-idle-delay 0)
     ;; using child frame
     (use-package company-posframe
       :ensure t
@@ -1058,9 +1128,19 @@
 
     (use-package elpy
       :ensure t
+      :init
+      (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
       :config
-      (elpy-enable))
-
+      ((setq elpy-rpc-backend "jedi")
+       ;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+       ;;flycheck-python-flake8-executable "/usr/local/bin/flake8"
+       (elpy-enable)
+       )
+      :bind (:map elpy-mode-map
+                  ("M-." . elpy-goto-definition)
+                  ("M-," . pop-tag-mark)
+                  )
+      )
     (use-package virtualenvwrapper
       :ensure t
       ;; Automatically switch python venv
@@ -1108,9 +1188,10 @@
 
     (use-package pydoc
       :ensure t
-      :after anaconda-mode
-      :bind (:map anaconda-mode-map
-		  ("M-?" . pydoc-at-point)))
+      :bind (:map python-mode-map
+                  ("M-?" . pydoc-at-point)))
+
+    (use-package counsel-pydoc :ensure t)
   #+END_SRC
 
 * White Space and Blank Lines
@@ -2410,6 +2491,20 @@
     (exec-path-from-shell-copy-env "SHELL")
     (exec-path-from-shell-copy-env "JAVA_HOME")
     )
+
+  ;; https://emacs.stackexchange.com/questions/4090/org-mode-cannot-find-pdflatex-using-mac-os
+
+  (defun set-exec-path-from-shell-PATH ()
+    "Sets the exec-path to the same value used by the user shell"
+    (let ((path-from-shell
+           (replace-regexp-in-string
+            "[[:space:]\n]*$" ""
+            (shell-command-to-string "$SHELL -l -c 'echo $PATH'"))))
+      (setenv "PATH" path-from-shell)
+      (setq exec-path (split-string path-from-shell path-separator))))
+
+  ;; call function now
+  (set-exec-path-from-shell-PATH)
 #+END_SRC
 
 * Wgrep
@@ -2826,13 +2921,18 @@
            (scala-mode . lsp))
     :config (setq lsp-prefer-flymake nil))
 
-  (use-package lsp-ui :ensure t)
+  (use-package lsp-ui
+    :ensure t
+    :hook (lsp-mode . lsp-ui-mode)
+    )
 
   (use-package lsp-treemacs :ensure t :commands lsp-treemacs-errors-list)
 
   ;; Add company-lsp backend for metals
-  (use-package company-lsp :ensure t)
-
+  (use-package company-lsp
+    :ensure t
+    :config
+    (push 'company-lsp company-backends))
   ;;; Config for Eglot
 
   ;; Enable scala-mode and sbt-mode
@@ -3555,6 +3655,8 @@
                          backup-files)))
 
     (setq snapshot-timemachine-snapshot-finder #'snapshot-timemachine-backup-finder))
+
+  (require 'snapshot-timemachine)
 #+END_SRC
 
 * XML
@@ -4543,14 +4645,15 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   ;;(quelpa '(cheat :fetcher github :repo "pbellon/cheat"))
-  (quelpa '(cheat :fetcher github :url "https://github.com/pbellon/cheat.git"))
-  (require 'cheat)
-  (cheat--setup)
+  ;;(quelpa '(cheat :fetcher github :url "https://github.com/pbellon/cheat.git"))
+  ;;(require 'cheat)
+  ;;(cheat--setup)
 
-  ;;(use-package
-  ;;    :quelpa (cheat :fetcher github :repo "pbellon/cheat")
-  ;;    :config
-  ;;    (cheat--setup))
+  (use-package cheat
+    :quelpa (cheat :fetcher github :url "https://github.com/pbellon/cheat.git")
+    ;;:straight (cheat :type git :host github :repo "pbellon/cheat")
+    :config
+    (cheat--setup))
 #+END_SRC
 
 * terminal in emacs setting
@@ -4860,6 +4963,9 @@ Select from xref candidates with ivy
     (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
     )
 
+  (use-package terraform-doc
+    :ensure t)
+
   (use-package company-terraform
     :ensure t
     :after company
@@ -5021,4 +5127,53 @@ Select from xref candidates with ivy
  ;;           ;;("/Users/ckoneru/" "/Users/ckoneru/locate_dbs/ellocate-home-db")
  ;;           ("/Users/ckoneru/Downloads" "/Users/ckoneru/locate_dbs/DownloadsDB")))
  ;;   :commands (ellocate))
+#+END_SRC
+
+* page-break-line
+
+#+BEGIN_SRC emacs-lisp
+  (use-package page-break-lines)
+#+END_SRC
+
+* reset GC
+
+#+BEGIN_SRC emacs-lisp
+  ;;; end
+  ;; reset GC
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1)
+#+END_SRC
+
+* Write good mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package writegood-mode
+    ;; Load this whenver I'm composing prose.
+    :hook (text-mode org-mode)
+    ;; Don't show me the “Wg” marker in the mode line
+    :diminish
+    ;; Some additional weasel words.
+    :config
+    (--map (push it writegood-weasel-words)
+           '("some" "simple" "simply" "easy" "often" "easily" "probably"
+             "clearly"               ;; Is the premise undeniably true?
+             "experience shows"      ;; Whose? What kind? How does it do so?
+             "may have"              ;; It may also have not!
+             "it turns out that")))  ;; How does it turn out so?
+  ;; ↯ What is the evidence of highighted phrase? ↯
+#+END_SRC
+
+* Backup-walker
+
+#+BEGIN_SRC emacs-lisp
+  (use-package backup-walker
+    :commands backup-walker-start)
+
+  ;; Make Emacs backup everytime I save
+
+  (defun my/force-backup-of-buffer ()
+    "Lie to Emacs, telling it the curent buffer has yet to be backed up."
+    (setq buffer-backed-up nil))
+
+  (add-hook 'before-save-hook  'my/force-backup-of-buffer)
 #+END_SRC
