@@ -390,19 +390,6 @@
     (defalias 'gsetq-default #'general-setq-default))
 #+END_SRC
 
-* FlySpell
-
-#+BEGIN_SRC emacs-lisp
-  (use-package flyspell
-    ;;:diminish
-    ;;:hook ((prog-mode . flyspell-prog-mode)
-    ;;       (text-mode . flyspell-mode))
-           )
-
-  (setq ispell-program-name "/usr/local/bin/aspell")
-  (setq ispell-dictionary "en_US") ;; set the default dictionary
-#+END_SRC
-
 * Hydra
 
 #+BEGIN_SRC emacs-lisp
