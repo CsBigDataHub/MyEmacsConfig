@@ -925,18 +925,21 @@
     :defines
     (company-dabbrev-ignore-case company-dabbrev-downcase)
     :bind
-    (:map company-active-map
-          ("C-n" . company-select-next)
-          ("C-p" . company-select-previous)
-          ("<tab>" . company-complete-common-or-cycle)
-          :map company-search-map
-          ("C-p" . company-select-previous)
-          ("C-n" . company-select-next))
+    (("M-/" . company-complete)
+     (:map company-active-map
+           ("C-n" . company-select-next)
+           ("C-p" . company-select-previous)
+           ("<tab>" . company-complete-common-or-cycle)
+           ("TAB" . company-complete-common-or-cycle)
+           ("M-i" . company-complete-common-or-cycle)
+           :map company-search-map
+           ("C-p" . company-select-previous)
+           ("C-n" . company-select-next)))
     :custom
     (company-idle-delay 0)
     (company-echo-delay 0)
     (company-show-numbers t)
-    (company-begin-commands '(self-insert-command))
+    (company-begin-commands '(sel-insert-command))
     (company-tooltip-align-annotations 't)
     (company-minimum-prefix-length 1)
     :hook
@@ -969,6 +972,11 @@
      company-dabbrev-other-buffers t
      company-dabbrev-code-other-buffers t
 
+     company-tooltip-align-annotations t
+
+     company-frontends '(company-pseudo-tooltip-frontend
+                         company-echo-metadata-frontend)
+     company-require-match nil
      ;; Allow (lengthy) numbers to be eligible for completion.
      company-complete-number t
 
@@ -987,6 +995,16 @@
 
      ;; Immediately activate completion.
      company-idle-delay 0)
+
+    ;; TOPIC: How add company-dabbrev to the Company completion popup?
+    ;; URL: https://emacs.stackexchange.com/questions/15246/how-add-company-dabbrev-to-the-company-completion-popup
+    (add-to-list 'company-backends 'company-dabbrev-code)
+    (add-to-list 'company-backends 'company-gtags)
+    (add-to-list 'company-backends 'company-etags)
+    (add-to-list 'company-backends 'company-keywords)
+    (add-to-list 'company-backends 'company-files)
+    (add-to-list 'company-backends 'company-dabbrev)
+    (add-to-list 'company-backends 'company-capf)
     ;; using child frame
     (use-package company-posframe
       :ensure t
@@ -3003,7 +3021,8 @@
     :ensure t
     ;; Optional - enable lsp-mode automatically in scala files
     :hook ((sh-mode . lsp)
-           (scala-mode . lsp))
+           (scala-mode . lsp)
+           (xml-mode . lsp))
     :config (setq lsp-prefer-flymake nil))
 
   (use-package lsp-ui
@@ -3747,43 +3766,49 @@
 * XML
 
 #+BEGIN_SRC emacs-lisp
- ;; (use-package nxml-mode
- ;;   :ensure t
- ;;   :mode ("\\.xml$" . nxml-mode)
- ;;   :commands (pretty-print-xml-region)
- ;;   :defer t
- ;;   :init
- ;;   ;; Mapping xml to nxml
- ;;   (fset 'xml-mode 'nxml-mode)
+  (use-package nxml-mode
+    :disabled
+    :ensure nil
+    :no-require t
+    :mode ("\\.xml$" . nxml-mode)
+    :commands (pretty-print-xml-region)
+    :defer t
+    :init
+    ;; Mapping xml to nxml
+    (fset 'xml-mode 'nxml-mode)
 
- ;;   :config
+    :config
 
- ;;   ;; Global configuration
- ;;   (setq nxml-child-indent 2
- ;;         nxml-auto-insert-xml-declaration-flag t
- ;;         nxml-slash-auto-complete-flag t
- ;;         nxml-bind-meta-tab-to-complete-flag t)
+    ;; Global configuration
+    (setq nxml-child-indent 2
+          nxml-auto-insert-xml-declaration-flag t
+          nxml-slash-auto-complete-flag t
+          nxml-bind-meta-tab-to-complete-flag t)
 
- ;;   ;; Outline hook
- ;;   (add-hook 'nxml-mode-hook
- ;;             (lambda ()
- ;;               (outline-minor-mode)
- ;;               (setq outline-regexp "^[ \t]*\<[a-zA-Z]+")))
+    ;; Outline hook
+    (add-hook 'nxml-mode-hook
+              (lambda ()
+                (outline-minor-mode)
+                (setq outline-regexp "^[ \t]*\<[a-zA-Z]+")))
 
- ;;   ;; Helper to format
- ;;   (defun my/pretty-print-xml-region (begin end)
- ;;     "Pretty format XML markup in region. You need to have nxml-mode
- ;; http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
- ;; this.  The function inserts linebreaks to separate tags that have
- ;; nothing but whitespace between them.  It then indents the markup
- ;; by using nxml's indentation rules."
- ;;     (interactive "r")
- ;;     (save-excursion
- ;;       (nxml-mode)
- ;;       (goto-char begin)
- ;;       (while (search-forward-regexp "\>[ \\t]*\<" nil t)
- ;;         (backward-char) (insert "\n"))
- ;;       (indent-region begin end))))
+    ;; Helper to format
+    (defun my/pretty-print-xml-region (begin end)
+      "Pretty format XML markup in region. You need to have nxml-mode
+   http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+   this.  The function inserts linebreaks to separate tags that have
+   nothing but whitespace between them.  It then indents the markup
+   by using nxml's indentation rules."
+      (interactive "r")
+      (save-excursion
+        (nxml-mode)
+        (goto-char begin)
+        (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+          (backward-char) (insert "\n"))
+        (indent-region begin end))))
+
+  (add-hook 'nxml-mode-hook 'lsp)
+
+  (setq lsp-xml-jar-file "~/GitRepos/org.eclipse.lsp4xml-0.3.0-uber.jar")
 #+END_SRC
 
 * Gradle
