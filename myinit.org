@@ -959,6 +959,7 @@
                                       company-files
                                       company-capf
                                       company-dabbrev-code
+                                      company-dabbrev
                                       )))))
     :config
     (setq ;; Only 2 letters required for completion to activate.
@@ -1116,9 +1117,8 @@
   ;;:ensure t
   ;;  :hook (company-mode . company-box-mode))
 
-  (setq company-backends '((company-capf company-dabbrev-code company-files)))
+  (setq company-backends '((company-capf company-dabbrev company-dabbrev-code company-files)))
   (define-key global-map (kbd "C-c c f") 'company-files)
-
 #+END_SRC
 
 * Reveal.js
