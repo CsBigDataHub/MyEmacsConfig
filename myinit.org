@@ -716,6 +716,8 @@
       (historian-mode +1)
       :diminish (ivy-mode)
       :bind (("C-x b" . ivy-switch-buffer))
+      :custom
+      (ivy-use-selectable-prompt t)
       :config
       ;;(ivy-mode 1)
       (ivy-historian-mode +1)
@@ -723,8 +725,17 @@
       (setq ivy-display-style 'fancy))
 
 
-    (load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
+    ;;(load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
     (load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
+
+    (use-package ivy-rich
+      :ensure t
+      :custom
+      (ivy-rich-path-style 'abbreviate)
+      :config
+      (setcdr (assq t ivy-format-functions-alist)
+              #'ivy-format-function-line)
+      (ivy-rich-mode 1))
 
     ;; Enhance fuzzy matching
     (use-package flx
@@ -788,8 +799,14 @@
 
     (use-package ivy-prescient
       :ensure t
-      :after ivy
-      :init (ivy-prescient-mode))
+      :after (prescient ivy)
+      :custom
+      (ivy-prescient-sort-commands
+       '(:not swiper ivy-switch-buffer counsel-switch-buffer))
+      (ivy-prescient-retain-classic-highlighting t)
+      (ivy-prescient-enable-filtering t)
+      (ivy-prescient-enable-sorting t)
+      :init (ivy-prescient-mode 1))
 
     (setq counsel-grep-base-command
           "rg -i -M 120 --no-heading --line-number --color never %s %s")
@@ -800,6 +817,64 @@
     ;;        (t . ivy--regex-fuzzy)))
 
     (setq counsel-fzf-cmd "fd -HLia -t f --color never --exclude .git | fzf -f \"%s\"")
+
+    (defun my/counsel-fzf-rg-files (&optional input dir)
+      "Run `fzf' in tandem with `ripgrep' to find files in the
+    present directory.  If invoked from inside a version-controlled
+    repository, then the corresponding root is used instead."
+      (interactive)
+      (let* ((process-environment
+              (cons (concat "FZF_DEFAULT_COMMAND=rg -Sn --color never --files --no-follow --hidden")
+                    process-environment))
+             (vc (vc-root-dir)))
+        (if dir
+            (counsel-fzf input dir)
+          (if (eq vc nil)
+              (counsel-fzf input default-directory)
+            (counsel-fzf input vc)))))
+
+    (defun my/counsel-fzf-dir (arg)
+      "Specify root directory for `counsel-fzf'."
+      (my/counsel-fzf-rg-files ivy-text
+                               (read-directory-name
+                                (concat (car (split-string counsel-fzf-cmd))
+                                        " in directory: "))))
+
+    (defun my/counsel-rg-dir (arg)
+      "Specify root directory for `counsel-rg'."
+      (let ((current-prefix-arg '(4)))
+        (counsel-rg ivy-text nil "")))
+
+    ;; TODO generalise for all relevant file/buffer counsel-*?
+    (defun my/counsel-fzf-ace-window (arg)
+      "Use `ace-window' on `my/counsel-fzf-rg-files' candidate."
+      (ace-window t)
+      (let ((default-directory (if (eq (vc-root-dir) nil)
+                                   counsel--fzf-dir
+                                 (vc-root-dir))))
+        (if (> (length (aw-window-list)) 1)
+            (progn
+              (find-file arg))
+          (find-file-other-window arg))
+        (balance-windows)))
+
+    ;; Pass functions as appropriate Ivy actions (accessed via M-o)
+    (ivy-add-actions
+     'counsel-fzf
+     '(("r" my/counsel-fzf-dir "change root directory")
+       ("g" my/counsel-rg-dir "use ripgrep in root directory")
+       ("a" my/counsel-fzf-ace-window "ace-window switch")))
+
+    (ivy-add-actions
+     'counsel-rg
+     '(("r" my/counsel-rg-dir "change root directory")
+       ("z" my/counsel-fzf-dir "find file with fzf in root directory")))
+
+    (ivy-add-actions
+     'counsel-find-file
+     '(("g" my/counsel-rg-dir "use ripgrep in root directory")
+       ("z" my/counsel-fzf-dir "find file with fzf in root directory")))
+
   #+END_SRC
 
 * Avy
@@ -808,7 +883,7 @@
 
     (use-package avy
       :ensure t
-      :bind (("M-s" . avy-goto-char)
+      :bind (("M-s s" . avy-goto-char)
              ("C-:" . avy-goto-word-0)
              ("C-'" . avy-goto-char-2)
              ("M-g l" . avy-goto-line))
@@ -872,12 +947,18 @@
                                         )))))
     ((go-mode
       c++-mode
+      org-mode
+      emacs-lisp-mode
+      shell-mode
+      java-mode
+      python-mode
       c-mode
       objc-mode) . (lambda () (set (make-local-variable 'company-backends)
                                    '((company-yasnippet
                                       company-lsp
                                       company-files
-                                      ;; company-dabbrev-code
+                                      company-capf
+                                      company-dabbrev-code
                                       )))))
     :config
     (setq ;; Only 2 letters required for completion to activate.
@@ -1034,6 +1115,10 @@
   ;;(use-package company-box
   ;;:ensure t
   ;;  :hook (company-mode . company-box-mode))
+
+  (setq company-backends '((company-capf company-dabbrev-code company-files)))
+  (define-key global-map (kbd "C-c c f") 'company-files)
+
 #+END_SRC
 
 * Reveal.js
@@ -1116,19 +1201,24 @@
 
     (use-package elpy
       :ensure t
+      :commands (elpy-enable)
       :init
-      (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
+      (setq elpy-rpc-backend "jedi")
       :config
-      ((setq elpy-rpc-backend "jedi")
-       ;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-       ;;flycheck-python-flake8-executable "/usr/local/bin/flake8"
-       (elpy-enable)
-       )
+      (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
+      ;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+      ;;flycheck-python-flake8-executable "/usr/local/bin/flake8"
+      (setq elpy-rpc-python-command "python3"
+            elpy-modules (dolist (elem '(elpy-module-highlight-indentation
+                                         elpy-module-yasnippet))
+                           (remove elem elpy-modules)))
+
       :bind (:map elpy-mode-map
                   ("M-." . elpy-goto-definition)
                   ("M-," . pop-tag-mark)
                   )
       )
+
     (use-package virtualenvwrapper
       :ensure t
       ;; Automatically switch python venv
@@ -1739,6 +1829,7 @@
   (use-package peep-dired
     :ensure t
     :config
+    (setq peep-dired-cleanup-on-disable t)
     (define-key dired-mode-map (kbd "P") 'peep-dired)
     )
 
@@ -1801,6 +1892,7 @@
     :ensure t
     :after dired
     :config
+    (setq wdired-create-parent-directories t)
     ;; Make permission bits editable
     (setq wdired-allow-to-change-permissions t))
 
@@ -1909,6 +2001,11 @@
   (use-package projectile
     :ensure t
     :bind ("C-c p" . projectile-command-map)
+    :custom
+    (projectile-project-search-path '("~/GitRepos/"))
+    (projectile-indexing-method 'alien)
+    (setq projectile-sort-order 'recently-active)
+    (projectile-enable-caching t)
     :config
     (projectile-global-mode)
     (setq projectile-completion-system 'ivy))
@@ -4192,7 +4289,19 @@ Select from xref candidates with ivy
   (use-package anzu
     :ensure t
     :hook ((after-init . global-anzu-mode))
-    :bind ([remap query-replace] . anzu-query-replace-regexp))
+    :custom
+    (anzu-search-threshold 1000)
+    (anzu-replace-threshold nil)
+    (anzu-deactivate-region nil)
+    ;;(anzu-replace-to-string-separator "") ;; This is default
+    (anzu-replace-to-string-separator "=>")
+    (anzu-cons-mode-line-p nil)
+    :bind (
+           ([remap query-replace-regexp] . anzu-query-replace-regexp)
+           ([remap query-replace] . anzu-query-replace)
+           ("M-s %" . anzu-query-replace-at-cursor)
+           )
+    )
 #+END_SRC
 
 * Awesome-tabs
