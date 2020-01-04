@@ -10,3 +10,6 @@
 [submodule "custom-el-scripts/evil"]
 	path = custom-el-scripts/evil
 	url = https://github.com/emacs-evil/evil.git
+[submodule "custom-el-scripts/undo-tree"]
+	path = custom-el-scripts/undo-tree
+	url = https://github.com/emacsorphanage/undo-tree.git

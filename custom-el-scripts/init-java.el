@@ -39,6 +39,30 @@
 
 (require 'dap-java)
 
+;; Support Lombok in our projects, among other things
+(setq my/lombok-jar (expand-file-name "~/GitRepos/lombok/lombok.jar"))
+
+(setq lsp-java-vmargs
+      (list "-noverify"
+            "-Xmx2G"
+            "-XX:+UseG1GC"
+            "-XX:+UseStringDeduplication"
+            (concat "-javaagent:" my/lombok-jar)
+            (concat "-Xbootclasspath/a:" my/lombok-jar))
+      lsp-file-watch-ignored
+      '(".idea" ".ensime_cache" ".eunit" "node_modules" ".git" ".hg" ".fslckout" "_FOSSIL_"
+        ".bzr" "_darcs" ".tox" ".svn" ".stack-work" "build")
+
+      ;;lsp-java-import-order '["" "java" "javax" "#"]
+      ;; Don't organize imports on save
+      ;;lsp-java-save-action-organize-imports nil
+
+      ;; Formatter profile
+      ;;lsp-java-format-settings-url (concat "file://" my/java-format-settings-file)
+      lsp-enable-on-type-formatting t
+      lsp-enable-indentation t)
+
+
 ;;(use-package dap-java
 ;;  :after (lsp-java))
 
