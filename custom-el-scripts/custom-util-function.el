@@ -452,8 +452,8 @@
       (transpose-lines -1))
     (move-to-column col)))
 
-(global-set-key (kbd "<C-S-down>") 'my/move-line-down)
-(global-set-key (kbd "<C-S-up>") 'my/move-line-up)
+;;(global-set-key (kbd "<C-S-down>") 'my/move-line-down)
+;;(global-set-key (kbd "<C-S-up>") 'my/move-line-up)
 
 ;;if you're windened, narrow to the region, if you're narrowed, widen;
 ;;bound to C-x n
@@ -501,6 +501,7 @@
 (defun my/general-formatting-hooks ()
   (setq show-trailing-whitespace 't)
   (turn-on 'form-feed))
+
 (defun fixup-json ()
   "Re-indent json buffers with broken literal strings. Needs jsonpp installed (available using homebrew)"
   (interactive)
@@ -626,14 +627,29 @@ point reaches the beginning or end of the buffer, stop there."
              (set-window-start w2 s1)
              (setq i (1+ i)))))))
 
+(defun my/toggle-frame-fullscreen-non-native ()
+  "Toggle full screen non-natively. Uses the `fullboth' frame paramerter
+   rather than `fullscreen'. Useful to fullscreen on OSX w/o animations."
+  (interactive)
+  (modify-frame-parameters
+   nil
+   `((maximized
+      . ,(unless (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+           (frame-parameter nil 'fullscreen)))
+     (fullscreen
+      . ,(if (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+             (if (eq (frame-parameter nil 'maximized) 'maximized)
+                 'maximized)
+           'fullboth)))))
+
 (defhydra my/hydra-of-windows (:color red
                                       :hint nil)
   "
- ^Move^    ^Size^    ^Change^                    ^Split^           ^Text^
- ^^^^^^^^^^^------------------------------------------------------------------
+ ^Move^           ^Size^      ^Change^                    ^Split^           ^Text^
+ ^^^^^^^^^^^------------------------------------------------------------------------------
  ^ ^ _k_ ^ ^   ^ ^ _K_ ^ ^   _u_: winner-undo _o_: rotate  _v_: vertical     _+_: zoom in
- _h_ ^+^ _l_   _H_ ^+^ _L_   _r_: winner-redo            _s_: horizontal   _-_: zoom out
- ^ ^ _j_ ^ ^   ^ ^ _J_ ^ ^   _c_: close                  _z_: zoom         _q_: quit
+ _h_ ^+^ _l_   _H_ ^+^ _L_   _r_: winner-redo              _s_: horizontal   _-_: zoom out
+ ^ ^ _j_ ^ ^   ^ ^ _J_ ^ ^   _c_: close                    _z_: zoom         _q_: quit
 "
   ("h" windmove-left)
   ("j" windmove-down)
@@ -658,7 +674,7 @@ point reaches the beginning or end of the buffer, stop there."
   ("q" nil :color blue))
 
 (bind-keys*
- ("M-m SPC u" . my/hydra-of-windows/body))
+ ("C-c h w" . my/hydra-of-windows/body))
 
 (defhydra my/hydra-bookmarks (:color blue
                                      :hint nil)
@@ -673,7 +689,7 @@ point reaches the beginning or end of the buffer, stop there."
   ("q" nil :color blue))
 
 (bind-keys*
- ("M-m `" . my/hydra-bookmarks/body))
+ ("C-c h B" . my/hydra-bookmarks/body))
 
 (defun my/incs (s &optional num)
   (let* ((inc (or num 1))
@@ -964,7 +980,8 @@ region-end is used."
  ("M-m [ e" . my/move-text-up)
  ("M-m ] e" . my/move-text-down))
 
-(defun my/replace-next-underscore-with-camel (arg)
+(defun my/replace-snale-case-with-camel-case (arg)
+  "Change snake case to camel case"
   (interactive "p")
   (if (> arg 0)
       (setq arg (1+ arg))) ; 1-based index to get eternal loop with 0
@@ -991,56 +1008,6 @@ region-end is used."
 
 (bind-keys*
  ("M-m g _" . my/snakeify-current-word))
-
-(defhydra my/hydra-rectangle (:pre (rectangle-mark-mode 1)
-                                   :color pink
-                                   :hint nil)
-  "
- _p_: paste   _r_: replace  _I_: insert
- _y_: copy    _o_: open     _V_: reset
- _d_: kill    _n_: number   _q_: quit
-"
-  ("h" backward-char nil)
-  ("l" forward-char nil)
-  ("k" previous-line nil)
-  ("j" next-line nil)
-  ("y" copy-rectangle-as-kill)
-  ("d" kill-rectangle)
-  ("x" clear-rectangle)
-  ("o" open-rectangle)
-  ("p" yank-rectangle)
-  ("r" string-rectangle)
-  ("n" rectangle-number-lines)
-  ("I" string-insert-rectangle)
-  ("V" (if (region-active-p)
-           (deactivate-mark)
-         (rectangle-mark-mode 1)) nil)
-  ("q" keyboard-quit :color blue))
-
-(bind-keys*
- ("M-m V" . my/hydra-rectangle/body))
-
-(defhydra my/hydra-of-macros (:color pink
-                                     :hint nil)
-  "
- _m_: macro  _L_: lossage  _v_: view      _n_: forward    _D_: delete   _q_: quit
- _M_: prev   _E_: edit     _r_: register  _p_: backward   _K_: key
-  "
-  ("m" kmacro-call-macro)
-  ("M" kmacro-call-ring-2nd)
-  ("L" kmacro-edit-lossage :color blue)
-  ("E" kmacro-edit-macro :color blue)
-  ("v" kmacro-view-macro :color blue)
-  ("r" kmacro-to-register :color blue)
-  ("n" kmacro-cycle-ring-next)
-  ("p" kmacro-cycle-ring-previous)
-  ("D" kmacro-delete-ring-head :color blue)
-  ("K" kmacro-bind-to-key :color blue)
-  ("q" nil :color blue))
-
-
-(bind-keys*
- ("M-m @" . my/hydra-of-macros/body))
 
 (defun my/smarter-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
@@ -1330,6 +1297,10 @@ _s-f_: file            _a_: ag                _i_: Ibuffer           _c_: cache 
   ("`"   my/hydra-projectile-other-window/body "other window")
   ("q"   nil "cancel" :color blue))
 
+
+(bind-keys*
+ ("C-c h P" . my/hydra-projectile))
+
 (defhydra my/hydra-smartparens (:hint nil)
   "
  Moving^^^^                       Slurp & Barf^^   Wrapping^^            Sexp juggling^^^^               Destructive
@@ -1410,6 +1381,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   ("u" undo nil)
   ("g" nil))      ;; ok
 
+(bind-keys*
+ ("C-c h r" . my/hydra-rectangle/body))
 
 (defhydra my/hydra-macro (:hint nil :color pink :pre
                                 (when defining-kbd-macro
@@ -1419,7 +1392,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
             ^[_i_] cycle-ring-previous^          [_e_] execute    [_n_] insert    [_b_] name      [_'_] previous
              ^^↑^^                               [_d_] delete     [_t_] set       [_K_] key       [_,_] last
- [_j_] start ←   → [_l_] end                     [_o_] edit       [_a_] add       [_x_] register
+ [_j_] start ←   → [_l_] end                     [_o_] edit       [_a_] add       [_x_] register  [_V_] view
              ^^↓^^                               [_r_] region     [_f_] format    [_B_] defun
             ^[_k_] cycle-ring-next^              [_m_] step
             ^^   ^^                              [_s_] swap                                       [_q_] quit
@@ -1444,8 +1417,11 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   ("x" kmacro-to-register)
   ("'" kmacro-edit-macro)
   ("," edit-kbd-macro)
+  ("V" kmacro-view-macro :color blue)
   ("q" nil :color blue))
 
+(bind-keys*
+ ("C-c h M" . my/hydra-of-macros/body))
 
 ;; Hydra for org agenda (graciously taken from Spacemacs)
 (defhydra hydra-org-agenda (:pre (setq which-key-inhibit t)
@@ -1527,12 +1503,15 @@ _vr_ reset      ^^                       ^^                 ^^
   ("." org-agenda-goto-today)
   ("gr" org-agenda-redo))
 
+(bind-keys*
+ ("C-c h o A" . hydra-org-agenda/body))
+
 (defun my/insert-unicode (unicode-name)
   "Same as C-x 8 enter UNICODE-NAME."
   (insert-char (gethash unicode-name (ucs-names))))
 
 (global-set-key
- (kbd "C-x 9")
+ (kbd "C-c h 9")
  (defhydra hydra-unicode (:hint nil)
    "
         Unicode  _e_ €  _s_ ZERO WIDTH SPACE
@@ -1566,8 +1545,8 @@ _SPC_ cancel	_o_nly this     _d_elete
   ("w" hydra-move-splitter-down)
   ("e" hydra-move-splitter-up)
   ("r" hydra-move-splitter-right)
-  ("b" helm-mini)
-  ("f" helm-find-files)
+  ("b" ivy-switch-buffer)
+  ("f" counsel-find-files)
   ("F" follow-mode)
   ("a" (lambda ()
          (interactive)
@@ -1608,29 +1587,35 @@ _SPC_ cancel	_o_nly this     _d_elete
   ("SPC" nil)
   )
 
-(defhydra hydra-lsp (:exit t :hint nil)
-  "
+(bind-keys*
+ ("C-c h w" . hydra-window/body))
+
+(dehydra hydra-lsp (:exit t :hint nil)
+         "
  Buffer^^               Server^^                   Symbol
 -------------------------------------------------------------------------------------
  [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
  [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
  [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
-  ("d" lsp-find-declaration)
-  ("D" lsp-ui-peek-find-definitions)
-  ("R" lsp-ui-peek-find-references)
-  ("i" lsp-ui-peek-find-implementation)
-  ("t" lsp-find-type-definition)
-  ("s" lsp-signature-help)
-  ("o" lsp-describe-thing-at-point)
-  ("r" lsp-rename)
+         ("d" lsp-find-declaration)
+         ("D" lsp-ui-peek-find-definitions)
+         ("R" lsp-ui-peek-find-references)
+         ("i" lsp-ui-peek-find-implementation)
+         ("t" lsp-find-type-definition)
+         ("s" lsp-signature-help)
+         ("o" lsp-describe-thing-at-point)
+         ("r" lsp-rename)
 
-  ("f" lsp-format-buffer)
-  ("m" lsp-ui-imenu)
-  ("x" lsp-execute-code-action)
+         ("f" lsp-format-buffer)
+         ("m" lsp-ui-imenu)
+         ("x" lsp-execute-code-action)
 
-  ("M-s" lsp-describe-session)
-  ("M-r" lsp-restart-workspace)
-  ("S" lsp-shutdown-workspace))
+         ("M-s" lsp-describe-session)
+         ("M-r" lsp-restart-workspace)
+         ("S" lsp-shutdown-workspace))
+
+(bind-keys*
+ ("C-c h l l" . hydra-window/body))
 
 (defun my/package-upgrade-all ()
   "Upgrade all packages automatically without showing *Packages* buffer."
@@ -1786,6 +1771,9 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
   ("i" nil :exit t)
   ("q" nil :exit t))
 
+(bind-keys*
+ ("C-c h n n" . my/nav-mode/body))
+
 (defhydra my/indent-tools-hydra (:color red :hint nil)
   "
  ^Indent^         | ^Navigation^        | ^Actions^
@@ -1815,7 +1803,7 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
   ("S" indent-tools-select-end-of-tree)
   ("n" indent-tools-goto-next-sibling)
   ("p" indent-tools-goto-previous-sibling)
-  ("i" helm-imenu)
+  ("i" counsel-imenu)
   ("j" forward-line)
   ("k" previous-line)
   ("SPC" indent-tools-indent-space)
@@ -1823,6 +1811,9 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
   ("L" recenter-top-bottom)
   ("f" yafolding-toggle-element)
   ("q" nil))
+
+(bind-keys*
+ ("C-c h n n" . my/nav-mode/body))
 
 (defhydra my/hydra-coolmoves-text-motions (:color amaranth :hint nil :foreign-keys nil)
   "
@@ -1859,12 +1850,15 @@ _n_ next-line          _S-SPC_ scroll-down-command              _d_ kill-buffer
   ("x" cool-moves/sexp-forward)
   ("X" cool-moves/sexp-backward))
 
+(bind-keys*
+ ("C-c h n c" . my/hydra-coolmoves-text-motions/body))
+
 (defhydra hydra-ediff (:color blue :hint nil)
   "
 ediff
 ^Buffers           Files                 VC                   Ediff regions
 --------------------------------------------------------------------------------
-_b_uffers           _f_iles (_=_)        _r_evisions                _l_inewise
+_b_uffers           _f_iles (_=_)        _r_evisions            _l_inewise
 _B_uffers (3-way)   _F_iles (3-way)                             _w_ordwise
                   _c_urrent file
 
@@ -2024,6 +2018,7 @@ region if active. http://xenodium.com/fishing-with-emacs/"
      (region-beginning) (region-end)
      (concat "yq r -j - | jq  > " (shell-quote-argument output-file)))
     ))
+
 (defun xah-check-parens-balance ()
   "Check if there are unbalanced parentheses/brackets/quotes in current bufffer or selection.
 If so, place cursor there, print error to message buffer.
