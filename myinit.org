@@ -675,15 +675,51 @@
 
   #+BEGIN_SRC emacs-lisp
 
-(use-package ace-window
-  :ensure t
-  :init
-  (progn
-    (global-set-key [remap other-window] 'ace-window)
-    (custom-set-faces
-     '(aw-leading-char-face
-       ((t (:inherit ace-jump-face-foreground :height 3.0)))))
-    ))
+    (use-package ace-window
+      :ensure t
+      :custom
+      (aw-keys '(?a ?s ?d ?f ?g ?h ?p ?k ?l))
+      ;;(aw-dispatch-always t)
+      (aw-dispatch-alist
+       '((?s aw-swap-window "Swap Windows")
+         (?2 aw-split-window-vert "Split Window Vertically")
+         (?3 aw-split-window-horz "Split Window Horizontally")
+         (?? aw-show-dispatch-help)))
+      (aw-display-mode-overlay t)
+      :init
+      (progn
+        (global-set-key [remap other-window] 'ace-window)
+        (custom-set-faces
+         '(aw-leading-char-face
+           ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+        )
+      :config
+      (defun my-scroll-other-window()
+        (interactive)
+        (scroll-other-window 1))
+      (defun my-scroll-other-window-down ()
+        (interactive)
+        (scroll-other-window-down 1))
+      (when (package-installed-p 'hydra)
+        (defhydra hydra-window-size (:color red)
+          "Windows size"
+          ("h" shrink-window-horizontally "shrink horizontal")
+          ("j" shrink-window "shrink vertical")
+          ("k" enlarge-window "enlarge vertical")
+          ("l" enlarge-window-horizontally "enlarge horizontal"))
+        (defhydra hydra-window-frame (:color red)
+          "Frame"
+          ("f" make-frame "new frame")
+          ("x" delete-frame "delete frame"))
+        (defhydra hydra-window-scroll (:color red)
+          "Scroll other window"
+          ("n" my-scroll-other-window "scroll")
+          ("p" my-scroll-other-window-down "scroll down"))
+        (add-to-list 'aw-dispatch-alist '(?w hydra-window-size/body) t)
+        (add-to-list 'aw-dispatch-alist '(?S hydra-window-scroll/body) t)
+        (add-to-list 'aw-dispatch-alist '(?\; hydra-window-frame/body) t))
+      (ace-window-display-mode -1)
+      )
 
   #+END_SRC
 
@@ -860,6 +896,15 @@
           (find-file-other-window arg))
         (balance-windows)))
 
+    (defun my/counsel-ff-ace-window (arg)
+      "Use `ace-window' on `my/counsel-find-files' candidate."
+      (ace-window t)
+      (if (> (length (aw-window-list)) 1)
+          (progn
+            (find-file arg))
+        (find-file-other-window arg))
+      (balance-windows))
+
     ;; Pass functions as appropriate Ivy actions (accessed via M-o)
     (ivy-add-actions
      'counsel-fzf
@@ -893,7 +938,9 @@
     (ivy-set-actions
      t
      '(("i" ivy-copy-to-buffer-action "insert")
-       ("y" ivy-yank-action "yank")))
+       ("y" ivy-yank-action "yank")
+       ("O" my/counsel-ff-ace-window "find file with ace-window integration")
+       ))
 
     ;;(ivy-set-actions t nil)
   #+END_SRC
