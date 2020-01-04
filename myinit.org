@@ -724,6 +724,8 @@
       (setq ivy-use-virtual-buffers t)
       (setq ivy-display-style 'fancy))
 
+    (use-package ivy-hydra
+      :ensure t)
 
     ;;(load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
     (load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
@@ -873,10 +875,27 @@
     (ivy-add-actions
      'counsel-find-file
      '(("g" my/counsel-rg-dir "use ripgrep in root directory")
-       ("z" my/counsel-fzf-dir "find file with fzf in root directory")))
+       ("z" my/counsel-fzf-dir "find file with fzf in root directory")
+       ;; ("i" ivy-copy-to-buffer-action "insert")
+       ;; ("y" ivy-yank-action "yank")
+       ))
 
     ;; to toggle case sesitivity in swiper
     (define-key ivy-minibuffer-map (kbd "M-c") 'ivy-toggle-case-fold)
+
+    (defun ivy-yank-action (x)
+      (kill-new x))
+
+    (defun ivy-copy-to-buffer-action (x)
+      (with-ivy-window
+        (insert x)))
+
+    (ivy-set-actions
+     t
+     '(("i" ivy-copy-to-buffer-action "insert")
+       ("y" ivy-yank-action "yank")))
+
+    ;;(ivy-set-actions t nil)
   #+END_SRC
 
 * Avy
