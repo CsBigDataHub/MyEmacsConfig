@@ -875,6 +875,8 @@
      '(("g" my/counsel-rg-dir "use ripgrep in root directory")
        ("z" my/counsel-fzf-dir "find file with fzf in root directory")))
 
+    ;; to toggle case sesitivity in swiper
+    (define-key ivy-minibuffer-map (kbd "M-c") 'ivy-toggle-case-fold)
   #+END_SRC
 
 * Avy
