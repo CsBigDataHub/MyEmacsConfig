@@ -378,7 +378,8 @@ fi
 * To Auto export org file to html
 
   Place this in the first line of the org file. Now emacs will start a background task to export the current file and you are able to work in the meantime.
-  Because html export ist much faster than latex processing in my current setup I export to html and have emacs on the left half of the screen and on the other my browser. Every time I save my document the browser preview updates automatically
+  Because html export ist much faster than latex processing in my current setup I export to html and have emacs on the left half of the screen and on the other my browser.
+  Every time I save my document the browser preview updates automatically
   #+BEGIN_SRC emacs-lisp
   # -*- after-save-hook: org-html-export-to-html; org-export-in-background: t; -*-
 

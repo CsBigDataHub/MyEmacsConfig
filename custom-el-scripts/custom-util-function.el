@@ -2120,6 +2120,25 @@ Version 2018-07-03"
     (set-buffer-modified-p t)
     (message "Enabled org html export on save")))
 
+(defun my/delete-process-at-point ()
+  (interactive)
+  (let ((process (get-text-property (point) 'tabulated-list-id)))
+    (cond ((and process
+                (processp process))
+           (delete-process process)
+           (revert-buffer))
+          (t
+           (error "no process at point!")))))
+
+(define-key process-menu-mode-map (kbd "C-k") 'my/delete-process-at-point)
+
+(defun delete-process-interactive ()
+  (interactive)
+  (let ((pname (ido-completing-read "Process Name: "
+                                    (mapcar 'process-name (process-list)))))
+
+    (delete-process (get-process pname))))
+
 (defun my-toggle-fold ()
   "Toggle fold all lines larger than indentation on current line"
   (interactive)
