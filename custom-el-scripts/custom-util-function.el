@@ -2108,6 +2108,18 @@ Version 2018-07-03"
 
 (global-set-key (kbd "C-x c w") 'formatted-copy)
 
+(defun toggle-html-export-on-save ()
+  "Enable or disable export HTML when saving current buffer."
+  (interactive)
+  (when (not (eq major-mode 'org-mode))
+    (error "Not an org-mode file!"))
+  (if (memq 'org-html-export-to-html after-save-hook)
+      (progn (remove-hook 'after-save-hook 'org-html-export-to-html t)
+             (message "Disabled org html export on save"))
+    (add-hook 'after-save-hook 'org-html-export-to-html nil t)
+    (set-buffer-modified-p t)
+    (message "Enabled org html export on save")))
+
 (defun my-toggle-fold ()
   "Toggle fold all lines larger than indentation on current line"
   (interactive)
