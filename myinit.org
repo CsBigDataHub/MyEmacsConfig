@@ -248,6 +248,9 @@
     ;; C-n, next line, inserts newlines when at the end of the buffer
     (setq next-line-add-newlines t)
 
+    ;; Adding indent hook
+    (add-hook 'org-mode-hook 'org-indent-mode)
+
   #+END_SRC
 
 * Theme
@@ -5427,6 +5430,14 @@ Select from xref candidates with ivy
        t)))
 
   (define-key org-brain-visualize-mode-map (kbd "L") #'org-brain-cliplink-resource)
+#+END_SRC
+
+* Ox-hugo
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-hugo
+    :ensure t            ;Auto-install the package from Melpa (optional)
+    :after ox)
 #+END_SRC
 
 * reset GC
