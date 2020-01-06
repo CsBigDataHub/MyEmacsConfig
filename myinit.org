@@ -37,15 +37,6 @@
     ;;      use-package-always-ensure t)
   #+END_SRC
 
-* Org
-
-#+BEGIN_SRC emacs-lisp
-  ;; Enable Org mode
-  (use-package org
-    :ensure org-plus-contrib
-    )
-#+END_SRC
-
 * Garbage collection
 
 #+BEGIN_SRC emacs-lisp
@@ -386,7 +377,18 @@
   ;;;;  Effectively replace use-package with straight-use-package
   ;;; https://github.com/raxod502/straight.el/blob/develop/README.md#integration-with-use-package
   (straight-use-package 'use-package)
-  (setq straight-use-package-by-default t)
+  ;;(setq straight-use-package-by-default t)
+#+END_SRC
+
+* Org
+
+#+BEGIN_SRC emacs-lisp
+  ;; Enable Org mode
+  (use-package org
+    :ensure org-plus-contrib
+    )
+
+  (require 'org-tempo)
 #+END_SRC
 
 * Genearl
@@ -524,7 +526,7 @@
      :fetcher git
      :url "https://github.com/quelpa/quelpa-use-package.git"))
   (require 'quelpa-use-package)
-  (setq use-package-ensure-function 'quelpa)
+  ;;(setq use-package-ensure-function 'quelpa)
 #+END_SRC
 
 * Which key
@@ -1238,45 +1240,93 @@
 
   #+BEGIN_SRC emacs-lisp
     ;; add <el for emacs-lisp expansion
-    (add-to-list 'org-structure-template-alist
-                 '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"
-                   "<src lang=\"emacs-lisp\">\n?\n</src>"))
 
-    ;; add <cl for emacs-lisp expansion
-    (add-to-list 'org-structure-template-alist
-                 '("cl" "#+BEGIN_SRC clojure\n?\n#+END_SRC"
-                   "<src lang=\"clojure\">\n?\n</src>"))
+    ;; Setup code block templates.
+    ;; For Org-mode < 9.2
+    (setq old-structure-template-alist
+          '(("py" "#+BEGIN_SRC python :results output\n?\n#+END_SRC" "")
+            ("ipy" "#+BEGIN_SRC ipython :results output\n?\n#+END_SRC" "")
+            ("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "")
+            ("hs" "#+BEGIN_SRC haskell\n?\n#+END_SRC" "")
+            ("laeq" "#+BEGIN_LaTeX\n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}\n#+END_LaTeX" "")
+            ("sh" "#+BEGIN_SRC sh\n?\n#+END_SRC" "")
+            ("r" "#+BEGIN_SRC R\n?\n#+END_SRC" "")
+            ("js" "#+BEGIN_SRC js\n?\n#+END_SRC" "")
+            ("http" "#+BEGIN_SRC http\n?\n#+END_SRC" "")
+            ("ditaa" "#+BEGIN_SRC ditaa :file\n?\n#+END_SRC" "")
+            ("dot" "#+BEGIN_SRC dot :file\n?\n#+END_SRC" "")
+            ("rp" "#+BEGIN_SRC R :results output graphics :file \n?\n#+END_SRC" "")
+            ("plantuml" "#+BEGIN_SRC plantuml :file\n?\n#+END_SRC" "")
+            ("n" "#+NAME: ?")
+            ("cap" "#+CAPTION: ?")))
+    ;; For Org-mode >= 9.2
+    (setq new-structure-template-alist
+          '(("py" . "src python :results output")
+            ("ipy" . "src ipython :results output")
+            ("el" . "src emacs-lisp")
+            ("hs" . "src haskell")
+            ("laeq" . "latex \n\\begin{equation} \\label{eq-sinh}\ny=\\sinh x\n\\end{equation}")
+            ("sh" . "src sh")
+            ("r" . "src R")
+            ("js" . "src js")
+            ("http" . "src http")
+            ("ditaa" . "src ditaa :file")
+            ("dot" . "src dot :file")
+            ("rp" . "src R :results output graphics :file ")
+            ("plantuml" . "src plantuml :file")
+            ))
+    ;; Keyword expansion also changed in 9.2
+    (setq my-tempo-keywords-alist
+          '(("n" . "NAME")
+            ("cap" . "CAPTION")))
 
-    ;; add <p for python expansion
-    (add-to-list 'org-structure-template-alist
-                 '("p" "#+BEGIN_SRC python :results output org drawer\n?\n#+END_SRC"
-                   "<src lang=\"python\">\n?\n</src>"))
+    (when (version< (org-version) "9.2")
+      (add-to-list 'org-modules 'org-tempo))
+    (require 'org-tempo)
+    (if (version<  (org-version) "9.2")
+        (dolist (ele old-structure-template-alist)
+          (add-to-list 'org-structure-template-alist ele))
+      (dolist (ele new-structure-template-alist)
+        (add-to-list 'org-structure-template-alist ele))
+      (dolist (ele my-tempo-keywords-alist)
+        (add-to-list 'org-tempo-keywords-alist ele))
+      )
 
-    ;; add <r for R expansion
-    (add-to-list 'org-structure-template-alist
-                 '("r" "#+BEGIN_SRC r :results output org drawer\n?\n#+END_SRC"
-                   "<src lang=\"r\">\n?\n</src>"))
-
-    (add-to-list 'org-structure-template-alist
-                 '("ao" "#+attr_org: " ""))
-
-    (add-to-list 'org-structure-template-alist
-                 '("al" "#+attr_latex: " ""))
-
-    (add-to-list 'org-structure-template-alist
-                 '("ca" "#+caption: " ""))
-
-    (add-to-list 'org-structure-template-alist
-                 '("tn" "#+tblname: " ""))
-
-    (add-to-list 'org-structure-template-alist
-                 '("n" "#+name: " ""))
-
-    (add-to-list 'org-structure-template-alist
-                 '("o" "#+options: " ""))
-
-    (add-to-list 'org-structure-template-alist
-                 '("ti" "#+title: " ""))
+    ;;;; add <cl for emacs-lisp expansion
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("cl" "#+BEGIN_SRC clojure\n?\n#+END_SRC"
+    ;;               "<src lang=\"clojure\">\n?\n</src>"))
+    ;;
+    ;;;; add <p for python expansion
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("p" "#+BEGIN_SRC python :results output org drawer\n?\n#+END_SRC"
+    ;;               "<src lang=\"python\">\n?\n</src>"))
+    ;;
+    ;;;; add <r for R expansion
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("r" "#+BEGIN_SRC r :results output org drawer\n?\n#+END_SRC"
+    ;;               "<src lang=\"r\">\n?\n</src>"))
+    ;;
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("ao" "#+attr_org: " ""))
+    ;;
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("al" "#+attr_latex: " ""))
+    ;;
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("ca" "#+caption: " ""))
+    ;;
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("tn" "#+tblname: " ""))
+    ;;
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("n" "#+name: " ""))
+    ;;
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("o" "#+options: " ""))
+    ;;
+    ;;(add-to-list 'org-structure-template-alist
+    ;;             '("ti" "#+title: " ""))
   #+END_SRC
 
 * FlyCheck
@@ -4857,11 +4907,11 @@ Select from xref candidates with ivy
   ;;(require 'cheat)
   ;;(cheat--setup)
 
-  (use-package cheat
-    :quelpa (cheat :fetcher github :url "https://github.com/pbellon/cheat.git")
-    ;;:straight (cheat :type git :host github :repo "pbellon/cheat")
-    :config
-    (cheat--setup))
+  ;;(use-package cheat
+  ;;  :quelpa (cheat :fetcher github :url "https://github.com/pbellon/cheat.git")
+  ;;  ;;:straight (cheat :type git :host github :repo "pbellon/cheat")
+  ;;  :config
+  ;;  (cheat--setup))
 #+END_SRC
 
 * terminal in emacs setting
