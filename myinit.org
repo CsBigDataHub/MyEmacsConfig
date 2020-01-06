@@ -1670,6 +1670,14 @@
 
      ;; highlight brackets if visible, else entire expression
      ;;(setq show-paren-style 'mixed)
+
+     ;; disable <> auto pairing in electric-pair-mode for org-mode
+     (add-hook
+      'org-mode-hook
+      (lambda ()
+        (setq-local electric-pair-inhibit-predicate
+                    `(lambda (c)
+                       (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
    #+END_SRC
 
 * string-inflection for string manipulation
