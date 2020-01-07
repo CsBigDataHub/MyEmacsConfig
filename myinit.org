@@ -1024,7 +1024,7 @@
     (company-show-numbers t)
     (company-begin-commands '(sel-insert-command))
     (company-tooltip-align-annotations 't)
-    (company-minimum-prefix-length 1)
+    (company-minimum-prefix-length 2)
     :hook
     (after-init . global-company-mode)
     (plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
@@ -1108,6 +1108,10 @@
       (add-to-list 'company-backends '(company-shell
                                        company-shell-env
                                        company-fish-shell)))
+
+    ;; Better sorting and filtering
+    (use-package company-prescient
+      :init (company-prescient-mode 1))
 
     ;; Show pretty icons
     (use-package company-box
@@ -4945,6 +4949,7 @@ Select from xref candidates with ivy
   ;;(define-key vterm-mode-map [return]                      #'vterm-send-return)
 
   (setq vterm-keymap-exceptions nil)
+  (evil-define-key 'insert vterm-mode-map [delete] #'vterm--self-insert)
   (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)
   (evil-define-key 'insert vterm-mode-map (kbd "C-f")      #'vterm--self-insert)
   (evil-define-key 'insert vterm-mode-map (kbd "C-a")      #'vterm--self-insert)
@@ -4961,7 +4966,7 @@ Select from xref candidates with ivy
   (evil-define-key 'insert vterm-mode-map (kbd "C-r")      #'vterm--self-insert)
   (evil-define-key 'insert vterm-mode-map (kbd "C-t")      #'vterm--self-insert)
   (evil-define-key 'insert vterm-mode-map (kbd "C-g")      #'vterm--self-insert)
-  (evil-define-key 'insert vterm-mode-map (kbd "C-c")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-c C-c")  #'vterm-send-ctrl-c)
   (evil-define-key 'insert vterm-mode-map (kbd "C-SPC")    #'vterm--self-insert)
   (evil-define-key 'normal vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
   ;;(evil-define-key 'normal vterm-mode-map (kbd ",c")       #'multi-libvterm)
