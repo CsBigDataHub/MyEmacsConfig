@@ -3448,6 +3448,9 @@
 
   (use-package kubel
     :ensure t)
+
+  (use-package kubel-evil
+    :ensure t)
 #+END_SRC
 
 * Json
