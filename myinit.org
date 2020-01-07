@@ -389,6 +389,8 @@
     )
 
   (require 'org-tempo)
+
+  (define-key org-mode-map (kbd "C-x n w") 'widen)
 #+END_SRC
 
 * Genearl
