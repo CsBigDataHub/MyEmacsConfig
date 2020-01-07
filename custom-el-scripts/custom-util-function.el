@@ -240,7 +240,7 @@
                   "5 → Thursday, April 12, 2018"
                   "6 → Thu, Apr 12, 2018"
                   "7 → April 12, 2018"
-                  "8 → Apr 12, 2018"
+                  "8 → 12-April-2018"
                   )) 0 1))
            0
            )))
@@ -282,8 +282,8 @@
        ;; "April 12, 2018"
        )
       ((= $style 8)
-       (format-time-string "%b %d, %Y")
-       ;; "Apr 12, 2018"
+       (format-time-string "%d-%B-%Y")
+       ;; "12-April-2018"
        )
       (t
        (format-time-string "%Y-%m-%d"))))))

@@ -1,12 +1,14 @@
 ;;; counsel-fd.el --- counsel interface for fd  -*- lexical-binding: t; -*-
 
-;; Copyright © 2018, Rashawn Zhang, all rights reserved.
+;; Copyright © 2020, Rashawn Zhang, all rights reserved.
 
 ;; Version: 0.1.0
 ;; URL: https://github.com/yqrashawn/counsel-fd
 ;; Package-Requires: ((emacs "24.4"))
 ;; Author: Rashawn Zhang <namy.19@gmail.com>
 ;; Created: 27 August 2018
+;; Modified: 07-January-2020
+;; Changed fd command and added a new ivy action
 ;; Keywords: tools
 
 ;; This program is free software; you can redistribute it and/or modify
