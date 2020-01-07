@@ -1022,7 +1022,7 @@
     (company-idle-delay 0)
     (company-echo-delay 0)
     (company-show-numbers t)
-    (company-begin-commands '(sel-insert-command))
+    (company-begin-commands '(self-insert-command))
     (company-tooltip-align-annotations 't)
     (company-minimum-prefix-length 2)
     :hook
