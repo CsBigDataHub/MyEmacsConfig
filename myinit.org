@@ -3017,6 +3017,14 @@
     :ensure t
     :after pcomplete)
 
+  (use-package pcmpl-args
+    :ensure t
+    :after pcomplete)
+
+  (use-package pcmpl-homebrew
+    :ensure t
+    :after pcomplete)
+
   (add-hook 'eshell-mode-hook
             (lambda ()
               (add-to-list 'eshell-visual-commands "ssh")
