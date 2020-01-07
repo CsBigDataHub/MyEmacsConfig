@@ -5254,6 +5254,15 @@ Select from xref candidates with ivy
     :ensure t
     :after company
     :hook (terraform-mode . company-terraform-init))
+
+  (add-to-list 'lsp-language-id-configuration '(terraform-mode . "terraform"))
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("~/.emacs.d/custom-el-scripts/lsp/terraform-lsp" "-enable-log-file"))
+                    :major-modes '(terraform-mode)
+                    :server-id 'terraform-ls))
+
+  (add-hook 'terraform-mode-hook #'lsp)
 #+END_SRC
 
 * Region Convert
