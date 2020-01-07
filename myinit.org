@@ -91,14 +91,14 @@
     (setq inhibit-startup-message t)
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
     (fset 'yes-or-no-p 'y-or-n-p)
-    (global-auto-revert-mode 1)
 
     (global-set-key (kbd "<f5>") 'revert-buffer)
     ;;(global-set-key (kbd "C-a") 'move-beginning-of-line)
     ;;(global-set-key (kbd "C-e") 'move-end-of-line)
 
-    (global-auto-revert-mode 1) ;; you might not want this
-    (setq auto-revert-verbose nil) ;; or thiS
+    ;; Commenting this due to excess battery usage
+    ;;(global-auto-revert-mode 1) ;; you might not want this as it use huge amout of battery
+    ;;(setq auto-revert-verbose nil) ;; or thiS
     ;; using swiper so ido no longer needed
     (tool-bar-mode -1)
     (winner-mode 1)
@@ -3262,11 +3262,11 @@
 * Auto-revert
 
 #+BEGIN_SRC emacs-lisp
-;; Automatically reload files was modified by external program
-(use-package autorevert
-  :ensure nil
-  :diminish
-  :hook (after-init . global-auto-revert-mode))
+  ;; Automatically reload files was modified by external program
+  ;;(use-package autorevert
+  ;;  :ensure nil
+  ;;  :diminish
+  ;;  :hook (after-init . global-auto-revert-mode))
 #+END_SRC
 
 * Save Place/ Recentf/ PBCOPY
