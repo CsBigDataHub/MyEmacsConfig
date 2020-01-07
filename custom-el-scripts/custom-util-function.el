@@ -1040,7 +1040,7 @@ point reaches the beginning or end of the buffer, stop there."
 (defhydra my/hydra-dired (:hint nil :color pink)
   "
 _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
-_P_eep
+_P_eep             _n_ filter
 _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
 _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
 _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
@@ -1053,6 +1053,7 @@ _Z_ compress       _Q_ repl regexp
 T - tag prefix
 "
   ("\\" dired-do-ispell)
+  ("n" dired-narrow)
   ("(" dired-hide-details-mode)
   (")" dired-omit-mode)
   ("+" dired-create-directory)
