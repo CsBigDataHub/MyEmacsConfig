@@ -62,6 +62,23 @@
   ;;(let ((gc-cons-threshold most-positive-fixnum))
   ;;  # existing init code
   ;;  )
+
+  ;;https://github.com/seagle0128/.emacs.d/blob/24d17d3a36841c1c3c27c6ab26e4d3cb975095f3/init.el#L38
+  ;; Speed up startup
+  (defvar default-file-name-handler-alist file-name-handler-alist)
+  (setq file-name-handler-alist nil)
+  (setq gc-cons-threshold 80000000)
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              "Restore defalut values after init."
+              (setq file-name-handler-alist default-file-name-handler-alist)
+              (setq gc-cons-threshold 8000000)
+              (if (boundp 'after-focus-change-function)
+                  (add-function :after after-focus-change-function
+                                (lambda ()
+                                  (unless (frame-focus-state)
+                                    (garbage-collect))))
+                (add-hook 'focus-out-hook 'garbage-collect))))
 #+END_SRC
 
 * File-Exists Function
@@ -5543,6 +5560,6 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   ;;; end
   ;; reset GC
-  (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1)
+  ;;(setq gc-cons-threshold 16777216
+  ;;      gc-cons-percentage 0.1)
 #+END_SRC
