@@ -1878,6 +1878,16 @@ _q_ quit
 
 (global-set-key (kbd "C-c h d") 'hydra-ediff/body)
 
+(defhydra my/hydra-highlight-symbol (:color blue)
+  ("h" highlight-symbol-at-point)
+  ("n" highlight-symbol-next)
+  ("p" highlight-symbol-prev)
+  ("q" highlight-symbol-query-replace)
+  ("r" highlight-symbol-remove-all))
+
+(global-set-key (kbd "C-c h h s") 'my/hydra-highlight-symbol/body)
+
+
 (defhydra hydra-hide-show (:idle 1.0)
   "
 Hide^^            ^Show^            ^Toggle^    ^Navigation^
