@@ -3203,6 +3203,7 @@
     ;; Optional - enable lsp-mode automatically in scala files
     :hook ((sh-mode . lsp)
            (scala-mode . lsp)
+           (dockerfile-mode . lsp)
            (xml-mode . lsp))
     :config (setq lsp-prefer-flymake nil))
 
