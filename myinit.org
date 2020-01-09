@@ -3204,6 +3204,7 @@
     :hook ((sh-mode . lsp)
            (scala-mode . lsp)
            (dockerfile-mode . lsp)
+           (html-mode . lsp)
            (xml-mode . lsp))
     :config (setq lsp-prefer-flymake nil))
 
