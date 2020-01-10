@@ -1036,17 +1036,22 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key [remap move-beginning-of-line]
                 'my/smarter-move-beginning-of-line)
 
+(defun dired-copy-file-path-as-kill ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (dired-copy-filename-as-kill 0))
+
 ;;Hydra for Dired
 (defhydra my/hydra-dired (:hint nil :color pink)
   "
-_+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
+_+_ mkdir          _v_iew                       _m_ark             _(_ details        _i_nsert-subdir    _w_dired
 _P_eep             _n_ filter
-_C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
-_D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
-_R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
-_Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
-_S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
-_r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
+_C_opy             _O_ view other               _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
+_D_elete           _o_pen other                 _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
+_R_ename           _M_ chmod                    _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
+_Y_ rel symlink    _G_ chgrp                    _E_xtension mark   _s_ort             _=_ pdiff
+_S_ymlink          _fc_ copy-file-name          _F_ind marked      _._ toggle hydra   \\ flyspell
+_r_sync            _fp_ copy-file-name-path     ^ ^                ^ ^                _?_ summary
 _z_ compress-file  _A_ find regexp
 _Z_ compress       _Q_ repl regexp
 
@@ -1085,6 +1090,8 @@ T - tag prefix
   ("u" dired-unmark)
   ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
   ("w" dired-kill-subdir)
+  ("fc" dired-copy-filename-as-kill)
+  ("fp" dired-copy-file-path-as-kill)
   ("Y" dired-do-relsymlink)
   ("z" diredp-compress-this-file)
   ("Z" dired-do-compress)

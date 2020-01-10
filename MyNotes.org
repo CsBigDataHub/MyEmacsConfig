@@ -41,14 +41,16 @@
 
 ** Copy/Paste
 
-| Keys | Description                            |
-|------+----------------------------------------|
-| C-w  | Kill region.                           |
-| M-w  | Copy region to kill ring.              |
-| C-y  | Yank.                                  |
-| M-y  | Cycle through kill ring after yanking. |
-| M-d  | Kill word.                             |
-| C-k  | Kill line.                             |
+| Keys                    | Description                                              |
+|-------------------------+----------------------------------------------------------|
+| C-w                     | Kill region.                                             |
+| M-w                     | Copy region to kill ring.                                |
+| C-y                     | Yank.                                                    |
+| M-y                     | Cycle through kill ring after yanking.                   |
+| M-d                     | Kill word.                                               |
+| C-k                     | Kill line.                                               |
+| C-u o w [In dired mode] | [In dired-mode] To copy the file name at point with path |
+| w [In dired mode]       | [In dired mode] to copy file name at point               |
 
 ** Delete Text
 

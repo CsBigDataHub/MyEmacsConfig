@@ -1057,15 +1057,14 @@
       shell-mode
       java-mode
       python-mode
-      c-mode
-      objc-mode) . (lambda () (set (make-local-variable 'company-backends)
-                                   '((company-yasnippet
-                                      company-lsp
-                                      company-files
-                                      company-capf
-                                      company-dabbrev-code
-                                      company-dabbrev
-                                      )))))
+      ) . (lambda () (set (make-local-variable 'company-backends)
+                          '((company-yasnippet
+                             company-lsp
+                             company-files
+                             company-capf
+                             company-dabbrev-code
+                             company-dabbrev
+                             )))))
     :config
     (setq ;; Only 2 letters required for completion to activate.
      company-minimum-prefix-length 2
@@ -1209,7 +1208,10 @@
     (add-to-list 'company-backends 'company-jedi))
 
   (add-hook 'python-mode-hook 'my/python-mode-hook)
-  (setq company-global-modes '(not org-mode))
+
+  ;; Had to comment this to get company mode working in org mode
+  ;;(setq company-global-modes '(not org-mode))
+
   ;; http://oremacs.com/2017/12/27/company-numbers/
   (setq company-show-numbers t)
   (let ((map company-active-map))
