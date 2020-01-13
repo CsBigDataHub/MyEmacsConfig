@@ -4350,19 +4350,25 @@
 * Imenu
 
 #+BEGIN_SRC emacs-lisp
-(use-package imenu
-  :ensure t
-  :defer t
-  ;;:hook (emacs-lisp-mode . imenu-use-package)
-  :config
-  ;; Recenter window after imenu jump so cursor doesn't end up on the last line
-  (add-hook 'imenu-after-jump-hook 'recenter)  ; or 'reposition-window
-  (set-default 'imenu-auto-rescan t))
+  (use-package imenu
+    :ensure t
+    :defer t
+    ;;:hook (emacs-lisp-mode . imenu-use-package)
+    :config
+    ;; Recenter window after imenu jump so cursor doesn't end up on the last line
+    (add-hook 'imenu-after-jump-hook 'recenter)  ; or 'reposition-window
+    (set-default 'imenu-auto-rescan t))
 
-(use-package imenu-anywhere
-  :ensure t
-  :bind (("M-I" . ivy-imenu-anywhere)
-         ("C-c i" . ivy-imenu-anywhere)))
+  (use-package imenu-anywhere
+    :ensure t
+    :bind (("M-I" . ivy-imenu-anywhere)
+           ("C-c i" . ivy-imenu-anywhere)))
+
+
+  (use-package imenu-list
+    :ensure t
+    :config
+    (setq-default imenu-list-position "left"))
 #+END_SRC
 
 * Xref
