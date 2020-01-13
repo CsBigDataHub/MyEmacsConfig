@@ -407,6 +407,8 @@
 
   (require 'org-tempo)
 
+  (setq org-startup-with-inline-images t)
+
   (define-key org-mode-map (kbd "C-x n w") 'widen)
 #+END_SRC
 
