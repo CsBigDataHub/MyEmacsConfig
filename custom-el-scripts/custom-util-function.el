@@ -1045,7 +1045,7 @@ point reaches the beginning or end of the buffer, stop there."
 (defhydra my/hydra-dired (:hint nil :color pink)
   "
 _+_ mkdir          _v_iew                       _m_ark             _(_ details        _i_nsert-subdir    _w_dired
-_P_eep             _n_ filter
+_P_eep             _n_ filter                   _@_ mark regex
 _C_opy             _O_ view other               _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
 _D_elete           _o_pen other                 _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
 _R_ename-or-move   _M_ chmod                    _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
@@ -1080,6 +1080,7 @@ T - tag prefix
   ("O" dired-display-file)
   ("o" dired-find-file-other-window)
   ("P" peep-dired)
+  ("@" dired-mark-files-regexp)
   ("Q" dired-do-find-regexp-and-replace)
   ("R" dired-do-rename)
   ("r" dired-do-rsynch)
