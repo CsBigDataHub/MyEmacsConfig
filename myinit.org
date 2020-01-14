@@ -435,6 +435,7 @@
     "bl" 'ibuffer
     "bb" 'counsel-switch-buffer
     "bs" 'save-buffer
+    "bk" 'my/kill-this-buffer
     "ff" 'counsel-find-file
     "fz" 'counsel-fzf
     "fd" 'counsel-fd
@@ -442,9 +443,13 @@
     "uu" 'undo-tree
     "wo" 'other-window
     "w0" 'delete-window
+    "w2" 'my/split-below-and-move
+    "w3" 'my/split-right-and-move
     "gg" 'magit-status
     "zz" 'zop-to-char
-    "za" 'zop-up-to-char)
+    "za" 'zop-up-to-char
+    "mc" 'my/open-config
+    "SPC" 'counsel-M-x)
 
 #+END_SRC
 
@@ -1014,7 +1019,10 @@
       :bind (("M-s s" . avy-goto-char)
              ("C-:" . avy-goto-word-0)
              ("C-'" . avy-goto-char-2)
-             ("M-g l" . avy-goto-line))
+             ("M-g l" . avy-goto-line)
+             (:map evil-normal-state-map
+                   ("g s" . avy-goto-char)
+                   ("g S" . avy-goto-char-2)))
       :config
       (avy-setup-default))
 
