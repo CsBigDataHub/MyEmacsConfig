@@ -422,6 +422,30 @@
     (defalias 'gsetq #'general-setq)
     (defalias 'gsetq-local #'general-setq-local)
     (defalias 'gsetq-default #'general-setq-default))
+
+  (require 'general)
+  (general-evil-setup t)
+
+  ;; use `SPC' as leader key
+  (general-create-definer my-spc-leader-def
+    :prefix "SPC"
+    :states '(normal visual))
+
+  (my-spc-leader-def
+    "bl" 'ibuffer
+    "bb" 'counsel-switch-buffer
+    "bs" 'save-buffer
+    "ff" 'counsel-find-file
+    "fz" 'counsel-fzf
+    "fd" 'counsel-fd
+    "dd" 'dired
+    "uu" 'undo-tree
+    "wo" 'other-window
+    "w0" 'delete-window
+    "gg" 'magit-status
+    "zz" 'zop-to-char
+    "za" 'zop-up-to-char)
+
 #+END_SRC
 
 * Hydra
