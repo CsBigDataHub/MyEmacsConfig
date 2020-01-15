@@ -784,7 +784,7 @@ First we set two global variables, x=10 and total=0, then run the loop. Then we
 can evaluate the expression total to see that its value is 55 (the sum of the
 numbers 1 to 10).
 
-break/continue
+*** break/continue
 
 Lisp has a facility for upward control-flow transfers called catch/throw. It's
 very similar to Java or C++ exception handling, albeit possibly somewhat
@@ -793,6 +793,7 @@ lighter-weight.
 To do a break from inside a loop in elisp, you put a (catch 'break ...) outside
 the loop, an a (throw 'break value) wherever you want to break insie the loop,
 like so:
+#+begin_example
 
 Emacs Lisp                       Java
  (setq x 0 total 0)              var x = total = 0;
@@ -802,6 +803,7 @@ Emacs Lisp                       Java
      (if (> (incf x) 10)                break;
          (throw 'break total))))          }
              }
+#+end_example
 
 The symbol 'break is arbitrary, but is probably a nice choice for your reaers.
 If you have neste loops, you might consider 'break-outer and 'break-inner in
@@ -814,31 +816,36 @@ To continue a loop, put a catch expression just inside the loop, at the top. For
 instance, to sum the numbers from 1 to 99 that are not evenly divisible by 5
 (artificially lame example demonstrating use of continue):
 
- Emacs Lisp  Java
- (setq x 0 total 0)  var x = total = 0;
- (while (< x 100)  while (x < 100) {
-   (catch 'continue    x++;
-     (incf x)    if (x % 5 == 0) {
-     (if (zerop (% x 5))      continue;
-         (throw 'continue nil))    }
-     (incf total x)))    total += x;
-     }
+#+begin_example
+
+Emacs Lisp                        Java
+ (setq x 0 total 0)             var x = total = 0;
+ (while (< x 100)               while (x < 100) {
+   (catch 'continue             x++;
+     (incf x)                   if (x % 5 == 0) {
+     (if (zerop (% x 5))                continue;
+         (throw 'continue nil))         }
+       (incf total x)))                  total += x;
+                                        }
+#+end_example
 
 We can combine these examples to show using a break and continue in the same
 loop:
+#+begin_example
 
- Emacs Lisp  JavaScript
- (setq x 0 total 0)  var x = total = 0;
- (catch 'break  while (true) {
-   (while t    x++;
-     (catch 'continue    if (x >= 100) {
-       (incf x)      break;
-       (if (>= x 100)    }
-           (throw 'break nil))    if (x % 5 == 0) {
-       (if (zerop (% x 5))      continue;
-           (throw 'continue nil))    }
-       (incf total x))))    total += x;
-   }
+ Emacs Lisp                             JavaScript
+ (setq x 0 total 0)                     var x = total = 0;
+ (catch 'break                          while (true) {
+   (while t                                     x++;
+     (catch 'continue                           if (x >= 100) {
+       (incf x)                                 break;
+       (if (>= x 100)                           }
+           (throw 'break nil))                          if (x % 5 == 0) {
+       (if (zerop (% x 5))                          continue;
+           (throw 'continue nil))                        }
+       (incf total x))))                        total += x;
+                                                }
+#+end_example
 
 All the loops above compute the value 4000 in the variable total. There are
 better ways to compute this result, but I needed something simple to illustrate
@@ -1022,19 +1029,20 @@ possible return value is in a "tail position" (meaning the last expression out
 before the door closes, so to speak.) For instance:
 
 
-
- Emacs Lisp  JavaScript
- (require 'calendar)  function dayName() {
-     var date = new Date().getDay();
- (defun day-name ()    switch (date) {
-   (let ((date (calendar-day-of-week      case 0:
-                (calendar-current-date))))        return "Sunday";
-     (if (= date 0)      case 6:
-         "Sunday"        return "Saturday";
-       (if (= date 6)      default:
-           "Saturday"        return "weekday";
-         "weekday"))))    }
-   }
+#+BEGIN_SRC
+ Emacs Lisp                                     JavaScript
+ (require 'calendar)                            function dayName() {
+                                                var date = new Date().getDay();
+ (defun day-name ()                                     switch (date) {
+   (let ((date (calendar-day-of-week                    case 0:
+                (calendar-current-date))))              return "Sunday";
+     (if (= date 0)                                     case 6:
+         "Sunday"                                       return "Saturday";
+       (if (= date 6)                                   default:
+           "Saturday"                                   return "weekday";
+         "weekday"))))                                  }
+                                                      }
+#+END_SRC
 
 
 The return value is just the result of the last expression, so whatever our
@@ -1081,14 +1089,17 @@ them.
 Here's an example of a universal try/catch using the condition-case construct,
 with a Java equivalent:
 
- Emacs Lisp  Java
- (condition-case nil  try {
-     (progn    doSomething();
-       (do-something)    doSomethingElse();
-       (do-something-else))  } catch (Throwable t) {
-   (error    print("uh-oh");
-    (message "oh no!")    doRecoveryStuff();
-    (do-recovery-stuff)))  }
+#+begin_example
+
+ Emacs Lisp                             Java
+ (condition-case nil                    try {
+     (progn                                 doSomething();
+       (do-something)                       doSomethingElse();
+       (do-something-else))                     } catch (Throwable t) {
+   (error                                       print("uh-oh");
+    (message "oh no!")                          doRecoveryStuff();
+    (do-recovery-stuff)))                        }
+#+end_example
 
 If you want an empty catch block (just squelch the error), you can use
 ignore-errors:
@@ -1114,15 +1125,17 @@ independent.
 
 Emacs has a "finally"-like facility called unwind-protect.
 
+#+begin_example
 
- Emacs Lisp  Java
- (unwind-protect  try {
-     (progn    doSomething();
-       (do-something)    doSomethingElse();
-       (do-something-else))  } finally {
-   (first-finally-expr)    firstFinallyExpr();
-   (second-finally-expr))    secondFinallyExpr();
-                                   }
+ Emacs Lisp                             Java
+ (unwind-protect                          try {
+     (progn                                 doSomething();
+       (do-something)                      doSomethingElse();
+       (do-something-else))              } finally {
+   (first-finally-expr)                 firstFinallyExpr();
+   (second-finally-expr))               secondFinallyExpr();
+                                        }
+#+end_example
 
 Like condition-case, unwind-protect takes a single body-form followed by one or
 more cleanup forms, so you need to use progn if you have more than one
@@ -1156,42 +1169,44 @@ I'll walk through a basic example.
 
 These two declarations are essentially equivalent:
 
+#+begin_example
 
 
- Emacs Lisp  Java
- (require 'cl) ; top of file    /* A Person class */
-   class Person {
- (defstruct person    String name;
-   "A person structure."    int age;
-   name    double height;
-   (age 0)    public Person() {}
-   (height 0.0))    public Person(String name) {
-       this(name, 0, 0);
-     }
-     public Person(int age) {
-       this(null, age, 0);
-     }
-     public Person(double height) {
-       this(null, 0, height);
-     }
-     public Person(String name, int age) {
-       this(name, age, 0);
-     }
-     public Person(String name, double height) {
-       this(name, 0, height);
-     }
-     public Person(int age, double height) {
-       this(null, age, height);
-     }
-     public Person(String name, int age, double height) {
-       this.name = name;
-       this.age = age;
-       this.height = height;
-     }
-   }
+ Emacs Lisp                                                             Java
+ (require 'cl) ; top of file                                            /* A Person class */
+                                                                        class Person {
+ (defstruct person                                                      String name;
+   "A person structure."                                                int age;
+   name                                                                 double height;
+   (age 0)                                                              public Person() {}
+   (height 0.0))                                                        public Person(String name) {
+                                                                          this(name, 0, 0);
+                                                                        }
+                                                                        public Person(int age) {
+                                                                          this(null, age, 0);
+                                                                        }
+                                                                        public Person(double height) {
+                                                                          this(null, 0, height);
+                                                                        }
+                                                                        public Person(String name, int age) {
+                                                                          this(name, age, 0);
+                                                                        }
+                                                                        public Person(String name, double height) {
+                                                                          this(name, 0, height);
+                                                                        }
+                                                                        public Person(int age, double height) {
+                                                                          this(null, age, height);
+                                                                        }
+                                                                        public Person(String name, int age, double height) {
+                                                                          this.name = name;
+                                                                          this.age = age;
+                                                                          this.height = height;
+                                                                        }
+                                                                        }
 
 
 
+#+end_example
 
 
 Both create a "class" with three named fields, and constructors for initializing
@@ -1200,6 +1215,8 @@ parameters, so these are all valid:
 (make-person)  ; new Person()
 (make-person :age 39)  ; new Person(39)
 (make-person :name "Steve" :height 5.83 :age 39)  ; new Person("Steve", 39, 5.83)
+
+#+begin_example
 
  Emacs Lisp                             Java
  (defstruct (employee                   /* An Employee class */
@@ -1247,6 +1264,7 @@ parameters, so these are all valid:
                                         }
                                         // (remaining 150 overloaded constructors elided for brevity)
                                      }
+#+end_example
 
 The defstruct macro supports single-inheritance (to arbitrary depth):
 
@@ -1271,6 +1289,8 @@ Java may suck at declaring constructors, but Emacs Lisp makes up for it by
 sucking at setting fields. To set a field in a struct, you have to use the setf
 function, and construct the field name by prepending the structure name. So:
 
+#+begin_example
+
 
  Emacs Lisp                             Java
  (setq e (make-employee))               Employee e = new Employee();
@@ -1278,6 +1298,7 @@ function, and construct the field name by prepending the structure name. So:
        (employee-age e) 39                      e.age = 39;
        (employee-company e) "Google"            e.company = "Google";
        (employee-title e) "Janitor")            e.title = "Janitor";
+#+end_example
 
 The Lisp one doesn't look too bad here, but in practice (because Elisp has no
 namespace support and no with-slots macro), you wind up with long structure and
