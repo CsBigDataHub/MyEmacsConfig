@@ -51,6 +51,8 @@
       (set (make-local-variable 'compile-command)
            "go build -v && go test -v && go vet")))
 
+(load-if-exists "./go-dlv.el")
 (require 'dap-go)
+(require 'go-dlv)
 
 (provide 'lang-go)
