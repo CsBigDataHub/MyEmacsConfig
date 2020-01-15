@@ -25,6 +25,10 @@
 			    (set (make-local-variable 'company-backends) '(company-go))
 			    (company-mode))))
 
+(lsp-register-custom-settings
+ '(("gopls.completeUnimported" t t)
+   ("gopls.staticcheck" t t)))
+
 (use-package company-go
   :ensure t
   :after go-mode

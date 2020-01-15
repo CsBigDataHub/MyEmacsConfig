@@ -267,6 +267,10 @@
     ;; Adding indent hook
     (add-hook 'org-mode-hook 'org-indent-mode)
 
+    (use-package server
+      :no-require t
+      :hook (after-init . server-start))
+
   #+END_SRC
 
 * Theme
@@ -2978,8 +2982,6 @@
   ;;  :after lsp
   ;;  :config
   ;;  (add-hook 'yaml-mode-hook #'lsp))
-  (use-package lsp-mode
-    :ensure t)
 
 
   ;;(load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
@@ -3234,28 +3236,6 @@
     :ensure t
     :init (global-flycheck-mode))
 
-  (use-package lsp-mode
-    :ensure t
-    ;; Optional - enable lsp-mode automatically in scala files
-    :hook ((sh-mode . lsp)
-           (scala-mode . lsp)
-           (dockerfile-mode . lsp)
-           (html-mode . lsp)
-           (xml-mode . lsp))
-    :config (setq lsp-prefer-flymake nil))
-
-  (use-package lsp-ui
-    :ensure t
-    :hook (lsp-mode . lsp-ui-mode)
-    )
-
-  (use-package lsp-treemacs :ensure t :commands lsp-treemacs-errors-list)
-
-  ;; Add company-lsp backend for metals
-  (use-package company-lsp
-    :ensure t
-    :config
-    (push 'company-lsp company-backends))
   ;;; Config for Eglot
 
   ;; Enable scala-mode and sbt-mode
@@ -3989,7 +3969,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package nxml-mode
-    :disabled
+    ;;:disabled
     :ensure nil
     :no-require t
     :mode ("\\.xml$" . nxml-mode)
@@ -4842,16 +4822,6 @@ Select from xref candidates with ivy
     :config (undo-propose-wrap redo))
 #+END_SRC
 
-* LSP for Bash
-
-#+BEGIN_SRC emacs-lisp
-
-  (use-package lsp-mode
-    :commands lsp
-    :hook
-    (sh-mode . lsp))
-#+END_SRC
-
 * MMM-Mode
 
 - MMM mode lets you edit multiple languages within one buffer.
@@ -5610,18 +5580,34 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
     :ensure t
-    :commands lsp
+    :commands (lsp lsp-deferred)
     :custom
     (lsp-auto-guess-root nil)
     (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
     :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
-    :hook ((python-mode) . lsp))
+    :hook ((python-mode . lsp)
+           (sh-mode . lsp)
+           (scala-mode . lsp)
+           (dockerfile-mode . lsp)
+           (go-mode . lsp-deferred)
+           (html-mode . lsp)
+           (xml-mode . lsp))
+    :config
+    (setq lsp-prefer-flymake nil)
+    ;; Set up before-save hooks to format buffer and add/delete imports.
+    ;; Make sure you don't have other gofmt/goimports hooks enabled.
+    (defun lsp-go-install-save-hooks ()
+      (add-hook 'before-save-hook #'lsp-format-buffer t t)
+      (add-hook 'before-save-hook #'lsp-organize-imports t t))
+    (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+    )
 
 
   (use-package lsp-ui
     :after lsp-mode
     :diminish
     :commands lsp-ui-mode
+    :hook (lsp-mode . lsp-ui-mode)
     :custom-face
     (lsp-ui-doc-background ((t (:background nil))))
     (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
@@ -5645,6 +5631,14 @@ Select from xref candidates with ivy
     ;; https://github.com/emacs-lsp/lsp-ui/issues/243
     (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
       (setq mode-line-format nil)))
+
+  (use-package lsp-treemacs :ensure t :commands lsp-treemacs-errors-list)
+
+  ;; Add company-lsp backend for metals
+  (use-package company-lsp
+    :ensure t
+    :config
+    (push 'company-lsp company-backends))
 #+END_SRC
 
 * reset GC
