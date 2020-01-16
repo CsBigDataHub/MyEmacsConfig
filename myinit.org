@@ -1564,7 +1564,8 @@
       (global-undo-tree-mode)
       :config
       (setq undo-tree-auto-save-history t)
-      (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
+      (add-to-list 'undo-tree-incompatible-major-modes #'magit-modes)
+      )
 
     ;;(use-package undo-tree
     ;;  :load-path "~/.emacs.d/custom-el-scripts/undo-tree/"
