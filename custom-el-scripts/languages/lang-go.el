@@ -27,7 +27,9 @@
 
 (lsp-register-custom-settings
  '(("gopls.completeUnimported" t t)
-   ("gopls.staticcheck" t t)))
+   ("gopls.staticcheck" t t)
+   ("gopls.fuzzyMatching" t t)
+   ))
 
 (use-package company-go
   :ensure t
