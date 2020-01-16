@@ -193,13 +193,14 @@
     ;;(savehist-mode)
     (setq savehist-file "~/.emacs.d/savehist")
     (savehist-mode 1)
-    (setq history-length t)
+    (setq-default history-length 100)
     (setq history-delete-duplicates t)
     (setq savehist-save-minibuffer-history 1)
     (setq savehist-additional-variables
           '(kill-ring
             search-ring
             regexp-search-ring))
+    (savehist-mode t)
 
     ;; Added this to build pdf tools
     (setenv "PKG_CONFIG_PATH" "/usr/local/lib/pkgconfig:/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig")
