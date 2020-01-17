@@ -156,9 +156,13 @@
                   tramp-file-name-regexp))
     (setq tramp-verbose 1)
 
-    (setq mouse-drag-copy-region nil
-          x-select-enable-primary nil
-          x-select-enable-clipboard t
+    ;;https://emacs.stackexchange.com/questions/17170/how-to-auto-copy-when-a-region-is-selected
+    ;;When emacs 25.1 is released (supposedly the next stable version after 24.5),
+    ;;the x-select-enable-primary variable name will be deprecated and
+    ;;select-enable-primary must be used instead (removal of that x- prefix).
+    ;;Similarly x-select-enable-clipboard will be deprecated in favor of select-enable-clipboard
+    (setq select-enable-primary nil
+          select-enable-clipboard t
           select-active-regions t)
 
     ;;Keyboard tweaks
@@ -272,6 +276,7 @@
       :no-require t
       :hook (after-init . server-start))
 
+    (setq require-final-newline t)
   #+END_SRC
 
 * Theme
@@ -1752,6 +1757,14 @@
         (setq-local electric-pair-inhibit-predicate
                     `(lambda (c)
                        (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+
+     ;; make electric-pair-mode work on more brackets
+     (setq electric-pair-pairs
+           '(
+             (?\" . ?\")
+             (?\' . ?\')
+             (?\{ . ?\})
+             ))
    #+END_SRC
 
 * string-inflection for string manipulation
@@ -3912,7 +3925,7 @@
 #+END_SRC
 
 * snapshot-timemachine
-
+# This is not relevent for MAC os
 #+BEGIN_SRC emacs-lisp
   (use-package snapshot-timemachine
     :ensure t
@@ -5592,6 +5605,7 @@ Select from xref candidates with ivy
     :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
     :hook ((python-mode . lsp)
            (sh-mode . lsp)
+           (terraform-mode . lsp)
            (scala-mode . lsp)
            (dockerfile-mode . lsp)
            (go-mode . lsp-deferred)
@@ -5599,6 +5613,11 @@ Select from xref candidates with ivy
            (xml-mode . lsp))
     :config
     (setq lsp-prefer-flymake nil)
+    ;; LSP debugging
+    (setq lsp-print-io t)
+    (setq lsp-log-io t)
+    (setq lsp-trace t)
+    (setq lsp-print-performance t)
     ;; Set up before-save hooks to format buffer and add/delete imports.
     ;; Make sure you don't have other gofmt/goimports hooks enabled.
     ;;(defun lsp-go-install-save-hooks ()
