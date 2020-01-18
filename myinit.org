@@ -195,7 +195,7 @@
     ;;Persistent history
     ;; commented due to exit errors
     ;;(savehist-mode)
-    (setq savehist-file "~/.emacs.d/savehist")
+    (setq savehist-file "~/.emacs.d/var/savehist")
     (savehist-mode 1)
     (setq-default history-length 100)
     (setq history-delete-duplicates t)
@@ -240,7 +240,7 @@
     ;;saves the buffers whenever emacs loses the window focus.
     (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
 
-    (setq desktop-path '("~/.emacs.d/desktop-mode-cache/"))
+    (setq desktop-path '("~/.emacs.d/var/desktop-mode-cache/"))
     (desktop-save-mode 1)
 
     ;;(setq org-ellipsis "↴") ;;▼, ↴, ⬎, ⤷,⤵
@@ -261,7 +261,7 @@
       :config (defalias 'emacs-restart #'restart-emacs))
 
     (setq-default save-place  t)
-    (setq save-place-file "~/.emacs.d/etc/saveplace")
+    (setq save-place-file "~/.emacs.d/var/saveplace")
 
     ;;Text selected with the mouse is automatically copied to clipboard.
     (setq mouse-drag-copy-region t)
@@ -2701,7 +2701,7 @@
             treemacs-no-png-images                 nil
             treemacs-no-delete-other-windows       t
             treemacs-project-follow-cleanup        nil
-            treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+            treemacs-persist-file                  (expand-file-name "var/.cache/treemacs-persist" user-emacs-directory)
             treemacs-recenter-distance             0.1
             treemacs-recenter-after-file-follow    nil
             treemacs-recenter-after-tag-follow     nil
@@ -3196,9 +3196,9 @@
 
   ;;(require 'lsp-groovy)
 
-  ;;(add-hook 'groovy-mode-hook 'lsp)
+  (add-hook 'groovy-mode-hook 'lsp)
 
-  ;;(setq lsp-groovy-server-install-dir "~/.emacs.d/groovy-lsp/")
+  (setq lsp-groovy-server-install-dir "~/.emacs.d/custom-el-scripts/lsp/groovy-language-server/build/libs/")
 #+END_SRC
 
 * Duplicate Things
@@ -3932,21 +3932,21 @@
     :init
 
     ;; Default Backup directory
-    (defvar backup-directory "~/.emacs.d/backups/")
+    (defvar backup-directory "~/.emacs.d/var/backups/")
     (setq backup-directory-alist `((".*" . ,backup-directory)))
 
     (when (not (file-exists-p backup-directory))
       (make-directory backup-directory t))
 
     ;; Auto-save
-    (defvar auto-save-directory "~/.emacs.d/auto-save/")
+    (defvar auto-save-directory "~/.emacs.d/var/auto-save/")
     (setq auto-save-file-name-transforms `((".*" ,auto-save-directory t)))
 
     (when (not (file-exists-p auto-save-directory))
       (make-directory auto-save-directory t))
 
     ;; Tramp backup
-    (defvar tramp-backup-directory "~/.emacs.d/tramp-backups/")
+    (defvar tramp-backup-directory "~/.emacs.d/var/tramp-backups/")
     (setq tramp-backup-directory-alist `((".*" . ,tramp-backup-directory)))
 
     (when (not (file-exists-p tramp-backup-directory))
@@ -4131,7 +4131,7 @@
     (setq bm-cycle-all-buffers t)
 
     ;; where to store persistant files
-    (setq bm-repository-file "~/.emacs.d/bm-repository")
+    (setq bm-repository-file "~/.emacs.d/var/bm-repository")
 
     ;; save bookmarks
     (setq-default bm-buffer-persistence t)
@@ -5508,6 +5508,7 @@ Select from xref candidates with ivy
   (use-package backup-walker
     :commands backup-walker-start)
 
+  (require 'backup-walker)
   ;; Make Emacs backup everytime I save
 
   (defun my/force-backup-of-buffer ()

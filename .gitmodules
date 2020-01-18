@@ -13,3 +13,6 @@
 [submodule "custom-el-scripts/undo-tree"]
 	path = custom-el-scripts/undo-tree
 	url = https://github.com/emacsorphanage/undo-tree.git
+[submodule "custom-el-scripts/lsp/groovy-language-server"]
+	path = custom-el-scripts/lsp/groovy-language-server
+	url = https://github.com/prominic/groovy-language-server.git
