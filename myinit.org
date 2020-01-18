@@ -91,6 +91,23 @@
   ;;(when (file-readable-p f) (load-file p))
   #+END_SRC
 
+* No-Littering
+
+#+BEGIN_SRC emacs-lisp
+  (use-package no-littering               ; Keep .emacs.d clean
+    :ensure t
+    :config (progn
+              (require 'recentf)
+              (add-to-list 'recentf-exclude no-littering-etc-directory)
+              (add-to-list 'recentf-exclude no-littering-var-directory)
+              (setq create-lockfiles nil
+                    delete-old-versions t
+                    kept-new-versions 6
+                    kept-old-versions 2
+                    version-control t)))
+#+END_SRC
+
+
 * interface tweaks
 
   #+BEGIN_SRC emacs-lisp
@@ -146,7 +163,7 @@
     (column-number-mode t)
     (size-indication-mode t)
     (setq tramp-default-method "ssh")
-    (setq tramp-auto-save-directory temporary-file-directory)
+    ;;(setq tramp-auto-save-directory temporary-file-directory) ;; handled by no-littering package
 
     ;; to speed up tramp
     (setq remote-file-name-inhibit-cache nil)
@@ -195,7 +212,7 @@
     ;;Persistent history
     ;; commented due to exit errors
     ;;(savehist-mode)
-    (setq savehist-file "~/.emacs.d/var/savehist")
+    ;;(setq savehist-file "~/.emacs.d/var/savehist") ;; handled by no-littering package
     (savehist-mode 1)
     (setq-default history-length 100)
     (setq history-delete-duplicates t)
@@ -240,7 +257,7 @@
     ;;saves the buffers whenever emacs loses the window focus.
     (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
 
-    (setq desktop-path '("~/.emacs.d/var/desktop-mode-cache/"))
+    ;;(setq desktop-path '("~/.emacs.d/var/desktop-mode-cache/"));; handled by no-littering package
     (desktop-save-mode 1)
 
     ;;(setq org-ellipsis "↴") ;;▼, ↴, ⬎, ⤷,⤵
@@ -261,7 +278,7 @@
       :config (defalias 'emacs-restart #'restart-emacs))
 
     (setq-default save-place  t)
-    (setq save-place-file "~/.emacs.d/var/saveplace")
+    ;;(setq save-place-file "~/.emacs.d/var/saveplace");; handled by no-littering package
 
     ;;Text selected with the mouse is automatically copied to clipboard.
     (setq mouse-drag-copy-region t)
@@ -3865,22 +3882,6 @@
   :config (setq ffap-machine-p-known 'reject))
 #+END_SRC
 
-* No-Littering
-
-#+BEGIN_SRC emacs-lisp
-  (use-package no-littering               ; Keep .emacs.d clean
-    :ensure t
-    :config (progn
-              (require 'recentf)
-              (add-to-list 'recentf-exclude no-littering-etc-directory)
-              (add-to-list 'recentf-exclude no-littering-var-directory)
-              (setq create-lockfiles nil
-                    delete-old-versions t
-                    kept-new-versions 6
-                    kept-old-versions 2
-                    version-control t)))
-#+END_SRC
-
 * Evil Collection
 
 #+BEGIN_SRC emacs-lisp
@@ -3932,8 +3933,9 @@
     :init
 
     ;; Default Backup directory
-    (defvar backup-directory "~/.emacs.d/var/backups/")
-    (setq backup-directory-alist `((".*" . ,backup-directory)))
+    ;;Commenting as handled by no-litttering package
+    ;;(defvar backup-directory "~/.emacs.d/var/backups/")
+    ;;(setq backup-directory-alist `((".*" . ,backup-directory)))
 
     (when (not (file-exists-p backup-directory))
       (make-directory backup-directory t))
@@ -4131,7 +4133,7 @@
     (setq bm-cycle-all-buffers t)
 
     ;; where to store persistant files
-    (setq bm-repository-file "~/.emacs.d/var/bm-repository")
+    ;;(setq bm-repository-file "~/.emacs.d/var/bm-repository");; handled by no-littering package
 
     ;; save bookmarks
     (setq-default bm-buffer-persistence t)
