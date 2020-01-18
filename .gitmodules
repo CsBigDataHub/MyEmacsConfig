@@ -16,3 +16,6 @@
 [submodule "custom-el-scripts/lsp/groovy-language-server"]
 	path = custom-el-scripts/lsp/groovy-language-server
 	url = https://github.com/prominic/groovy-language-server.git
+[submodule "custom-el-scripts/fuz.el"]
+	path = custom-el-scripts/fuz.el
+	url = https://github.com/rustify-emacs/fuz.el.git

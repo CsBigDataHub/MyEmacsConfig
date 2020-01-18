@@ -107,7 +107,6 @@
                     version-control t)))
 #+END_SRC
 
-
 * interface tweaks
 
   #+BEGIN_SRC emacs-lisp
@@ -3194,8 +3193,6 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package groovy-mode
-    :mode (("\\.groovy" . groovy-mode)
-           ("/Jenkinsfile" . groovy-mode))
     :ensure t
     :config
     (add-to-list 'auto-mode-alist '("\\.g\\(?:ant\\|roovy\\|radle\\)\\'" . groovy-mode))
@@ -5670,6 +5667,27 @@ Select from xref candidates with ivy
     :config
     (push 'company-lsp company-backends))
 #+END_SRC
+
+* Fuz and Ivy-fuz
+
+#+begin_src emacs-lisp
+
+  (add-to-list 'load-path (concat user-emacs-directory "custom-el-scripts/fuz.el"))
+
+  (require 'fuz)
+  (unless (require 'fuz-core nil t)
+    (fuz-build-and-load-dymod))
+
+  (use-package ivy-fuz
+    :ensure t
+    :demand t
+    :after ivy
+    :custom
+    (ivy-sort-matches-functions-alist '((t . ivy-fuz-sort-fn)))
+    (ivy-re-builders-alist '((t . ivy-fuz-regex-fuzzy)))
+    :config
+    (add-to-list 'ivy-highlight-functions-alist '(ivy-fuz-regex-fuzzy . ivy-fuz-highlight-fn)))
+#+end_src
 
 * reset GC
 
