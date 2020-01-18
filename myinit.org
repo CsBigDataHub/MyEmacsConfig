@@ -3934,8 +3934,8 @@
     ;;(defvar backup-directory "~/.emacs.d/var/backups/")
     ;;(setq backup-directory-alist `((".*" . ,backup-directory)))
 
-    (when (not (file-exists-p backup-directory))
-      (make-directory backup-directory t))
+    ;;(when (not (file-exists-p backup-directory))
+    ;;  (make-directory backup-directory t))
 
     ;; Auto-save
     (defvar auto-save-directory "~/.emacs.d/var/auto-save/")
@@ -5672,21 +5672,21 @@ Select from xref candidates with ivy
 
 #+begin_src emacs-lisp
 
-  (add-to-list 'load-path (concat user-emacs-directory "custom-el-scripts/fuz.el"))
+  ;;(add-to-list 'load-path (concat user-emacs-directory "custom-el-scripts/fuz.el"))
 
-  (require 'fuz)
-  (unless (require 'fuz-core nil t)
-    (fuz-build-and-load-dymod))
+  ;;(require 'fuz)
+  ;;(unless (require 'fuz-core nil t)
+  ;;  (fuz-build-and-load-dymod))
 
-  (use-package ivy-fuz
-    :ensure t
-    :demand t
-    :after ivy
-    :custom
-    (ivy-sort-matches-functions-alist '((t . ivy-fuz-sort-fn)))
-    (ivy-re-builders-alist '((t . ivy-fuz-regex-fuzzy)))
-    :config
-    (add-to-list 'ivy-highlight-functions-alist '(ivy-fuz-regex-fuzzy . ivy-fuz-highlight-fn)))
+  ;;(use-package ivy-fuz
+  ;;  :ensure t
+  ;;  :demand t
+  ;;  :after ivy
+  ;;  :custom
+  ;;  (ivy-sort-matches-functions-alist '((t . ivy-fuz-sort-fn)))
+  ;;  ;;(ivy-re-builders-alist '((t . ivy-fuz-regex-fuzzy)))
+  ;;  :config
+  ;;  (add-to-list 'ivy-highlight-functions-alist '(ivy-fuz-regex-fuzzy . ivy-fuz-highlight-fn)))
 #+end_src
 
 * reset GC
