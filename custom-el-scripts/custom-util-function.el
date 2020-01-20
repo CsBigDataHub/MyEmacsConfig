@@ -1648,7 +1648,7 @@ _SPC_ cancel	_o_nly this     _d_elete
   ("S" lsp-shutdown-workspace))
 
 (bind-keys*
- ("C-c h l l" . hydra-window/body))
+	("C-c h l l" . hydra-lsp/body))
 
 (defun my/package-upgrade-all ()
   "Upgrade all packages automatically without showing *Packages* buffer."

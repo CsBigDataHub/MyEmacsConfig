@@ -469,6 +469,7 @@
     "uu" 'undo-tree
     "wo" 'other-window
     "w0" 'delete-window
+    "w1" 'delete-other-windows
     "w2" 'my/split-below-and-move
     "w3" 'my/split-right-and-move
     "gg" 'magit-status
@@ -3704,16 +3705,29 @@
 * GG_Tags
 
 #+BEGIN_SRC emacs-lisp
-(use-package ggtags
-  :ensure t
-  :diminish ggtags-mode
-  :bind* (("M-m T"   . ggtags-find-tag-regexp)
-          ("M-m g t" . ggtags-create-tags)
-          ("M-m g T" . ggtags-update-tags))
-  :init
-  (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
-  :config
-  (add-hook 'prog-mode-hook 'ggtags-mode))
+  (use-package ggtags
+    :ensure t
+    :diminish ggtags-mode
+    :bind* (("M-m T"   . ggtags-find-tag-regexp)
+            ("M-m g t" . ggtags-create-tags)
+            ("M-m g T" . ggtags-update-tags))
+    :init
+    (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
+    :config
+    (add-hook 'prog-mode-hook 'ggtags-mode))
+
+  (use-package counsel-gtags
+    :ensure t
+    :commands counsel-gtags-mode
+    :bind (:map
+           counsel-gtags-mode-map
+           ("M-." . counsel-gtags-dwim)
+           ("M-," . counsel-gtags-go-backward))
+    ;;:hook (
+    ;;(swift-mode . counsel-gtags-mode)
+    ;;(swift-mode . ggtags-mode)
+    ;;)
+    )
 #+END_SRC
 
 * Dash at point
@@ -5621,6 +5635,7 @@ Select from xref candidates with ivy
     (setq lsp-log-io t)
     (setq lsp-trace t)
     (setq lsp-print-performance t)
+    (setq lsp-session-file (expand-file-name "~/.emacs.d/var/lsp-session.el"))
     ;; Set up before-save hooks to format buffer and add/delete imports.
     ;; Make sure you don't have other gofmt/goimports hooks enabled.
     ;;(defun lsp-go-install-save-hooks ()
@@ -5687,6 +5702,17 @@ Select from xref candidates with ivy
   ;;  ;;(ivy-re-builders-alist '((t . ivy-fuz-regex-fuzzy)))
   ;;  :config
   ;;  (add-to-list 'ivy-highlight-functions-alist '(ivy-fuz-regex-fuzzy . ivy-fuz-highlight-fn)))
+#+end_src
+
+* EsUp - startup
+
+#+begin_src emacs-lisp
+  (use-package esup
+    :ensure t
+    :commands esup
+    :config
+    (setq esup-user-init-file (expand-file-name "~/.emacs.d/myinit.el"))
+    )
 #+end_src
 
 * reset GC
