@@ -293,6 +293,7 @@
       :hook (after-init . server-start))
 
     (setq require-final-newline t)
+
   #+END_SRC
 
 * Theme
@@ -708,16 +709,19 @@
 * Relative Line number
 
   #+BEGIN_SRC emacs-lisp
+    ;; Built in line numbers now, yay!
+    ;;(global-display-line-numbers-mode 'relative)
+    (setq-default display-line-numbers 'relative)
 
-(use-package linum-relative
-  :ensure t
-  :config
-  (linum-relative-global-mode 1))
-
-(linum-relative-global-mode 1)
-
-;; Use `display-line-number-mode' as linum-mode's backend for smooth performance
-(setq linum-relative-backend 'display-line-numbers-mode)
+    ;;(use-package linum-relative
+    ;;  :ensure t
+    ;;  :config
+    ;;  (linum-relative-global-mode 1))
+    ;;
+    ;;(linum-relative-global-mode 1)
+    ;;
+    ;;;; Use `display-line-number-mode' as linum-mode's backend for smooth performance
+    ;;(setq linum-relative-backend 'display-line-numbers-mode)
 
   #+END_SRC
 
@@ -1852,8 +1856,8 @@
       :ensure t
       :config
       (set-cursor-color "cyan")
-      (line-number-mode 0)
-      (column-number-mode 0))
+      (line-number-mode +1)
+      (column-number-mode +1))
     (require 'doom-modeline)
     (doom-modeline-init)
     (setq doom-modeline-env-version t)
@@ -1889,7 +1893,7 @@
     (setq doom-modeline-env-enable-python t)
     ;;(setq doom-modeline-env-enable-ruby t)
     ;;(setq doom-modeline-env-enable-perl t)
-    ;;(setq doom-modeline-env-enable-go t)
+    (setq doom-modeline-env-enable-go t)
     ;;(setq doom-modeline-env-enable-elixir t)
     ;;(setq doom-modeline-env-enable-rust t)
 
@@ -1897,7 +1901,7 @@
     (setq doom-modeline-env-python-executable "python3") ; or `python-shell-interpreter'
     ;;(setq doom-modeline-env-ruby-executable "ruby")
     ;;(setq doom-modeline-env-perl-executable "perl")
-    ;;(setq doom-modeline-env-go-executable "go")
+    (setq doom-modeline-env-go-executable "go")
     ;;(setq doom-modeline-env-elixir-executable "iex")
     ;;(setq doom-modeline-env-rust-executable "rustc")
 
@@ -1948,14 +1952,14 @@
     ;;  '(bar window-number matches git-timemachine buffer-position parrot selection-info)
     ;;  '(misc-info fancy-battery mu4e github debug minor-modes indent-info buffer-encoding major-mode))
 
-    (doom-modeline-def-modeline 'my-simple-line
-      '(bar window-number matches buffer-info remote-host buffer-position parrot selection-info)
-      '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
+    ;;(doom-modeline-def-modeline 'my-simple-line
+    ;;  '(bar window-number matches buffer-info remote-host buffer-position parrot selection-info)
+    ;;  '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
 
-    (defun setup-custom-doom-modeline ()
-      (doom-modeline-set-modeline 'my-simple-line 'default))
+    ;;(defun setup-custom-doom-modeline ()
+    ;;  (doom-modeline-set-modeline 'my-simple-line 'default))
 
-    (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
+    ;;(add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
   #+END_SRC
 
 * Telephone-line
