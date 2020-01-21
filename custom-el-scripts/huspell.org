@@ -15,5 +15,5 @@
 ** to use hunspell
 add the following command to rc file.
 #+begin_example
-export DICPATH="/Users/ckoneru/.emacs.d/custom-el-scripts/hunspell-dict/"
+export DICPATH="~/.emacs.d/custom-el-scripts/hunspell-dict/"
 #+end_example
