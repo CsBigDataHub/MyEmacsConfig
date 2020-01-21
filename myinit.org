@@ -267,8 +267,10 @@
     ;;cursor color to white
     (set-cursor-color "#ffffff")
 
-    (setq max-specpdl-size 1300000)
-    (setq max-lisp-eval-depth 100000)
+    ;;Commented as not using ellocate
+    ;; see -https://github.com/hlissner/doom-emacs/issues/1407#issuecomment-491931901
+    ;;(setq max-specpdl-size 1300000)
+    ;;(setq max-lisp-eval-depth 100000)
 
     ;; Provides only the command “restart-emacs”.
     (use-package restart-emacs
@@ -946,8 +948,10 @@
       :init (ivy-prescient-mode 1))
 
     (setq counsel-grep-base-command
-          "rg -i -M 120 --no-heading --line-number --color never %s %s")
+          "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
 
+    (setq counsel-rg-base-command
+          "rg -SHni -M 120 --no-heading --color never --no-follow --hidden %s")
     ;; https://oremacs.com/2016/01/06/ivy-flx/
     ;;(setq ivy-re-builders-alist
     ;;      '((ivy-switch-buffer . ivy--regex-plus)
@@ -993,7 +997,7 @@
             (progn
               (find-file arg))
           (find-file-other-window arg))
-        (balance-windows)))
+        (balance-windows (current-buffer))))
 
     (defun my/counsel-ff-ace-window (arg)
       "Use `ace-window' on `my/counsel-find-files' candidate."
@@ -1002,7 +1006,7 @@
           (progn
             (find-file arg))
         (find-file-other-window arg))
-      (balance-windows))
+      (balance-windows (current-buffer)))
 
     ;; Pass functions as appropriate Ivy actions (accessed via M-o)
     (ivy-add-actions
@@ -5729,6 +5733,30 @@ Select from xref candidates with ivy
     :commands esup
     :config
     (setq esup-user-init-file (expand-file-name "~/.emacs.d/myinit.el"))
+    )
+#+end_src
+
+* Flyspell
+
+#+begin_src emacs-lisp
+  ;;http://blog.binchen.org/posts/what-s-the-best-spell-check-set-up-in-emacs.html
+  ;;https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-spelling.el
+  (use-package flyspell
+    :commands (ispell-change-dictionary
+               flyspell-buffer
+               flyspell-mode
+               flyspell-region)
+    :config
+    (setq flyspell-issue-message-flag nil)
+    (setq flyspell-issue-welcome-flag nil)
+    (setq ispell-program-name "aspell")
+    (setq ispell-dictionary "en_US")
+    (setq ispell-extra-args '("--sug-mode=ultra"))
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
+    ;;(define-key flyspell-mode-map (kbd "C-;") nil)
+    ;; TODO (emacs 27): ispell-change-dictionary-hook
     )
 #+end_src
 
