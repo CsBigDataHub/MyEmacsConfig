@@ -476,6 +476,16 @@
     "w1" 'delete-other-windows
     "w2" 'my/split-below-and-move
     "w3" 'my/split-right-and-move
+    "ww1" 'eyebrowse-switch-to-window-config-0
+    "ww1" 'eyebrowse-switch-to-window-config-1
+    "ww2" 'eyebrowse-switch-to-window-config-2
+    "ww3" 'eyebrowse-switch-to-window-config-3
+    "ww4" 'eyebrowse-switch-to-window-config-4
+    "ww5" 'eyebrowse-switch-to-window-config-5
+    "ww6" 'eyebrowse-switch-to-window-config-6
+    "ww7" 'eyebrowse-switch-to-window-config-7
+    "ww8" 'eyebrowse-switch-to-window-config-8
+    "ww9" 'eyebrowse-switch-to-window-config-9
     "gg" 'magit-status
     "zz" 'zop-to-char
     "za" 'zop-up-to-char
@@ -1109,13 +1119,6 @@
            :map company-search-map
            ("C-p" . company-select-previous)
            ("C-n" . company-select-next)))
-    :custom
-    (company-idle-delay 0)
-    (company-echo-delay 0)
-    (company-show-numbers t)
-    (company-begin-commands '(self-insert-command))
-    (company-tooltip-align-annotations 't)
-    (company-minimum-prefix-length 2)
     :hook
     (after-init . global-company-mode)
     (plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
@@ -1127,6 +1130,7 @@
       org-mode
       emacs-lisp-mode
       shell-mode
+      groovy-mode
       java-mode
       python-mode
       ) . (lambda () (set (make-local-variable 'company-backends)
@@ -1139,13 +1143,36 @@
                              )))))
     :config
     (setq ;; Only 2 letters required for completion to activate.
+
+     company-auto-complete nil
+
+     company-echo-delay 0
+
+     company-dabbrev-code-everywhere t
+
+     company-dabbrev-code-modes t
+
      company-minimum-prefix-length 2
 
      ;; Search other buffers for compleition candidates
-     company-dabbrev-other-buffers t
-     company-dabbrev-code-other-buffers t
+
+     company-dabbrev-other-buffers 'all
+
+     company-dabbrev-code-other-buffers 'all
+
+
+     company-transformers
+     '(company-sort-by-backend-importance
+       company-sort-prefer-same-case-prefix
+       company-sort-by-occurrence)
 
      company-tooltip-align-annotations t
+
+     company-tooltip-limit 10
+
+     company-tooltip-margin 1
+
+     company-tooltip-offset-display 'scrollbar
 
      company-frontends '(company-pseudo-tooltip-frontend
                          company-echo-metadata-frontend)
@@ -1315,7 +1342,7 @@
   ;;:ensure t
   ;;  :hook (company-mode . company-box-mode))
 
-  (setq company-backends '((company-capf company-dabbrev company-dabbrev-code company-files)))
+  (add-to-list 'company-backends '(company-capf company-dabbrev company-dabbrev-code company-files))
   (define-key global-map (kbd "C-c c f") 'company-files)
 #+END_SRC
 
@@ -3231,10 +3258,12 @@
   ;;(require 'lsp-mode)
 
   ;;(require 'lsp-groovy)
+  (setq lsp-server-install-dir (concat user-emacs-directory "custom-el-scripts/lsp/")
+        lsp-groovy-server-file (concat lsp-server-install-dir "groovy-language-server/build/libs/groovy-language-server-all.jar")
+        )
 
-  (add-hook 'groovy-mode-hook 'lsp)
+  ;;(add-hook 'groovy-mode-hook 'lsp)
 
-  (setq lsp-groovy-server-install-dir "~/.emacs.d/custom-el-scripts/lsp/groovy-language-server/build/libs/")
 #+END_SRC
 
 * Duplicate Things
@@ -4060,9 +4089,11 @@
           (backward-char) (insert "\n"))
         (indent-region begin end))))
 
-  (add-hook 'nxml-mode-hook 'lsp)
+  ;; had to use absolute path for this to work.
+  (setq lsp-xml-jar-file "/Users/ckoneru/.emacs.d/custom-el-scripts/lsp/org.eclipse.lsp4xml-0.3.0-uber.jar")
+  ;;(add-hook 'nxml-mode-hook 'lsp)
 
-  (setq lsp-xml-jar-file "~/GitRepos/org.eclipse.lsp4xml-0.3.0-uber.jar")
+
 #+END_SRC
 
 * Gradle
@@ -5648,7 +5679,8 @@ Select from xref candidates with ivy
            (dockerfile-mode . lsp)
            (go-mode . lsp-deferred)
            (html-mode . lsp)
-           (xml-mode . lsp))
+           ;;(xml-mode . lsp)
+           )
     :config
     (setq lsp-prefer-flymake nil)
     ;; LSP debugging
