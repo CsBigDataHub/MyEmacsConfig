@@ -50,14 +50,14 @@
 
   ;;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
 
-  (defun my-minibuffer-setup-hook ()
-    (setq gc-cons-threshold most-positive-fixnum))
-
-  (defun my-minibuffer-exit-hook ()
-    (setq gc-cons-threshold 800000))
-
-  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+  ;;(defun my-minibuffer-setup-hook ()
+  ;;  (setq gc-cons-threshold most-positive-fixnum))
+  ;;
+  ;;(defun my-minibuffer-exit-hook ()
+  ;;  (setq gc-cons-threshold 800000))
+  ;;
+  ;;(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+  ;;(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
   ;;(let ((gc-cons-threshold most-positive-fixnum))
   ;;  # existing init code
@@ -72,7 +72,7 @@
             (lambda ()
               "Restore defalut values after init."
               (setq file-name-handler-alist default-file-name-handler-alist)
-              (setq gc-cons-threshold 8000000)
+              (setq gc-cons-threshold 4000000)
               (if (boundp 'after-focus-change-function)
                   (add-function :after after-focus-change-function
                                 (lambda ()
@@ -242,6 +242,7 @@
     ;;Restart emacs from emacs
     (use-package restart-emacs
       :ensure t
+      :config (defalias 'emacs-restart #'restart-emacs)
       :bind* (("C-x M-c" . restart-emacs)))
 
     ;; Open Large file
@@ -271,12 +272,6 @@
     ;; see -https://github.com/hlissner/doom-emacs/issues/1407#issuecomment-491931901
     ;;(setq max-specpdl-size 1300000)
     ;;(setq max-lisp-eval-depth 100000)
-
-    ;; Provides only the command “restart-emacs”.
-    (use-package restart-emacs
-      :demand t
-      ;; Let's define an alias so there's no need to remember the order.
-      :config (defalias 'emacs-restart #'restart-emacs))
 
     (setq-default save-place  t)
     ;;(setq save-place-file "~/.emacs.d/var/saveplace");; handled by no-littering package
@@ -593,9 +588,9 @@
 
 * Use-package chords
 #+BEGIN_SRC emacs-lisp
-  (use-package use-package-chords
-    :ensure t
-    :config (key-chord-mode 1))
+  ;;(use-package use-package-chords
+  ;;  :ensure t
+  ;;  :config (key-chord-mode 1))
 #+END_SRC
 
 * Quelpa
@@ -1585,7 +1580,7 @@
     ;;       " --from=markdown --to=html"
     ;;       " --standalone --mathjax --highlight-style=pygments"))
 
-    ;;(setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
+    (setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
 
     (use-package poly-markdown
       :ensure t)
@@ -1851,7 +1846,7 @@
 
 * Dump-Keys
   #+BEGIN_SRC emacs-lisp
-  (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/dump-keys.el")
+  ;;(load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/dump-keys.el")
   #+END_SRC
 
 * Web-Mode
@@ -1873,10 +1868,11 @@
 * Parrot
 
 #+BEGIN_SRC emacs-lisp
-  (use-package parrot
-    :ensure t
-    :config
-    (parrot-mode))
+  ;; Do not us ei t asmuch
+  ;;(use-package parrot
+  ;;  :ensure t
+  ;;  :config
+  ;;  (parrot-mode))
 #+END_SRC
 
 * Mode Line
@@ -2610,10 +2606,10 @@
 * Better Shell
 
 #+BEGIN_SRC emacs-lisp
-  (use-package better-shell
-    :ensure t
-    :bind (("C-\"" . better-shell-shell)
-           ("C-:" . better-shell-remote-open)))
+  ;;(use-package better-shell
+  ;;  :ensure t
+  ;;  :bind (("C-\"" . better-shell-shell)
+  ;;         ("C-:" . better-shell-remote-open)))
 #+END_SRC
 
 * Dumb Jump
@@ -2921,11 +2917,11 @@
 * Regex
 
 #+BEGIN_SRC emacs-lisp
-  (use-package pcre2el
-    :ensure t
-    :config
-    (pcre-mode)
-    )
+  ;;(use-package pcre2el
+  ;;  :ensure t
+  ;;  :config
+  ;;  (pcre-mode)
+  ;;  )
 #+END_SRC
 
 * Eyebrowse
@@ -3462,13 +3458,6 @@
     ("H-C-g e" . mwim-end-of-code-or-line))
 #+END_SRC
 
-* Google-this
-
-#+BEGIN_SRC emacs-lisp
-  (use-package google-this
-    :ensure t)
-#+END_SRC
-
 * Dashboard
 
 #+BEGIN_SRC emacs-lisp
@@ -3783,11 +3772,11 @@
 * Dash at point
 
 #+BEGIN_SRC emacs-lisp
-(use-package dash-at-point
-  :ensure t
-  :bind (("C-c I" . dash-at-point))
-  :bind* (("M-m SPC i" . dash-at-point-with-docset)
-          ("M-m SPC I" . dash-at-point)))
+;;(use-package dash-at-point
+;;  :ensure t
+;;  :bind (("C-c I" . dash-at-point))
+;;  :bind* (("M-m SPC i" . dash-at-point-with-docset)
+;;          ("M-m SPC I" . dash-at-point)))
 #+END_SRC
 
 * Commenting
@@ -4270,27 +4259,27 @@
 
 * View
 
-#+BEGIN_SRC emacs-lisp
-  (use-package view
-    :config
-    (defun View-goto-line-last (&optional line)
-      "goto last line"
-      (interactive "P")
-      (goto-line (line-number-at-pos (point-max))))
-
-    (define-key view-mode-map (kbd "e") 'View-scroll-half-page-forward)
-    (define-key view-mode-map (kbd "u") 'View-scroll-half-page-backward)
-
-    ;; less like
-    (define-key view-mode-map (kbd "N") 'View-search-last-regexp-backward)
-    (define-key view-mode-map (kbd "?") 'View-search-regexp-backward?)
-    (define-key view-mode-map (kbd "g") 'View-goto-line)
-    (define-key view-mode-map (kbd "G") 'View-goto-line-last)
-    ;; vi/w3m like
-    (define-key view-mode-map (kbd "h") 'backward-char)
-    (define-key view-mode-map (kbd "j") 'next-line)
-    (define-key view-mode-map (kbd "k") 'previous-line)
-    (define-key view-mode-map (kbd "l") 'forward-char))
+#+;;BEGIN_SRC emacs-lisp
+  ;;(use-package view
+  ;;  :config
+  ;;  (defun View-goto-line-last (&optional line)
+  ;;    "goto last line"
+  ;;    (interactive "P")
+  ;;    (goto-line (line-number-at-pos (point-max))))
+  ;;
+  ;;  (define-key view-mode-map (kbd "e") 'View-scroll-half-page-forward)
+  ;;  (define-key view-mode-map (kbd "u") 'View-scroll-half-page-backward)
+  ;;
+  ;;  ;; less like
+  ;;  (define-key view-mode-map (kbd "N") 'View-search-last-regexp-backward)
+  ;;  (define-key view-mode-map (kbd "?") 'View-search-regexp-backward?)
+  ;;  (define-key view-mode-map (kbd "g") 'View-goto-line)
+  ;;  (define-key view-mode-map (kbd "G") 'View-goto-line-last)
+  ;;  ;; vi/w3m like
+  ;;  (define-key view-mode-map (kbd "h") 'backward-char)
+  ;;  (define-key view-mode-map (kbd "j") 'next-line)
+  ;;  (define-key view-mode-map (kbd "k") 'previous-line)
+  ;;  (define-key view-mode-map (kbd "l") 'forward-char))
 #+END_SRC
 
 * Hide-Show
@@ -4437,11 +4426,11 @@
 * Elisp-demos: Inject elisp demos into help buffer
 
 #+BEGIN_SRC emacs-lisp
-(use-package elisp-demos
-  :ensure t
-  :after helpful
-  :config
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+;;(use-package elisp-demos
+;;  :ensure t
+;;  :after helpful
+;;  :config
+;;  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+END_SRC
 
 * Imenu
@@ -4484,14 +4473,6 @@ Select from xref candidates with ivy
     :init (if (< emacs-major-version 27)
               (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
             (setq xref-show-definitions-function #'ivy-xref-show-defs)))
-#+END_SRC
-
-* Dicover-My-Mojor
-
-#+BEGIN_SRC emacs-lisp
-  (use-package discover-my-major
-    :ensure t
-    :bind (("C-h C-m" . discover-my-major)))
 #+END_SRC
 
 * Plant-UML Config
@@ -4595,8 +4576,8 @@ Select from xref candidates with ivy
 * CHT.SH
 
  #+BEGIN_SRC emacs-lisp
-   (use-package cheat-sh
-     :ensure t)
+   ;;(use-package cheat-sh
+   ;;  :ensure t)
  #+END_SRC
 
 * ANZU
@@ -4840,11 +4821,6 @@ Select from xref candidates with ivy
     :ensure t
     :hook ((after-init . global-hl-line-mode)))
 
-  (use-package highlight-indent-guides
-    :ensure t
-    :init (setq highlight-indent-guides-responsive 'stack)
-    :hook '(prog-mode-hook text-mode-hook org-mode-hook))
-
   (use-package highlight-numbers
     :ensure t
     :hook '(after-init-hook prog-mode-hook text-mode-hook org-mode-hook))
@@ -4900,9 +4876,9 @@ Select from xref candidates with ivy
 * Undo Propose
 
 #+BEGIN_SRC emacs-lisp
-  (use-package undo-propose
-    :ensure t
-    :config (undo-propose-wrap redo))
+  ;;(use-package undo-propose
+  ;;  :ensure t
+  ;;  :config (undo-propose-wrap redo))
 #+END_SRC
 
 * MMM-Mode
@@ -5133,38 +5109,38 @@ Select from xref candidates with ivy
 * Password-Manager
 
 #+BEGIN_SRC emacs-lisp
-  (use-package password-store
-    :quelpa (password-store :fetcher github :repo "emacsmirror/password-store")
-    ;;:straight (password-store :type git :host github :repo "emacsmirror/password-store")
-    ;;:ensure t
-    :config
-    (progn
-      (setq password-store-password-length 30)))
-
-  (use-package pass
-    :ensure t
-    :commands pass
-    :init
-    (progn
-      (defun my/pass-insert-generated (entry)
-        "Same as pass-insert-generated but with my own template."
-        (interactive (list (read-string "Password entry: ")))
-        (when (or (not (seq-contains (password-store-list) entry))
-                  (yes-or-no-p "Erase existing entry with same name? "))
-          (let ((password (shell-command-to-string
-                           (format "pwgen --secure --symbols %s"
-                                   password-store-password-length))))
-            (password-store-insert
-             entry
-             (format "%s--\nusername: %s\nurl: https://%s\n"
-                     password
-                     user-mail-address
-                     entry))
-            (password-store-edit entry)
-            (pass-update-buffer)))))
-    :config
-    (progn
-      (advice-add #'pass-insert-generated :override #'my/pass-insert-generated)))
+  ;;(use-package password-store
+  ;;  :quelpa (password-store :fetcher github :repo "emacsmirror/password-store")
+  ;;  ;;:straight (password-store :type git :host github :repo "emacsmirror/password-store")
+  ;;  ;;:ensure t
+  ;;  :config
+  ;;  (progn
+  ;;    (setq password-store-password-length 30)))
+  ;;
+  ;;(use-package pass
+  ;;  :ensure t
+  ;;  :commands pass
+  ;;  :init
+  ;;  (progn
+  ;;    (defun my/pass-insert-generated (entry)
+  ;;      "Same as pass-insert-generated but with my own template."
+  ;;      (interactive (list (read-string "Password entry: ")))
+  ;;      (when (or (not (seq-contains (password-store-list) entry))
+  ;;                (yes-or-no-p "Erase existing entry with same name? "))
+  ;;        (let ((password (shell-command-to-string
+  ;;                         (format "pwgen --secure --symbols %s"
+  ;;                                 password-store-password-length))))
+  ;;          (password-store-insert
+  ;;           entry
+  ;;           (format "%s--\nusername: %s\nurl: https://%s\n"
+  ;;                   password
+  ;;                   user-mail-address
+  ;;                   entry))
+  ;;          (password-store-edit entry)
+  ;;          (pass-update-buffer)))))
+  ;;  :config
+  ;;  (progn
+  ;;    (advice-add #'pass-insert-generated :override #'my/pass-insert-generated)))
 
   ;;(use-package auth-source
   ;;  :init
@@ -5180,9 +5156,9 @@ Select from xref candidates with ivy
   ;;  (progn
   ;;    (setq auth-sources '(password-store))))
 
-  (use-package ivy-pass
-    :ensure t
-    )
+  ;;(use-package ivy-pass
+  ;;  :ensure t
+  ;;  )
 #+END_SRC
 
 * Nyan-mode
@@ -5211,15 +5187,15 @@ Select from xref candidates with ivy
 * Vdiff
 
 #+BEGIN_SRC emacs-lisp
-  (use-package vdiff
-    :ensure t
-    :commands (vdiff-files
-               vdiff-files3
-               vdiff-buffers
-               vdiff-buffers3))
-
-  (use-package vdiff-magit
-    :ensure t)
+  ;;(use-package vdiff
+  ;;  :ensure t
+  ;;  :commands (vdiff-files
+  ;;             vdiff-files3
+  ;;             vdiff-buffers
+  ;;             vdiff-buffers3))
+  ;;
+  ;;(use-package vdiff-magit
+  ;;  :ensure t)
 
   ;;(require 'vdiff-magit)
   ;;(define-key magit-mode-map "4" 'vdiff-magit-dwim)
@@ -5249,9 +5225,9 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
 
-  (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi.el")
-  (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi-cmd.el")
-  (load-if-exists "~/.emacs.d/custom-el-scripts/doremi/setup-keys.el")
+  ;;(load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi.el")
+  ;;(load-if-exists "~/.emacs.d/custom-el-scripts/doremi/doremi-cmd.el")
+  ;;(load-if-exists "~/.emacs.d/custom-el-scripts/doremi/setup-keys.el")
 #+END_SRC
 
 * Golden-ratio
@@ -5333,7 +5309,7 @@ Select from xref candidates with ivy
 * PacMan
 
 #+BEGIN_SRC emacs-lisp
-  (use-package pacmacs :ensure t)
+  ;;(use-package pacmacs :ensure t)
 #+END_SRC
 
 * Isolate - surround string or region with delimiters
@@ -5551,19 +5527,19 @@ Select from xref candidates with ivy
 * Write good mode
 
 #+BEGIN_SRC emacs-lisp
-  (use-package writegood-mode
-    ;; Load this whenver I'm composing prose.
-    :hook (text-mode org-mode)
-    ;; Don't show me the “Wg” marker in the mode line
-    :diminish
-    ;; Some additional weasel words.
-    :config
-    (--map (push it writegood-weasel-words)
-           '("some" "simple" "simply" "easy" "often" "easily" "probably"
-             "clearly"               ;; Is the premise undeniably true?
-             "experience shows"      ;; Whose? What kind? How does it do so?
-             "may have"              ;; It may also have not!
-             "it turns out that")))  ;; How does it turn out so?
+  ;;(use-package writegood-mode
+  ;;  ;; Load this whenver I'm composing prose.
+  ;;  :hook (text-mode org-mode)
+  ;;  ;; Don't show me the “Wg” marker in the mode line
+  ;;  :diminish
+  ;;  ;; Some additional weasel words.
+  ;;  :config
+  ;;  (--map (push it writegood-weasel-words)
+  ;;         '("some" "simple" "simply" "easy" "often" "easily" "probably"
+  ;;           "clearly"               ;; Is the premise undeniably true?
+  ;;           "experience shows"      ;; Whose? What kind? How does it do so?
+  ;;           "may have"              ;; It may also have not!
+  ;;           "it turns out that")))  ;; How does it turn out so?
   ;; ↯ What is the evidence of highighted phrase? ↯
 #+END_SRC
 
@@ -5757,17 +5733,6 @@ Select from xref candidates with ivy
   ;;  (add-to-list 'ivy-highlight-functions-alist '(ivy-fuz-regex-fuzzy . ivy-fuz-highlight-fn)))
 #+end_src
 
-* EsUp - startup
-
-#+begin_src emacs-lisp
-  (use-package esup
-    :ensure t
-    :commands esup
-    :config
-    (setq esup-user-init-file (expand-file-name "~/.emacs.d/myinit.el"))
-    )
-#+end_src
-
 * Flyspell
 
 #+begin_src emacs-lisp
@@ -5799,4 +5764,8 @@ Select from xref candidates with ivy
   ;; reset GC
   ;;(setq gc-cons-threshold 16777216
   ;;      gc-cons-percentage 0.1)
+  (defvar best-gc-cons-threshold
+  4000000
+  "Best default gc threshold value.  Should NOT be too big!")
+  (setq gc-cons-threshold best-gc-cons-threshold)
 #+END_SRC
