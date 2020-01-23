@@ -91,6 +91,14 @@
   ;;(when (file-readable-p f) (load-file p))
   #+END_SRC
 
+* gnu-packagekeyring-update
+
+#+begin_src emacs-lisp
+  (setq package-check-signature nil)
+  (use-package gnu-elpa-keyring-update
+    :ensure t)
+#+end_src
+
 * No-Littering
 
 #+BEGIN_SRC emacs-lisp
@@ -586,7 +594,7 @@
     :ensure t)
 #+END_SRC
 
-* Use-package chords
+* COMMENT Use-package chords
 #+BEGIN_SRC emacs-lisp
   ;;(use-package use-package-chords
   ;;  :ensure t
@@ -628,7 +636,7 @@
 
   #+END_SRC
 
-* PowerLine
+* COMMENT PowerLine
 
 #+BEGIN_SRC emacs-lisp
 ;;  ;; powerline
@@ -744,7 +752,7 @@
 
   #+END_SRC
 
-* tabbar
+* COMMENT tabbar
 
   #+BEGIN_SRC emacs-lisp
 
@@ -870,7 +878,7 @@
       :ensure t)
 
     ;;(load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
-    (load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
+    ;;(load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
 
     (use-package ivy-rich
       :ensure t
@@ -1116,32 +1124,32 @@
            ("C-n" . company-select-next)))
     :hook
     (after-init . global-company-mode)
-    (plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
-                                     '((company-yasnippet
-                                        ;; company-dabbrev
-                                        )))))
-    ((go-mode
-      c++-mode
-      org-mode
-      emacs-lisp-mode
-      shell-mode
-      groovy-mode
-      java-mode
-      python-mode
-      ) . (lambda () (set (make-local-variable 'company-backends)
-                          '((company-yasnippet
-                             company-lsp
-                             company-files
-                             company-capf
-                             company-dabbrev-code
-                             company-dabbrev
-                             )))))
+    ;;(plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
+    ;;                                 '((company-yasnippet
+    ;;                                    ;; company-dabbrev
+    ;;                                    )))))
+    ;;((go-mode
+    ;;  c++-mode
+    ;;  org-mode
+    ;;  emacs-lisp-mode
+    ;;  shell-mode
+    ;;  groovy-mode
+    ;;  java-mode
+    ;;  python-mode
+    ;;  ) . (lambda () (set (make-local-variable 'company-backends)
+    ;;                      '((company-yasnippet
+    ;;                         company-lsp
+    ;;                         company-files
+    ;;                         company-capf
+    ;;                         company-dabbrev-code
+    ;;                         company-dabbrev
+    ;;                         )))))
     :config
     (setq ;; Only 2 letters required for completion to activate.
 
      company-auto-complete nil
 
-     company-echo-delay 0
+     company-echo-delay (if (display-graphic-p) nil 0)
 
      company-dabbrev-code-everywhere t
 
@@ -1188,18 +1196,20 @@
      ;; provide the ‘correct’ casing.
      company-dabbrev-ignore-case t
 
+     company-backends '(company-capf)
+
      ;; Immediately activate completion.
      company-idle-delay 0)
 
     ;; TOPIC: How add company-dabbrev to the Company completion popup?
     ;; URL: https://emacs.stackexchange.com/questions/15246/how-add-company-dabbrev-to-the-company-completion-popup
-    (add-to-list 'company-backends 'company-dabbrev-code)
-    (add-to-list 'company-backends 'company-gtags)
-    (add-to-list 'company-backends 'company-etags)
-    (add-to-list 'company-backends 'company-keywords)
-    (add-to-list 'company-backends 'company-files)
-    (add-to-list 'company-backends 'company-dabbrev)
-    (add-to-list 'company-backends 'company-capf)
+    ;; (add-to-list 'company-backends 'company-dabbrev-code)
+    ;; (add-to-list 'company-backends 'company-gtags)
+    ;; (add-to-list 'company-backends 'company-etags)
+    ;; (add-to-list 'company-backends 'company-keywords)
+    ;; (add-to-list 'company-backends 'company-files)
+    ;; (add-to-list 'company-backends 'company-dabbrev)
+    ;; (add-to-list 'company-backends 'company-capf)
     ;; using child frame
     (use-package company-posframe
       :ensure t
@@ -1337,7 +1347,7 @@
   ;;:ensure t
   ;;  :hook (company-mode . company-box-mode))
 
-  (add-to-list 'company-backends '(company-capf company-dabbrev company-dabbrev-code company-files))
+  ;;(add-to-list 'company-backends '(company-capf company-dabbrev company-dabbrev-code company-files))
   (define-key global-map (kbd "C-c c f") 'company-files)
 #+END_SRC
 
@@ -1844,7 +1854,7 @@
 
   #+END_SRC
 
-* Dump-Keys
+* COMMENT Dump-Keys
   #+BEGIN_SRC emacs-lisp
   ;;(load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/dump-keys.el")
   #+END_SRC
@@ -1865,7 +1875,7 @@
     (setq web-mode-enable-auto-quoting t))
   #+END_SRC
 
-* Parrot
+* COMMENT Parrot
 
 #+BEGIN_SRC emacs-lisp
   ;; Do not us ei t asmuch
@@ -1999,7 +2009,7 @@
     ;;(add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
   #+END_SRC
 
-* Telephone-line
+* COMMENT Telephone-line
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package telephone-line
@@ -2561,15 +2571,13 @@
   (use-package ghub :ensure t)
   (use-package ghub+ :ensure t)
 
-  (use-package magithub
-    :ensure t
-    :after (:all magit ghub ghub+)
-    :config (magithub-feature-autoinject t)
-    (setq magithub-clone-default-directory "~/github"))
+  ;;(use-package magithub
+  ;;  :ensure t
+  ;;  :after (:all magit ghub ghub+)
+  ;;  :config (magithub-feature-autoinject t)
+  ;;  (setq magithub-clone-default-directory "~/github"))
 
   (use-package gist :ensure t)
-
-  (use-package browse-at-remote :ensure t)
 
   ;; Display commit number that is associated with current line of code
   (use-package vc-msg
@@ -2603,7 +2611,7 @@
   ;;(savehist-mode +1)
 #+END_SRC
 
-* Better Shell
+* COMMENT Better Shell
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package better-shell
@@ -3020,7 +3028,7 @@
   (require 'org-pdfview)
 #+END_SRC
 
-* Sunrise Commander
+* COMMENT Sunrise Commander
 
 #+BEGIN_SRC emacs-lisp
 ;;(add-to-list 'load-path "~/.emacs.d/sunrise-commander")
@@ -3240,7 +3248,7 @@
   (use-package groovy-mode
     :ensure t
     :config
-    (add-to-list 'auto-mode-alist '("\\.g\\(?:ant\\|roovy\\|radle\\)\\'" . groovy-mode))
+    (add-to-list 'auto-mode-alist '("\\.g\\(?:ant\\|roovy\\)\\'" . groovy-mode))
     (add-to-list 'auto-mode-alist '("Jenkinsfile" . groovy-mode))
     (add-to-list 'auto-mode-alist '("Jenkinsfile\\'" . groovy-mode)))
 
@@ -3349,28 +3357,29 @@
 
 #+BEGIN_SRC emacs-lisp
 
-  (add-to-list 'load-path (concat user-emacs-directory "custom-el-scripts/languages"))
+  ;;(add-to-list 'load-path (concat user-emacs-directory "custom-el-scripts/languages"))
 
-  ;;(load-if-exists "./custom-el-scripts/languages/lang-go.el")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/languages/go-dlv.el")
+  (load-if-exists "~/.emacs.d/custom-el-scripts/languages/lang-go.el")
   ;;(load-if-exists "./custom-el-scripts/languages/lang-ruby.el")
   ;;(load-if-exists "./custom-el-scripts/languages/lang-php.el")
   ;;(load-if-exists "./custom-el-scripts/languages/lang-javascript.el")
   ;;(load-if-exists "./custom-el-scripts/languages/lang-web.el")
   ;;(load-if-exists "./custom-el-scripts/languages/lang-rust.el")
 
-  (require 'lang-ruby)
+  ;;(require 'lang-ruby)
 
   (require 'lang-go)
 
-  (require 'lang-php)
+  ;;(require 'lang-php)
 
-  (require 'lang-javascript)
+  ;;(require 'lang-javascript)
 
-  (require 'lang-web)
+  ;;(require 'lang-web)
 
-  (require 'lang-rust)
+  ;;(require 'lang-rust)
 
-  (require 'lang-c)
+  ;;(require 'lang-c)
 #+END_SRC
 
 * Hive-Mode
@@ -3379,7 +3388,7 @@
   (load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-hive.el")
 #+END_SRC
 
-* Auto-revert
+* COMMENT Auto-revert
 
 #+BEGIN_SRC emacs-lisp
   ;; Automatically reload files was modified by external program
@@ -3485,17 +3494,18 @@
   (use-package dimmer
     :ensure t
     :unless noninteractive
-    :disabled
+    ;;:disabled
     :custom
-    (dimmer-fraction 0.5)
-    (dimmer-exclusion-regexp-list
-     '(".*Minibuf.*"
-       ".*which-key.*"
-       ".*Messages.*"
-       ".*Async.*"
-       ".*Warnings.*"
-       ".*LV.*"
-       ".*Ilist.*"))
+    (dimmer-fraction 0.2)
+    ;;(dimmer-exclusion-regexp-list
+    ;; '(".*Minibuf.*"
+    ;;   ".*which-key.*"
+    ;;   ".*Messages.*"
+    ;;   ".*Async.*"
+    ;;   ".*Warnings.*"
+    ;;   ".*LV.*"
+    ;;   ".*Ilist.*")
+    ;; )
     :config
     (dimmer-mode t))
 #+END_SRC
@@ -3769,7 +3779,7 @@
     )
 #+END_SRC
 
-* Dash at point
+* COMMENT Dash at point
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package dash-at-point
@@ -3932,7 +3942,7 @@
   :config (setq ffap-machine-p-known 'reject))
 #+END_SRC
 
-* Evil Collection
+* COMMENT Evil Collection
 
 #+BEGIN_SRC emacs-lisp
   ;; (use-package evil-collection
@@ -3978,9 +3988,9 @@
 * snapshot-timemachine
 # This is not relevent for MAC os
 #+BEGIN_SRC emacs-lisp
-  (use-package snapshot-timemachine
-    :ensure t
-    :init
+  ;;(use-package snapshot-timemachine
+  ;;  :ensure t
+  ;;  :init
 
     ;; Default Backup directory
     ;;Commenting as handled by no-litttering package
@@ -4016,23 +4026,23 @@
           auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
           )
 
-    :config
+   ;; :config
 
-    (defun snapshot-timemachine-backup-finder (file)
-      "Find snapshots of FILE in rsnapshot backups."
-      (let* ((file (expand-file-name file))
-             (file-adapted (replace-regexp-in-string "/" "!" file))
-             (backup-files(directory-files backup-directory t (format "%s.*" file-adapted))))
-        (seq-map-indexed (lambda (backup-file index)
-                           (make-snapshot :id index
-                                          :name (format "%d" index)
-                                          :file backup-file
-                                          :date (nth 5 (file-attributes backup-file))))
-                         backup-files)))
+   ;; (defun snapshot-timemachine-backup-finder (file)
+   ;;   "Find snapshots of FILE in rsnapshot backups."
+   ;;   (let* ((file (expand-file-name file))
+   ;;          (file-adapted (replace-regexp-in-string "/" "!" file))
+   ;;          (backup-files(directory-files backup-directory t (format "%s.*" file-adapted))))
+   ;;     (seq-map-indexed (lambda (backup-file index)
+   ;;                        (make-snapshot :id index
+   ;;                                       :name (format "%d" index)
+   ;;                                       :file backup-file
+   ;;                                       :date (nth 5 (file-attributes backup-file))))
+   ;;                      backup-files)))
 
-    (setq snapshot-timemachine-snapshot-finder #'snapshot-timemachine-backup-finder))
+   ;; (setq snapshot-timemachine-snapshot-finder #'snapshot-timemachine-backup-finder))
 
-  (require 'snapshot-timemachine)
+  ;;(require 'snapshot-timemachine)
 #+END_SRC
 
 * XML
@@ -4257,9 +4267,9 @@
     )
 #+END_SRC
 
-* View
+* COMMENT View
 
-#+;;BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   ;;(use-package view
   ;;  :config
   ;;  (defun View-goto-line-last (&optional line)
@@ -4323,12 +4333,12 @@
   (load "cool-moves")
 #+END_SRC
 
-* Frog_Jump_buffer
+* COMMENT Frog_Jump_buffer
 
 #+BEGIN_SRC emacs-lisp
-  (use-package frog-jump-buffer
-    :ensure t
-    :bind ("C-x f" . frog-jump-buffer))
+  ;;(use-package frog-jump-buffer
+  ;;  :ensure t
+  ;;  :bind ("C-x f" . frog-jump-buffer))
 #+END_SRC
 
 * Subword: CamelCase aware editing operations
@@ -4423,7 +4433,7 @@
     )
 #+END_SRC
 
-* Elisp-demos: Inject elisp demos into help buffer
+* COMMENT Elisp-demos: Inject elisp demos into help buffer
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package elisp-demos
@@ -4542,7 +4552,7 @@ Select from xref candidates with ivy
     :hook ((after-init . global-color-identifiers-mode)))
 #+END_SRC
 
-* Ranger
+* COMMENT Ranger
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package ranger
@@ -4573,7 +4583,7 @@ Select from xref candidates with ivy
     :hook ((after-init . beginend-global-mode)))
 #+END_SRC
 
-* CHT.SH
+* COMMENT CHT.SH
 
  #+BEGIN_SRC emacs-lisp
    ;;(use-package cheat-sh
@@ -4601,7 +4611,7 @@ Select from xref candidates with ivy
     )
 #+END_SRC
 
-* Awesome-tabs
+* COMMENT Awesome-tabs
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package awesome-tab
@@ -4873,7 +4883,7 @@ Select from xref candidates with ivy
     :bind ("C-c C-/" . ivy-point-history))
 #+END_SRC
 
-* Undo Propose
+* COMMENT Undo Propose
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package undo-propose
@@ -4962,11 +4972,11 @@ Select from xref candidates with ivy
     :ensure t)
 #+END_SRC
 
-* Carbon-now-sh
+* COMMENT Carbon-now-sh
 
 #+BEGIN_SRC emacs-lisp
-  (use-package carbon-now-sh
-    :ensure t)
+  ;;(use-package carbon-now-sh
+  ;;  :ensure t)
 #+END_SRC
 
 * OX-Pandoc
@@ -4988,14 +4998,15 @@ Select from xref candidates with ivy
     :ensure t)
 #+END_SRC
 
-* GoTo-last-point
+* COMMENT GoTo-last-point
 
 #+BEGIN_SRC emacs-lisp
-  (use-package goto-last-point
-    :ensure t
-    :demand t
-    :bind ("H-<" . goto-last-point)
-    :config (goto-last-point-mode))
+;;Do not need to as using point history
+  ;;(use-package goto-last-point
+  ;;  :ensure t
+  ;;  :demand t
+  ;;  :bind ("H-<" . goto-last-point)
+  ;;  :config (goto-last-point-mode))
 #+END_SRC
 
 * persistent-scrach
@@ -5106,7 +5117,7 @@ Select from xref candidates with ivy
     (setq-when-file-existed sane-term-shell-command (executable-find "/usr/local/bin/zsh")))
 #+END_SRC
 
-* Password-Manager
+* COMMENT Password-Manager
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package password-store
@@ -5184,7 +5195,7 @@ Select from xref candidates with ivy
     :ensure t)
 #+END_SRC
 
-* Vdiff
+* COMMENT Vdiff
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package vdiff
@@ -5221,7 +5232,7 @@ Select from xref candidates with ivy
   ;; (setq vdiff-magit-stage-is-2way nil)
 #+END_SRC
 
-* Doremi
+* COMMENT Doremi
 
 #+BEGIN_SRC emacs-lisp
 
@@ -5306,7 +5317,7 @@ Select from xref candidates with ivy
     )
 #+END_SRC
 
-* PacMan
+* COMMENT PacMan
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package pacmacs :ensure t)
@@ -5379,7 +5390,7 @@ Select from xref candidates with ivy
     )
 #+END_SRC
 
-* Auto-compile
+* COMMENT Auto-compile
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package auto-compile
@@ -5406,6 +5417,7 @@ Select from xref candidates with ivy
 * Swap region
 
 #+BEGIN_SRC emacs-lisp
+;;M-x swap-regions [select the first region] C-M-c [select the second region] C-M-c
   (use-package swap-regions
     :ensure t)
 #+END_SRC
@@ -5448,15 +5460,15 @@ Select from xref candidates with ivy
     :ensure t)
 #+END_SRC
 
-* Broadcast-mode
+* COMMENT Broadcast-mode
 
 #+BEGIN_SRC emacs-lisp
-  (use-package broadcast
-    :ensure t
-    :commands broadcast-mode)
+  ;;(use-package broadcast
+  ;;  :ensure t
+  ;;  :commands broadcast-mode)
 #+END_SRC
 
-* Lsp-Ivy
+* COMMENT Lsp-Ivy
 
 #+BEGIN_SRC emacs-lisp
  ;; (use-package lsp-ivy
@@ -5503,7 +5515,7 @@ Select from xref candidates with ivy
     (highlight2clipboard-mode 1))
 #+END_SRC
 
-* Ellocate - a locate alternative -
+* COMMENT Ellocate - a locate alternative -
 
 #+BEGIN_SRC emacs-lisp
  ;; (use-package ellocate
@@ -5524,7 +5536,7 @@ Select from xref candidates with ivy
   (use-package page-break-lines)
 #+END_SRC
 
-* Write good mode
+* COMMENT Write good mode
 
 #+BEGIN_SRC emacs-lisp
   ;;(use-package writegood-mode
@@ -5712,7 +5724,7 @@ Select from xref candidates with ivy
     (push 'company-lsp company-backends))
 #+END_SRC
 
-* Fuz and Ivy-fuz
+* COMMENT Fuz and Ivy-fuz
 
 #+begin_src emacs-lisp
 
@@ -5749,8 +5761,8 @@ Select from xref candidates with ivy
     (setq ispell-program-name "aspell")
     (setq ispell-dictionary "en_US")
     (setq ispell-extra-args '("--sug-mode=ultra"))
-    (add-hook 'text-mode-hook 'flyspell-mode)
-    (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+    ;;(add-hook 'text-mode-hook 'flyspell-mode)
+    ;;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
     ;;(define-key flyspell-mode-map (kbd "C-;") nil)
     ;; TODO (emacs 27): ispell-change-dictionary-hook
