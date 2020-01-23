@@ -5798,6 +5798,15 @@ Select from xref candidates with ivy
     )
 #+end_src
 
+* TOML
+
+#+begin_src emacs-lisp
+  (use-package toml-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.t[o]ml\\'" . toml-mode)))
+#+end_src
+
 * reset GC
 
 #+BEGIN_SRC emacs-lisp
