@@ -1114,14 +1114,14 @@
     :bind
     (("M-/" . company-complete)
      (:map company-active-map
-           ("C-n" . company-select-next)
-           ("C-p" . company-select-previous)
-           ("<tab>" . company-complete-common-or-cycle)
-           ("TAB" . company-complete-common-or-cycle)
-           ("M-i" . company-complete-common-or-cycle)
-           :map company-search-map
-           ("C-p" . company-select-previous)
-           ("C-n" . company-select-next)))
+	   ("C-n" . company-select-next)
+	   ("C-p" . company-select-previous)
+	   ("<tab>" . company-complete-common-or-cycle)
+	   ("TAB" . company-complete-common-or-cycle)
+	   ("M-i" . company-complete-common-or-cycle)
+	   :map company-search-map
+	   ("C-p" . company-select-previous)
+	   ("C-n" . company-select-next)))
     :hook
     (after-init . global-company-mode)
     ;;(plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
@@ -1145,7 +1145,7 @@
     ;;                         company-dabbrev
     ;;                         )))))
     :config
-    (setq ;; Only 2 letters required for completion to activate.
+    (setq
 
      company-auto-complete nil
 
@@ -1155,6 +1155,7 @@
 
      company-dabbrev-code-modes t
 
+     ;; Only 2 letters required for completion to activate.
      company-minimum-prefix-length 2
 
      ;; Search other buffers for compleition candidates
@@ -1178,13 +1179,15 @@
      company-tooltip-offset-display 'scrollbar
 
      company-frontends '(company-pseudo-tooltip-frontend
-                         company-echo-metadata-frontend)
+			 company-echo-metadata-frontend)
+
      company-require-match nil
+
      ;; Allow (lengthy) numbers to be eligible for completion.
      company-complete-number t
 
      ;; M-⟪num⟫ to select an option according to its number.
-     company-show-numbers t
+     ;;company-show-numbers t
 
      ;; Edge of the completion list cycles around.
      company-selection-wrap-around t
@@ -1196,10 +1199,15 @@
      ;; provide the ‘correct’ casing.
      company-dabbrev-ignore-case t
 
-     company-backends '(company-capf)
+     ;;copied from oremacs
+     company-backends '(company-capf
+			(company-dabbrev-code company-gtags company-etags
+					      company-keywords)
+			company-files
+			company-dabbrev)
 
      ;; Immediately activate completion.
-     company-idle-delay 0)
+     company-idle-delay 0.2)
 
     ;; TOPIC: How add company-dabbrev to the Company completion popup?
     ;; URL: https://emacs.stackexchange.com/questions/15246/how-add-company-dabbrev-to-the-company-completion-popup
@@ -1222,14 +1230,14 @@
       (setq company-fuzzy-sorting-backend 'flx)
       (setq company-fuzzy-prefix-ontop nil)
       (with-eval-after-load 'company
-        (global-company-fuzzy-mode t)))
+	(global-company-fuzzy-mode t)))
 
     (use-package company-shell
       :ensure t
       :config
       (add-to-list 'company-backends '(company-shell
-                                       company-shell-env
-                                       company-fish-shell)))
+				       company-shell-env
+				       company-fish-shell)))
 
     ;; Better sorting and filtering
     (use-package company-prescient
@@ -1247,54 +1255,54 @@
       (setq company-box-max-candidates 50)
 
       (defun company-box-icons--elisp (candidate)
-        (when (derived-mode-p 'emacs-lisp-mode)
-          (let ((sym (intern candidate)))
-            (cond ((fboundp sym) 'Function)
-                  ((featurep sym) 'Module)
-                  ((facep sym) 'Color)
-                  ((boundp sym) 'Variable)
-                  ((symbolp sym) 'Text)
-                  (t . nil)))))
+	(when (derived-mode-p 'emacs-lisp-mode)
+	  (let ((sym (intern candidate)))
+	    (cond ((fboundp sym) 'Function)
+		  ((featurep sym) 'Module)
+		  ((facep sym) 'Color)
+		  ((boundp sym) 'Variable)
+		  ((symbolp sym) 'Text)
+		  (t . nil)))))
 
       (with-eval-after-load 'all-the-icons
-        (declare-function all-the-icons-faicon 'all-the-icons)
-        (declare-function all-the-icons-fileicon 'all-the-icons)
-        (declare-function all-the-icons-material 'all-the-icons)
-        (declare-function all-the-icons-octicon 'all-the-icons)
-        (setq company-box-icons-all-the-icons
-              `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.7 :v-adjust -0.15))
-                (Text . ,(all-the-icons-faicon "book" :height 0.68 :v-adjust -0.15))
-                (Method . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
-                (Function . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
-                (Constructor . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
-                (Field . ,(all-the-icons-faicon "tags" :height 0.65 :v-adjust -0.15 :face 'font-lock-warning-face))
-                (Variable . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face))
-                (Class . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
-                (Interface . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01))
-                (Module . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.15))
-                (Property . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face)) ;; Golang module
-                (Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.7 :v-adjust -0.15))
-                (Value . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'font-lock-constant-face))
-                (Enum . ,(all-the-icons-material "storage" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-orange))
-                (Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.7 :v-adjust -0.15))
-                (Snippet . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))
-                (Color . ,(all-the-icons-material "palette" :height 0.7 :v-adjust -0.15))
-                (File . ,(all-the-icons-faicon "file-o" :height 0.7 :v-adjust -0.05))
-                (Reference . ,(all-the-icons-material "collections_bookmark" :height 0.7 :v-adjust -0.15))
-                (Folder . ,(all-the-icons-octicon "file-directory" :height 0.7 :v-adjust -0.05))
-                (EnumMember . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-blueb))
-                (Constant . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05))
-                (Struct . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
-                (Event . ,(all-the-icons-faicon "bolt" :height 0.7 :v-adjust -0.05 :face 'all-the-icons-orange))
-                (Operator . ,(all-the-icons-fileicon "typedoc" :height 0.65 :v-adjust 0.05))
-                (TypeParameter . ,(all-the-icons-faicon "hashtag" :height 0.65 :v-adjust 0.07 :face 'font-lock-const-face))
-                (Template . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))))))
+	(declare-function all-the-icons-faicon 'all-the-icons)
+	(declare-function all-the-icons-fileicon 'all-the-icons)
+	(declare-function all-the-icons-material 'all-the-icons)
+	(declare-function all-the-icons-octicon 'all-the-icons)
+	(setq company-box-icons-all-the-icons
+	      `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.7 :v-adjust -0.15))
+		(Text . ,(all-the-icons-faicon "book" :height 0.68 :v-adjust -0.15))
+		(Method . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
+		(Function . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
+		(Constructor . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
+		(Field . ,(all-the-icons-faicon "tags" :height 0.65 :v-adjust -0.15 :face 'font-lock-warning-face))
+		(Variable . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face))
+		(Class . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
+		(Interface . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01))
+		(Module . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.15))
+		(Property . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face)) ;; Golang module
+		(Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.7 :v-adjust -0.15))
+		(Value . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'font-lock-constant-face))
+		(Enum . ,(all-the-icons-material "storage" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-orange))
+		(Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.7 :v-adjust -0.15))
+		(Snippet . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))
+		(Color . ,(all-the-icons-material "palette" :height 0.7 :v-adjust -0.15))
+		(File . ,(all-the-icons-faicon "file-o" :height 0.7 :v-adjust -0.05))
+		(Reference . ,(all-the-icons-material "collections_bookmark" :height 0.7 :v-adjust -0.15))
+		(Folder . ,(all-the-icons-octicon "file-directory" :height 0.7 :v-adjust -0.05))
+		(EnumMember . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-blueb))
+		(Constant . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05))
+		(Struct . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
+		(Event . ,(all-the-icons-faicon "bolt" :height 0.7 :v-adjust -0.05 :face 'all-the-icons-orange))
+		(Operator . ,(all-the-icons-fileicon "typedoc" :height 0.65 :v-adjust 0.05))
+		(TypeParameter . ,(all-the-icons-faicon "hashtag" :height 0.65 :v-adjust 0.07 :face 'font-lock-const-face))
+		(Template . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))))))
     ;; Show quick tooltip
     (use-package company-quickhelp
       :ensure t
       :defines company-quickhelp-delay
       :bind (:map company-active-map
-                  ("M-h" . company-quickhelp-manual-begin))
+		  ("M-h" . company-quickhelp-manual-begin))
       :hook (global-company-mode . company-quickhelp-mode)
       :custom (company-quickhelp-delay 0.8)))
 
@@ -1324,9 +1332,9 @@
        (define-key map (format "%d" x) 'ora-company-number))
      (number-sequence 0 9))
     (define-key map " " (lambda ()
-                          (interactive)
-                          (company-abort)
-                          (self-insert-command 1)))
+			  (interactive)
+			  (company-abort)
+			  (self-insert-command 1)))
     (define-key map (kbd "<return>") nil))
 
   (defun ora-company-number ()
@@ -1336,11 +1344,11 @@
   In that case, insert the number."
     (interactive)
     (let* ((k (this-command-keys))
-           (re (concat "^" company-prefix k)))
+	   (re (concat "^" company-prefix k)))
       (if (cl-find-if (lambda (s) (string-match re s))
-                      company-candidates)
-          (self-insert-command 1)
-        (company-complete-number (string-to-number k)))))
+		      company-candidates)
+	  (self-insert-command 1)
+	(company-complete-number (string-to-number k)))))
 
   ;; company box mode
   ;;(use-package company-box
@@ -1349,6 +1357,8 @@
 
   ;;(add-to-list 'company-backends '(company-capf company-dabbrev company-dabbrev-code company-files))
   (define-key global-map (kbd "C-c c f") 'company-files)
+
+
 #+END_SRC
 
 * Reveal.js
