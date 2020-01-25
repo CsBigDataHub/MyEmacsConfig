@@ -50,14 +50,14 @@
 
   ;;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
 
-  ;;(defun my-minibuffer-setup-hook ()
-  ;;  (setq gc-cons-threshold most-positive-fixnum))
-  ;;
-  ;;(defun my-minibuffer-exit-hook ()
-  ;;  (setq gc-cons-threshold 800000))
-  ;;
-  ;;(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
-  ;;(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+  (defun my-minibuffer-setup-hook ()
+    (setq gc-cons-threshold most-positive-fixnum))
+
+  (defun my-minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
   ;;(let ((gc-cons-threshold most-positive-fixnum))
   ;;  # existing init code
@@ -1930,7 +1930,7 @@
     (require 'doom-modeline)
     (doom-modeline-init)
     (setq doom-modeline-env-version t)
-    (setq doom-modeline-enable-word-count t)
+    ;;(setq doom-modeline-enable-word-count t)
     ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
     (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
@@ -5815,7 +5815,8 @@ Select from xref candidates with ivy
   ;;(setq gc-cons-threshold 16777216
   ;;      gc-cons-percentage 0.1)
   (defvar best-gc-cons-threshold
-  4000000
+  ;;4000000
+  100000000
   "Best default gc threshold value.  Should NOT be too big!")
   (setq gc-cons-threshold best-gc-cons-threshold)
 #+END_SRC
