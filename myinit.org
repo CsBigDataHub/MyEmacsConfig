@@ -166,6 +166,9 @@
     ;; Save whatever’s in the current (system) clipboard before
     ;; replacing it with the Emacs’ text.
     ;; https://github.com/dakrone/eos/blob/master/eos.org
+    ;; Kill ring
+    (setq kill-ring-max 200
+          kill-do-not-save-duplicates t)
     (setq save-interprogram-paste-before-kill t)
     (column-number-mode t)
     (size-indication-mode t)
@@ -1077,6 +1080,8 @@
        ("O" my/counsel-ff-ace-window "find file with ace-window integration")
        ))
 
+    (setq counsel-yank-pop-preselect-last t)
+
     ;;(ivy-set-actions t nil)
   #+END_SRC
 
@@ -1919,6 +1924,7 @@
   #+BEGIN_SRC emacs-lisp
 
     (setq display-time-24hr-format t)
+    (setq display-time-day-and-date t)
     (display-time-mode +1)
 
     (use-package doom-modeline
@@ -2427,7 +2433,8 @@
     (global-set-key (kbd "C-M-=") 'default-text-scale-increase)
     (global-set-key (kbd "C-M--") 'default-text-scale-decrease))
 
-  (define-key ctl-x-map [(control ?0)] 'zoom-in/out)
+  (use-package fontify-face
+    :defer t)
 #+END_SRC
 
 * Git
@@ -2515,7 +2522,7 @@
     :diminish
     :preface
     (with-eval-after-load 'hydra
-      (defhydra smerge-hydra
+      (defhydra hydra-smerge
         (:color pink :hint nil :post (smerge-auto-leave))
         "
   ^Move^       ^Keep^               ^Diff^                 ^Other^
@@ -2882,7 +2889,105 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package deadgrep
-    :ensure t)
+    :ensure t
+    :bind (("C-c d g" . deadgrep))
+    :config
+    (setq-default deadgrep--search-type 'regexp) ;Default is 'string
+
+    (defun my/deadgrep--jump-to-and-execute (re)
+      "Execute the button that matches RE and push it."
+      (goto-char (point-min))
+      (re-search-forward re)
+      (backward-char 3)
+      (push-button))
+
+    (defun my/deadgrep-change-search-term ()
+      "Change the search term."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Search term: .*change$"))
+
+    (defun my/deadgrep-change-search-type-to-string ()
+      "Change the search type to 'string'."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Search type: .*string"))
+
+    (defun my/deadgrep-change-search-type-to-words ()
+      "Change the search type to 'words'."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Search type: .*words"))
+
+    (defun my/deadgrep-change-search-type-to-regexp ()
+      "Change the search type to 'regexp'."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Search type: .*regexp"))
+
+    (defun my/deadgrep-change-case-to-smart ()
+      "Change the case sensitivity to 'smart'."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Case: .*smart"))
+
+    (defun my/deadgrep-change-case-to-sensitive ()
+      "Change the case sensitivity to 'sensitive'."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Case: .*sensitive"))
+
+    (defun my/deadgrep-change-case-to-ignore ()
+      "Change the case sensitivity to 'ignore'."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Case: .*ignore"))
+
+    (defun my/deadgrep-change-context-to-none ()
+      "Don't show ny context around the search results."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Context: .*none"))
+
+    (defun my/deadgrep-change-context-to-before ()
+      "Set 'before' context for the search results."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Context: .*before"))
+
+    (defun my/deadgrep-change-context-to-after ()
+      "Set 'after' context for the search results."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Context: .*after"))
+
+    (defun my/deadgrep-change-directory ()
+      "Change the root directory for searches."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Directory: .*$"))
+
+    (defun my/deadgrep-search-all-files ()
+      "Change file search scope to 'all'."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Files: .*all"))
+
+    (defun my/deadgrep-search-files-by-type ()
+      "Search only in the specified file types."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Files: .*type"))
+
+    (defun my/deadgrep-search-files-by-glob ()
+      "Search in files names that match the specified glob."
+      (interactive)
+      (my/deadgrep--jump-to-and-execute "^Files: .*glob"))
+
+    (bind-keys
+     :map deadgrep-mode-map
+     ("s" . my/deadgrep-change-search-term)
+     ("ts" . my/deadgrep-change-search-type-to-string)
+     ("tw" . my/deadgrep-change-search-type-to-words)
+     ("tr" . my/deadgrep-change-search-type-to-regexp)
+     ("cs" . my/deadgrep-change-case-to-smart)
+     ("cc" . my/deadgrep-change-case-to-sensitive)
+     ("ci" . my/deadgrep-change-case-to-ignore)
+     ("xn" . my/deadgrep-change-context-to-none)
+     ("xb" . my/deadgrep-change-context-to-before)
+     ("xa" . my/deadgrep-change-context-to-after)
+     ("d" . my/deadgrep-change-directory)
+     ("fa" . my/deadgrep-search-all-files)
+     ("ft" . my/deadgrep-search-files-by-type)
+     ("fg" . my/deadgrep-search-files-by-glob))
+    )
 
   (use-package rg
     :ensure t
@@ -2937,6 +3042,20 @@
 
   ;; call function now
   (set-exec-path-from-shell-PATH)
+
+  (cond ((display-graphic-p)
+         ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
+         ;; environment, so envvars will be wrong. That includes the PATH
+         ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
+         ;; and benefits greatly from compilation.
+         (setq exec-path
+               (or (eval-when-compile
+                     (when (require 'exec-path-from-shell nil t)
+                       (setq exec-path-from-shell-check-startup-files nil)
+                       (nconc exec-path-from-shell-variables '("GOPATH" "GOROOT" "PYTHONPATH"))
+                       (exec-path-from-shell-initialize)
+                       exec-path))
+                   exec-path))))
 #+END_SRC
 
 * Wgrep
@@ -4460,6 +4579,36 @@
   (use-package visual-regexp-steroids
     :after visual-regexp
     )
+
+  ;;; Query exchange
+  ;; Inspired from http://www.emacswiki.org/emacs/QueryExchange and definition of
+  ;; `query-replace-regexp' from replace.el
+  (defun query-exchange (string-1 string-2 &optional delimited start end)
+    "Exchange string-1 and string-2 interactively.
+  The user is prompted at each instance like query-replace. Exchanging
+  happens within a region if one is selected."
+    (interactive
+     (let ((common
+            (query-replace-read-args
+             (concat "Query replace"
+                     (if current-prefix-arg " word" "")
+                     " regexp"
+                     (if (and transient-mark-mode mark-active) " in region" ""))
+             t)))
+       (list (nth 0 common) (nth 1 common) (nth 2 common)
+             ;; These are done separately here
+             ;; so that command-history will record these expressions
+             ;; rather than the values they had this time.
+             (if (and transient-mark-mode mark-active)
+                 (region-beginning))
+             (if (and transient-mark-mode mark-active)
+                 (region-end)))))
+    (perform-replace
+     (concat "\\(" string-1 "\\)\\|" string-2)
+     '(replace-eval-replacement replace-quote
+                                (if (match-string 1) string-2 string-1))
+     t t delimited nil nil start end))
+
 #+END_SRC
 
 * COMMENT Elisp-demos: Inject elisp demos into help buffer
@@ -5454,6 +5603,60 @@ Select from xref candidates with ivy
 * Project abbrev
 
 #+BEGIN_SRC emacs-lisp
+  ;; abbrev: expand abbreviations
+  (use-package abbrev :ensure nil
+               :hook
+               ((prog-mode org-mode text-mode erc-mode LaTeX-mode) . abbrev-mode)
+               (expand-load
+                . (lambda ()
+                    (add-hook 'expand-expand-hook 'indent-according-to-mode)
+                    (add-hook 'expand-jump-hook 'indent-according-to-mode)))
+               :bind*
+               ("C-;" . endless/ispell-word-then-abbrev)
+               :config
+               ;; Silently save abbrevs on quitting emacs
+               (setq save-abbrevs 'silently)
+
+               ;;Read the abbreviations file on startup
+               (if (file-exists-p abbrev-file-name)
+                   (quietly-read-abbrev-file))
+
+               (defun endless/simple-get-word ()
+                 (car-safe (save-excursion (ispell-get-word nil))))
+
+               (defun endless/ispell-word-then-abbrev (p)
+                 "Call `ispell-word', then create an abbrev for it.
+  With prefix P, create local abbrev. Otherwise it will
+  be global.
+  If there's nothing wrong with the word at point, keep
+  looking for a typo until the beginning of buffer. You can
+  skip typos you don't want to fix with `SPC', and you can
+  abort completely with `C-g'."
+                 (interactive "P")
+                 (let (bef aft)
+                   (save-excursion
+                     (while (if (setq bef (endless/simple-get-word))
+                                ;; Word was corrected or used quit.
+                                (if (ispell-word nil 'quiet)
+                                    nil ; End the loop.
+                                  ;; Also end if we reach `bob'.
+                                  (not (bobp)))
+                              ;; If there's no word at point, keep looking
+                              ;; until `bob'.
+                              (not (bobp)))
+                       (backward-word)
+                       (backward-char))
+                     (setq aft (endless/simple-get-word)))
+                   (if (and aft bef (not (equal aft bef)))
+                       (let ((aft (downcase aft))
+                             (bef (downcase bef)))
+                         (define-abbrev
+                           (if p local-abbrev-table global-abbrev-table)
+                           bef aft)
+                         (message "\"%s\" now expands to \"%s\" %sally"
+                                  bef aft (if p "loc" "glob")))
+                     (user-error "No typo at or before point")))))
+
   (use-package project-abbrev
     :ensure t
     :bind
@@ -5807,6 +6010,80 @@ Select from xref candidates with ivy
     (add-to-list 'auto-mode-alist '("\\.t[o]ml\\'" . toml-mode)))
 #+end_src
 
+* Manage-minor-mode
+
+#+begin_src emacs-lisp
+  (use-package manage-minor-mode
+    :defer t)
+
+#+end_src
+
+* Nov
+
+#+begin_src emacs-lisp
+  ;; nov: Epub reader for emacs
+  ;; https://github.com/wasamasa/nov.el
+  (use-package nov
+    :mode ("\\.epub\\'" . nov-mode)
+    :hook ((nov-mode . visual-line-mode)
+           (nov-mode . visual-fill-column-mode))
+    :config
+    (setq nov-text-width most-positive-fixnum)
+    (setq visual-fill-column-center-text t))
+#+end_src
+
+* RealGud
+
+#+begin_src emacs-lisp
+  ;; realgud: Debugger interface for emacs
+  ;; https://github.com/realgud/realgud/
+  (use-package realgud)
+#+end_src
+
+* Selected
+
+#+begin_src emacs-lisp
+  (use-package selected
+    :bind (:map selected-keymap
+                ("w" . kill-region)
+                ("~" . hydra-change-case/body)
+                ("c" . copy-region-as-kill)
+                ("d" . duplicate-current-line-or-region)
+                ("E" . eval-region)
+                ("e" . er/expand-region)
+                ("f" . fill-region)
+                ("q" . vr/query-replace)
+                (";" . comment-or-uncomment-region)
+                )
+    :init
+    (selected-global-mode))
+#+end_src
+
+* Langtool
+
+#+begin_src emacs-lisp
+  (use-package langtool :defer 1
+               :config
+               ;; place the language-tool directory in $HOME
+               (setq langtool-language-tool-jar
+                     "/usr/local/Cellar/languagetool/4.8/libexec/languagetool-commandline.jar")
+               (setq langtool-default-language "en-US")
+
+               ;; hydra for langtool check
+               (defhydra hydra-langtool (:color pink
+                                                :hint nil)
+                 "
+  _c_: check    _n_: next error
+  _C_: correct  _p_: prev error _d_: done checking
+  "
+                 ("n"  langtool-goto-next-error)
+                 ("p"  langtool-goto-previous-error)
+                 ("c"  langtool-check)
+                 ("C"  langtool-correct-buffer)
+                 ("d"  langtool-check-done :color blue)
+                 ("q" nil "quit" :color blue))
+               (bind-key "C-c h l l t" 'hydra-langtool/body))
+#+end_src
 * reset GC
 
 #+BEGIN_SRC emacs-lisp

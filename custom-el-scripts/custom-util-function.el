@@ -2193,11 +2193,116 @@ Version 2018-07-03"
        (if selective-display nil (or col 1))))))
 
 (defun duplicate-line ()
-  (interactive)
-  (let ((col (current-column)))
-    (move-beginning-of-line 1)
-    (kill-line)
-    (yank)
-    (newline)
-    (yank)
-    (move-to-column col)))
+	(interactive)
+	(let ((col (current-column)))
+		(move-beginning-of-line 1)
+		(kill-line)
+		(yank)
+		(newline)
+		(yank)
+		(move-to-column col)))
+
+(defun xah-cycle-letter-case (arg)
+	"Cycle the letter case of the selected region or the current word.
+Cycles from 'lower' -> 'Capitalize' -> 'UPPER' -> 'lower' -> ..
+        C-u M-x xah-cycle-letter-case -> Force convert to upper case.
+    C-u C-u M-x xah-cycle-letter-case -> Force convert to lower case.
+C-u C-u C-u M-x xah-cycle-letter-case -> Force capitalize."
+	(interactive "p")
+	(let (p1 p2
+		     (deactivate-mark nil)
+		     (case-fold-search nil))
+		(if (use-region-p)
+			(setq p1 (region-beginning)
+				p2 (region-end))
+			(let ((bds (bounds-of-thing-at-point 'word)))
+				(setq p1 (car bds)
+					p2 (cdr bds))))
+
+		(cl-case arg
+			(4  (put this-command 'next-state "UPPER"))      ; Force convert to upper case
+			(16 (put this-command 'next-state "lower"))      ; Force convert to lower case
+			(64 (put this-command 'next-state "Capitalize")) ; Force capitalize
+			(t (when (not (eq last-command this-command))
+				   (save-excursion
+					   (goto-char p1)
+					   (cond
+						   ;; lower -> Capitalize
+						   ((looking-at "[[:lower:]]")            (put this-command 'next-state "Capitalize"))
+						   ;; Capitalize -> UPPER
+						   ((looking-at "[[:upper:]][[:lower:]]") (put this-command 'next-state "UPPER"))
+						   ;; Default: UPPER -> lower
+						   (t                                     (put this-command 'next-state "lower")))))))
+
+		(cl-case (string-to-char (get this-command 'next-state)) ; `string-to-char' returns first character in string
+			(?U (upcase-region p1 p2)
+				;; UPPER -> lower
+				(put this-command 'next-state "lower"))
+			(?l (downcase-region p1 p2)
+				;; lower -> Capitalize
+				(put this-command 'next-state "Capitalize"))
+			;; Capitalization is a better Option here than upcasing the initials
+			;; because (upcase-initials "abc") -> "Abc" (good)
+			;;         (upcase-initials "ABC") -> "ABC" (not what I expect most of the times)
+			;;         (capitalize "abc")      -> "Abc" (good)
+			;;         (capitalize "ABC")      -> "Abc" (good)
+			(t (capitalize-region p1 p2)
+				;; Capitalize -> UPPER
+				(put this-command 'next-state "UPPER")))))
+
+(defun my/upcase ()     (interactive) (xah-cycle-letter-case 4))
+(defun my/downcase ()   (interactive) (xah-cycle-letter-case 16))
+(defun my/capitalize () (interactive) (xah-cycle-letter-case 64))
+
+(bind-key "C-c h h c" (defhydra hydra-change-case (:color blue
+							  :hint nil)
+			      "
+_c_apitalize        _U_PCASE        _d_owncase        _<SPC>_ →Cap→UP→down→
+"
+			      ("c"     my/capitalize)
+			      ("U"     my/upcase)
+			      ("u"     my/upcase)
+			      ("d"     my/downcase)
+			      ("<SPC>" xah-cycle-letter-case :color red)
+			      ("q"     nil "cancel" :color blue)))
+
+
+;; hydra for movement keys
+(defhydra hydra-move
+	(:body-pre (next-line)
+		:hint nil)
+	"
+_f_: -> char        _F_: -> word         _n_: -> line       _a_: beginning-of-line
+_b_: <- char        _B_: <- word         _p_: <- line       _e_: end-of-line
+_m_: set mark       _v_: scroll down     _l_: recenter      _'_: avy       _`_: avy-word
+_j_: goto mark      _V_: scroll up       _w_: ace-window    _._: -> buffer _,_: <- buffer
+_s_: -> sentence    _a_: -> paragraph    _g_: -> page       _>_: end-of-buffer
+_S_: <- sentence    _A_: <- paragraph    _G_: <- page       _<_: beginning-of-buffer
+ "
+	("n" next-line)
+	("p" previous-line)
+	("f" forward-char)
+	("b" backward-char)
+	("a" mwim-beginning-of-code-or-line-or-comment)
+	("e" mwim-end-of-code-or-line)
+	("v" scroll-up)
+	("V" scroll-down)
+	("F" forward-word)
+	("B" backward-word)
+	("l" recenter-top-bottom)
+	("<" beginning-of-buffer)
+	(">" end-of-buffer)
+	("g" forward-page)
+	("G" backward-page)
+	("s" forward-sentence)
+	("S" backward-sentence)
+	("a" forward-paragraph)
+	("A" backward-paragraph)
+	("'" avy-goto-char-timer :color blue)
+	("`" avy-goto-word-1 :color blue)
+	("w" ace-window)
+	("m" org-mark-ring-push)
+	("j" org-mark-ring-goto)
+	("." next-buffer)
+	("," previous-buffer)
+	("q" nil :color blue))
