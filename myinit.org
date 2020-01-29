@@ -1365,24 +1365,20 @@
       :hook (global-company-mode . company-quickhelp-mode)
       :custom (company-quickhelp-delay 0.8)))
 
-  (defun my/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi))
+  ;;(use-package company-jedi
+  ;;  :ensure t
+  ;;  :config
+  ;;  (add-hook 'python-mode-hook 'jedi:setup)
+  ;;  )
 
-  (add-hook 'python-mode-hook 'my/python-mode-hook)
-  (use-package company-jedi
-    :ensure t
-    :config
-    (add-hook 'python-mode-hook 'jedi:setup)
-    )
+  ;;(defun my/python-mode-hook ()
+  ;;  (add-to-list 'company-backends 'company-jedi))
 
-  (defun my/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi))
-
-  (add-hook 'python-mode-hook 'my/python-mode-hook)
+  ;;(add-hook 'python-mode-hook 'my/python-mode-hook)
 
   ;; Had to comment this to get company mode working in org mode
   ;;(setq company-global-modes '(not org-mode))
-
+  (require 'company)
   ;; http://oremacs.com/2017/12/27/company-numbers/
   (setq company-show-numbers t)
   (let ((map company-active-map))
@@ -1541,36 +1537,80 @@
       )
   #+END_SRC
 
-* Pyhton
+* Python
   #+BEGIN_SRC emacs-lisp
-    (use-package jedi
-      :ensure t
-      :init
-      (add-hook 'python-mode-hook 'jedi:setup)
-      (add-hook 'python-mode-hook 'jedi:ac-setup))
-    ;; make sure to install jedi-server for effective pip lint
-    ;; M-x jedi:install-server
-    ;; Check Elpy if interested in Python Developement
+    ;;(setq py-python-command "python3")
+    ;;(setq python-shell-interpreter "python3")
+    ;;(use-package jedi
+    ;;  :ensure t
+    ;;  :init
+    ;;  (add-hook 'python-mode-hook 'jedi:setup)
+    ;; ;; (add-hook 'python-mode-hook 'jedi:ac-setup)
+    ;; )
+    ;;;;make sure to install jedi-server for effective pip lint
+    ;;;;M-x jedi:install-server
+    ;;;;Check Elpy if interested in Python Developement
+    ;;(use-package jedi
+    ;;  :ensure t
+    ;;  :init
+    ;;  (add-to-list 'company-backends 'company-jedi)
+    ;;  :config
+    ;;  (use-package company-jedi
+    ;;    :ensure t
+    ;;    :init
+    ;;    (add-hook 'python-mode-hook (lambda () (add-to-list 'company-backends 'company-jedi)))
+    ;;    (setq company-jedi-python-bin "python")))
+    ;;
+    ;;(use-package elpy
+    ;;  :ensure t
+    ;;  :commands (elpy-enable)
+    ;;  :init
+    ;;  (setq elpy-rpc-backend "jedi")
+    ;;  :config
+    ;;  (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
+    ;;  ;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+    ;;  ;;flycheck-python-flake8-executable "/usr/local/bin/flake8"
+    ;;  (setq elpy-rpc-python-command "python3"
+    ;;        elpy-modules (dolist (elem '(elpy-module-highlight-indentation
+    ;;                                     elpy-module-yasnippet))
+    ;;                       (remove elem elpy-modules)))
+    ;;
+    ;;  :bind (:map elpy-mode-map
+    ;;              ("M-." . elpy-goto-definition)
+    ;;              ("M-," . pop-tag-mark)
+    ;;              )
+    ;;  )
 
-    (use-package elpy
+
+    (use-package lsp-python-ms
       :ensure t
-      :commands (elpy-enable)
-      :init
-      (setq elpy-rpc-backend "jedi")
+      :hook (python-mode . (lambda ()
+                             (require 'lsp-python-ms)
+                             (lsp))))
+
+    (setq lsp-python-ms-executable "~/GitRepos/python-language-server/output/bin/Release/osx-x64/publish/Microsoft.Python.LanguageServer")
+    (setq lsp-python-ms-python-executable-cmd "python3")
+
+    (use-package pyvenv
+      :custom
+      (pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
       :config
-      (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
-      ;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-      ;;flycheck-python-flake8-executable "/usr/local/bin/flake8"
-      (setq elpy-rpc-python-command "python3"
-            elpy-modules (dolist (elem '(elpy-module-highlight-indentation
-                                         elpy-module-yasnippet))
-                           (remove elem elpy-modules)))
+      (add-hook 'pyvenv-post-activate-hooks
+                #'(lambda ()
+                    (call-interactively #'lsp-workspace-restart)))
+      (pyvenv-mode +1))
 
-      :bind (:map elpy-mode-map
-                  ("M-." . elpy-goto-definition)
-                  ("M-," . pop-tag-mark)
-                  )
-      )
+    ;;(use-package pyenv-mode
+    ;;  :hook ((python-mode . pyenv-mode))
+    ;;  :config
+    ;;  ;; integrate pyenv with projectile
+    ;;  (defun projectile-pyenv-mode-set ()
+    ;;    "Set pyenv version matching project name."
+    ;;    (let ((project (projectile-project-name)))
+    ;;      (if (member project (pyenv-mode-versions))
+    ;;          (pyenv-mode-set project)
+    ;;        (pyenv-mode-unset))))
+    ;;  (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
 
     (use-package virtualenvwrapper
       :ensure t
@@ -1583,6 +1623,20 @@
       )
 
 
+    ;;(use-package auto-virtualenv
+    ;;  :ensure t
+    ;;  :config
+    ;;  (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
+    ;;  )
+
+    ;; lightweight auto activate python virtualenvs
+    ;;(use-package auto-virtualenvwrapper
+    ;;  :ensure t
+    ;;  :after
+    ;;  (:all python virtualenvwrapper)
+    ;;  :init
+    ;;  (add-hook 'python-mode-hook #'auto-virtualenvwrapper-activate))
+
     (use-package pip-requirements
       :ensure t
       :mode ("/requirements.txt$" . pip-requirements-mode))
@@ -1590,7 +1644,7 @@
     (use-package blacken
       :ensure t
       :config
-      (add-hook 'python-mode-hook 'blacken-mode)
+      ;; (add-hook 'python-mode-hook 'blacken-mode)
       ;; Allow using Python 3.6-only syntax
       (setq blacken-allow-py36 t)
       ;; Skips temporary sanity checks
@@ -5928,7 +5982,8 @@ Select from xref candidates with ivy
     (lsp-enable-imenu t)
     (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
     :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
-    :hook ((python-mode . lsp)
+    :hook (
+           (python-mode . lsp)
            (sh-mode . lsp)
            (terraform-mode . lsp)
            (scala-mode . lsp)
@@ -5986,10 +6041,44 @@ Select from xref candidates with ivy
   (use-package lsp-treemacs :ensure t :commands lsp-treemacs-errors-list)
 
   ;; Add company-lsp backend for metals
+  ;;(use-package company-lsp
+  ;;:ensure t
+  ;;:config
+  ;;(setq compnay-lsp-enable-snippet t)
+  ;;(push 'company-lsp company-backends))
   (use-package company-lsp
-    :ensure t
+    :commands company-lsp
+    :custom
+    (company-lsp-cache-candidates 'auto)
     :config
-    (push 'company-lsp company-backends))
+    (setq compnay-lsp-enable-snippet t)
+    (push 'company-lsp company-backends)
+    (add-to-list 'company-lsp-filter-candidates '(mspyls . t))
+    (defun company-lsp--on-completion (response prefix)
+      " This is a (hack) workaround for candidate filtering issues in mspyls.
+  Handle completion RESPONSE.
+  PREFIX is a string of the prefix when the completion is requested.
+  Return a list of strings as the completion candidates."
+      (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
+             (items (cond ((hash-table-p response) (gethash "items" response))
+                          ((sequencep response) response)))
+             (candidates (mapcar (lambda (item)
+                                   (company-lsp--make-candidate item prefix))
+                                 (lsp--sort-completions items)))
+             (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
+             (should-filter (or (eq company-lsp-cache-candidates 'auto) ; change from t to 'auto
+                                (and (null company-lsp-cache-candidates)
+                                     (company-lsp--get-config company-lsp-filter-candidates server-id)))))
+        (when (null company-lsp--completion-cache)
+          (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
+          (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
+        (when (eq company-lsp-cache-candidates 'auto)
+          ;; Only cache candidates on auto mode. If it's t company caches the
+          ;; candidates for us.
+          (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
+        (if should-filter
+            (company-lsp--filter-candidates candidates prefix)
+          candidates))))
 #+END_SRC
 
 * COMMENT Fuz and Ivy-fuz
