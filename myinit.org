@@ -6209,6 +6209,22 @@ Select from xref candidates with ivy
                  ("q" nil "quit" :color blue))
                (bind-key "C-c h l l t" 'hydra-langtool/body))
 #+end_src
+
+* region-occurrences-highlighter
+
+#+begin_src emacs-lisp
+  (use-package region-occurrences-highlighter
+    :ensure t
+    :defer 1
+    :config
+    (add-hook 'prog-mode-hook #'region-occurrences-highlighter-mode)
+    (add-hook 'org-mode-hook #'region-occurrences-highlighter-mode)
+
+    (add-hook 'text-mode-hook #'region-occurrences-highlighter-mode)
+
+    )
+#+end_src
+
 * reset GC
 
 #+BEGIN_SRC emacs-lisp
