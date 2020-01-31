@@ -6233,6 +6233,17 @@ Select from xref candidates with ivy
     :bind ("C-x C-z" . zoom-window-zoom))
 #+end_src
 
+* Loccur
+
+#+begin_src emacs-lisp
+  (use-package loccur
+    :ensure t
+    :bind
+    (("M-s M-l" . loccur-current)
+     ("M-s M-L" . loccur)
+     ("M-s C-l" . loccur-previous-match)))
+#+end_src
+
 * reset GC
 
 #+BEGIN_SRC emacs-lisp
