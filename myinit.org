@@ -6225,6 +6225,14 @@ Select from xref candidates with ivy
     )
 #+end_src
 
+* Zoom-window
+
+#+begin_src emacs-lisp
+  (use-package zoom-window
+    :ensure t
+    :bind ("C-x C-z" . zoom-window-zoom))
+#+end_src
+
 * reset GC
 
 #+BEGIN_SRC emacs-lisp
