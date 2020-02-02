@@ -2144,6 +2144,14 @@
     ;;  (doom-modeline-set-modeline 'my-simple-line 'default))
 
     ;;(add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
+
+    (defmacro rename-modeline (package-name mode new-name)
+      `(eval-after-load ,package-name
+         '(defadvice ,mode (after rename-modeline activate)
+            (setq mode-name ,new-name))))
+
+    (rename-modeline "js2-mode" js2-mode "JS2")
+    (rename-modeline "clojure-mode" clojure-mode "Clj")
   #+END_SRC
 
 * COMMENT Telephone-line
