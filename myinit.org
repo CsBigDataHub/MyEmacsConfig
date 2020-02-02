@@ -1760,6 +1760,18 @@
     ;;  :load-path "~/.emacs.d/custom-el-scripts/undo-tree/"
     ;;  :init
     ;;  (global-undo-tree-mode))
+
+    ;; Keep region when undoing in region
+    (defadvice undo-tree-undo (around keep-region activate)
+      (if (use-region-p)
+          (let ((m (set-marker (make-marker) (mark)))
+                (p (set-marker (make-marker) (point))))
+            ad-do-it
+            (goto-char p)
+            (set-mark m)
+            (set-marker p nil)
+            (set-marker m nil))
+        ad-do-it))
   #+END_SRC
 
 * Highlight cursor line
@@ -2757,15 +2769,15 @@
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
 
   ;; C-c C-a to amend without any prompt
-
-  (defun magit-just-amend ()
-    (interactive)
-    (save-window-excursion
-      (magit-refresh
-       (shell-command "git --no-pager commit --amend --reuse-message=HEAD"))))
-
-  (eval-after-load "magit"
-    '(define-key magit-status-mode-map (kbd "C-c C-a") 'magit-just-amend))
+  ;; This code is inbuild by magit so Instead you should be using the built in Extend Commit command: `c e'
+  ;;(defun magit-just-amend ()
+  ;;  (interactive)
+  ;;  (save-window-excursion
+  ;;    (magit-refresh
+  ;;     (shell-command "git --no-pager commit --amend --reuse-message=HEAD"))))
+  ;;
+  ;;(eval-after-load "magit"
+  ;;  '(define-key magit-status-mode-map (kbd "C-c C-a") 'magit-just-amend))
 #+END_SRC
 
 * COMMENT Better Shell
