@@ -160,6 +160,11 @@
 ** Magit Cheatsheet
 You might also be interested in the [[https://magit.vc/manual/magit-refcard.pdf][Magit Reference Card]] (pdf).
 
+Magit video tutorial - https://www.youtube.com/watch?v=vQO7F2Q9DwA
+                       https://www.youtube.com/watch?v=j-k-lkilbEs
+                       https://www.youtube.com/watch?v=7ywEgcbaiys
+                       https://www.youtube.com/watch?v=qXgGtyjXPiw
+
 ***  Section commands
 
 These commands are for navigation and to change the visibility of
