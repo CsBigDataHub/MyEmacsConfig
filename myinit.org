@@ -633,6 +633,11 @@
     :ensure t
     )
 
+  ;; TODO - Still did not upstreamed to Melpa. Try again in few days
+  ;;(use-package all-the-icons-ibuffer
+  ;;  :ensure t
+  ;;  :init (all-the-icons-ibuffer-mode 1))
+
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 #+END_SRC
 
@@ -774,11 +779,23 @@
 
  - https://github.com/abo-abo/org-download
  #+BEGIN_SRC emacs-lisp
+   ;;(use-package org-download
+   ;;  :ensure t
+   ;;  :after org
+   ;;  :config
+   ;;  (add-hook 'dired-mode-hook 'org-download-enable))
+
    (use-package org-download
      :ensure t
-     :after org
      :config
-     (add-hook 'dired-mode-hook 'org-download-enable))
+     (require 'org-download)
+     ;; Drag and drop to Dired
+     (add-hook 'dired-mode-hook 'org-download-enable)
+     (setq org-download-method 'directory)
+     (setq-default org-download-image-dir "./img")
+     (setq org-download-screenshot-method "screencapture –I %s")
+     (setq org-download-screenshot-file "./img/tmp.png")
+     )
  #+END_SRC
 
 * Relative Line number
