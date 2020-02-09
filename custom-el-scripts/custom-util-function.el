@@ -2268,6 +2268,7 @@ _c_apitalize        _U_PCASE        _d_owncase        _<SPC>_ →Cap→UP→down
 			      ("<SPC>" xah-cycle-letter-case :color red)
 			      ("q"     nil "cancel" :color blue)))
 
+(global-set-key (kbd "<f9>") 'hydra-move/body)
 
 ;; hydra for movement keys
 (defhydra hydra-move
@@ -2278,8 +2279,8 @@ _f_: -> char        _F_: -> word         _n_: -> line       _a_: beginning-of-li
 _b_: <- char        _B_: <- word         _p_: <- line       _e_: end-of-line
 _m_: set mark       _v_: scroll down     _l_: recenter      _'_: avy       _`_: avy-word
 _j_: goto mark      _V_: scroll up       _w_: ace-window    _._: -> buffer _,_: <- buffer
-_s_: -> sentence    _a_: -> paragraph    _g_: -> page       _>_: end-of-buffer
-_S_: <- sentence    _A_: <- paragraph    _G_: <- page       _<_: beginning-of-buffer
+_s_: -> sentence    _PA_: -> paragraph    _g_: -> page       _>_: end-of-buffer
+_S_: <- sentence    _PB_: <- paragraph    _G_: <- page       _<_: beginning-of-buffer
  "
 	("n" next-line)
 	("p" previous-line)
@@ -2298,8 +2299,8 @@ _S_: <- sentence    _A_: <- paragraph    _G_: <- page       _<_: beginning-of-bu
 	("G" backward-page)
 	("s" forward-sentence)
 	("S" backward-sentence)
-	("a" forward-paragraph)
-	("A" backward-paragraph)
+	("PA" forward-paragraph)
+	("PB" backward-paragraph)
 	("'" avy-goto-char-timer :color blue)
 	("`" avy-goto-word-1 :color blue)
 	("w" ace-window)
