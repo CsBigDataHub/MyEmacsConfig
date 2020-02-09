@@ -1,5 +1,21 @@
 # Emacs CheatSheet
 
+## Emacs plus for mac os is Installed With
+
+	`brew install emacs-plus --with-ctags --with-dbus --with-jansson --with-modern-icon --with-x11 --with-xwidgets --HEAD`
+
+	This will install the latest beta which in 28.0.4 as of feb 8th
+
+	You will need to run
+
+	`brew cask install xquartz`
+
+	before you install emacs-plus
+
+	To link the application to default Homebrew App location:
+
+	 `ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications`
+
 ## To get Emacs Running Faster
 
 - Scan through `https://sriramkswamy.github.io/dotemacs/#orgheadline59`
