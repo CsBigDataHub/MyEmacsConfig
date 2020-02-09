@@ -192,8 +192,68 @@
     ;;(ido-mode 1)
     (add-to-list 'default-frame-alist '(font . "Fira Code-17"))
     ;;(windmove-default-keybindings) ;;uses shift + arrow keys to move around the windows.
-
+    ;; For fira code - https://github.com/tonsky/FiraCode/wiki/Emacs-instructions#using-composition-mode-in-emacs-mac-port
+    ;;(mac-auto-operator-composition-mode)
     ;;(defalias 'list-buffers 'ibuffer) ; make ibuffer default
+
+    (defun fira-code-mode--make-alist (list)
+      "Generate prettify-symbols alist from LIST."
+      (let ((idx -1))
+        (mapcar
+         (lambda (s)
+           (setq idx (1+ idx))
+           (let* ((code (+ #Xe100 idx))
+                  (width (string-width s))
+                  (prefix ())
+                  (suffix '(?\s (Br . Br)))
+                  (n 1))
+             (while (< n width)
+               (setq prefix (append prefix '(?\s (Br . Bl))))
+               (setq n (1+ n)))
+             (cons s (append prefix suffix (list (decode-char 'ucs code))))))
+         list)))
+
+    (defconst fira-code-mode--ligatures
+      '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\"
+        "{-" "[]" "::" ":::" ":=" "!!" "!=" "!==" "-}"
+        "--" "---" "-->" "->" "->>" "-<" "-<<" "-~"
+        "#{" "#[" "##" "###" "####" "#(" "#?" "#_" "#_("
+        ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*"
+        "/**" "/=" "/==" "/>" "//" "///" "&&" "||" "||="
+        "|=" "|>" "^=" "$>" "++" "+++" "+>" "=:=" "=="
+        "===" "==>" "=>" "=>>" "<=" "=<<" "=/=" ">-" ">="
+        ">=>" ">>" ">>-" ">>=" ">>>" "<*" "<*>" "<|" "<|>"
+        "<$" "<$>" "<!--" "<-" "<--" "<->" "<+" "<+>" "<="
+        "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<" "<~"
+        "<~~" "</" "</>" "~@" "~-" "~=" "~>" "~~" "~~>" "%%"
+        "x" ":" "+" "+" "*"))
+
+    (defvar fira-code-mode--old-prettify-alist)
+
+    (defun fira-code-mode--enable ()
+      "Enable Fira Code ligatures in current buffer."
+      (setq-local fira-code-mode--old-prettify-alist prettify-symbols-alist)
+      (setq-local prettify-symbols-alist (append (fira-code-mode--make-alist fira-code-mode--ligatures) fira-code-mode--old-prettify-alist))
+      (prettify-symbols-mode t))
+
+    (defun fira-code-mode--disable ()
+      "Disable Fira Code ligatures in current buffer."
+      (setq-local prettify-symbols-alist fira-code-mode--old-prettify-alist)
+      (prettify-symbols-mode -1))
+
+    (define-minor-mode fira-code-mode
+      "Fira Code ligatures minor mode"
+      :lighter " Fira Code"
+      (setq-local prettify-symbols-unprettify-at-point 'right-edge)
+      (if fira-code-mode
+          (fira-code-mode--enable)
+        (fira-code-mode--disable)))
+
+    (defun fira-code-mode--setup ()
+      "Setup Fira Code Symbols"
+      (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol"))
+
+    (provide 'fira-code-mode)
 
     (defalias 'list-buffers 'ibuffer-other-window) ; make ibuffer default
 
@@ -393,7 +453,7 @@
 
 
       ;; Show highlighted buffer-id as decoration. (Default: nil)
-      (setq moe-theme-highlight-buffer-id t)
+     (setq moe-theme-highlight-buffer-id t)
       :init (load-theme 'moe-dark t)
       )
 
@@ -2839,6 +2899,15 @@
     (jump-to-register :magit-fullscreen))
 
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+
+  ;;Emacs comes with a version control interface called "VC", see (emacs)Version Control. It is enabled be default, and if you don’t use it in addition to Magit, then you should disable it to keep it from performing unnecessary work:
+
+  (setq vc-handled-backends nil)
+
+  ;;You can also disable its use for Git but keep using it when using another version control system:
+
+  (setq vc-handled-backends (delq 'Git vc-handled-backends))
+
 #+END_SRC
 
 * COMMENT Better Shell
@@ -4085,12 +4154,13 @@
 * Ztree
 
 #+BEGIN_SRC emacs-lisp
-(use-package ztree
-  :ensure t
-  :bind* (("M-m g v" . ztree-dir)
-          ("M-m g V" . ztree-diff))
-  :init
-  (setq ztree-dir-move-focus t))
+  (use-package ztree
+    :ensure t
+    :bind* (("M-m g v" . ztree-dir)
+            ("M-m g V" . ztree-diff))
+    :init
+    (setq ztree-dir-move-focus t))
+
 #+END_SRC
 
 * GG_Tags
@@ -4705,8 +4775,9 @@
           shr-color-visible-distance-min 10
           shr-color-visible-luminance-min 80))
 
-  (load-if-exists "~/.emacs.d/custom-el-scripts/org-eww.el")
-  (require 'org-eww)
+  ;; org-eww is replaced by ol-eww.el in org-contrib
+  ;;(load-if-exists "~/.emacs.d/custom-el-scripts/org-eww.el")
+  ;;(require 'org-eww)
 #+END_SRC
 
 * Shr: Simple html renderer
