@@ -453,7 +453,7 @@
 
 
       ;; Show highlighted buffer-id as decoration. (Default: nil)
-     (setq moe-theme-highlight-buffer-id t)
+      (setq moe-theme-highlight-buffer-id t)
       :init (load-theme 'moe-dark t)
       )
 
@@ -477,17 +477,17 @@
     ;;  ;; Global settings (defaults)
     ;;  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
     ;;        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    ;;  (load-theme 'doom-solarized-ligh t)
-    ;;
+    ;;  (load-theme 'doom-one)
+
     ;;  ;; Enable flashing mode-line on errors
     ;;  (doom-themes-visual-bell-config)
-    ;;
+
     ;;  ;; Enable custom neotree theme (all-the-icons must be installed!)
     ;;  ;;(doom-themes-neotree-config)
     ;;  ;; or for treemacs users
     ;;  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
     ;;  (doom-themes-treemacs-config)
-    ;;
+
     ;;  ;; Corrects (and improves) org-mode's native fontification.
     ;;  (doom-themes-org-config))
     ;;
@@ -498,10 +498,10 @@
     ;;
     ;;(use-package apropospriate-theme
     ;;:ensure t
-    ;;;; :init
-    ;;;; (load-theme 'apropospriate-dark t)
-    ;;;; ;; or
-    ;;;; (load-theme 'apropospriate-light t)
+        ;;;; :init
+        ;;;; (load-theme 'apropospriate-dark t)
+        ;;;; ;; or
+        ;;;; (load-theme 'apropospriate-light t)
     ;;)
 
     ;;(use-package chocolate-theme
@@ -626,6 +626,7 @@
     "zz" 'zop-to-char
     "za" 'zop-up-to-char
     "mc" 'my/open-config
+    "tt" 'treemacs
     "rr" 'quickrun
     "rc" 'quickrun-compile-only
     "SPC" 'counsel-M-x)
@@ -2363,7 +2364,7 @@
     :straight (dired-git-info :type git :host github :repo "clemera/dired-git-info")
     ;;:ensure t
     :bind (:map dired-mode-map
-                (")" . dired-git-info-mode)))
+                ("I" . dired-git-info-mode)))
 
   (use-package dired-narrow
     :ensure t
@@ -3100,9 +3101,9 @@
          (treemacs-git-mode 'simple))))
     :bind
     (:map global-map
-          ("<C-M-tab>" . treemacs)
+          ("C-x t t" . treemacs)
           ("M-0"       . treemacs-select-window)
-          ("C-c 1"     . treemacs-delete-other-windows)
+          ("C-x t 1"     . treemacs-delete-other-windows)
           ))
 
 
@@ -3129,6 +3130,13 @@
     :ensure t)
 
   ;;(define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
+
+  (use-package treemacs-persp
+    :after treemacs persp-mode
+    :ensure t
+    :config (treemacs-set-scope-type 'Perspectives))
+
+
 #+END_SRC
 
 * Aggresive indent
