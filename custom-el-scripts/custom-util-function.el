@@ -2035,7 +2035,7 @@ region if active. http://xenodium.com/fishing-with-emacs/"
     (setq output-file (concat output-dir "/" (file-name-sans-extension input-file) ".html"))
     (shell-command-on-region
      (point-min) (point-max)
-     (concat "pandoc -f markdown -t html5 -Ss --toc --self-contained -c https://raw.githubusercontent.com/manuelp/pandoc-stylesheet/master/pub.css -o " output-file " " input-file))))
+     (concat "pandoc -f markdown+smart -t html5-smart --self-contained --highlight-style=pygments --standalone --mathjax -c ~/.emacs.d/custom-el-scripts/github-pandoc.css -o " output-file " " input-file))))
 
 (defun markdown-to-pdf ()
   "Compiles the current file to PDF using Pandoc."
@@ -2045,7 +2045,7 @@ region if active. http://xenodium.com/fishing-with-emacs/"
     (setq output-file (concat output-dir "/" (file-name-sans-extension input-file) ".pdf"))
     (shell-command-on-region
      (point-min) (point-max)
-     (concat "pandoc -f markdown -Ss --toc --chapters --number-sections --variable papersize:a4paper --variable documentclass:article --variable colorlinks:blue -o " output-file " " input-file))))
+     (concat "pandoc -f markdown+smart --toc --chapters --number-sections --variable papersize:a4paper --variable documentclass:article --variable colorlinks:blue -o " output-file " " input-file))))
 
 (defun markdown-convert-buffer-to-org ()
   "Convert the current buffer's content from markdown to orgmode format and save it with the current buffer's file name but with .org extension."
