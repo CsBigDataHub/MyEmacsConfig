@@ -1791,7 +1791,8 @@
       :mode (("README\\.md\\'" . gfm-mode)
              ("\\.md\\'" . markdown-mode)
              ("\\.markdown\\'" . markdown-mode))
-      :init (setq markdown-command "/usr/local/bin/multimarkdown"))
+     ;; :init (setq markdown-command "/usr/local/bin/multimarkdown")
+      )
 
     (use-package markdownfmt
       :ensure t)
@@ -1801,13 +1802,15 @@
       :after markdown-mode
       :defer t)
 
-    ;;(setq markdown-command
-    ;;      (concat
-    ;;       "/usr/local/bin/pandoc"
-    ;;       " --from=markdown --to=html"
-    ;;       " --standalone --mathjax --highlight-style=pygments"))
+    (setq markdown-command
+          (concat
+           "/usr/local/bin/pandoc"
+           "-f markdown+smart -t html5-smart"
+           "--self-contained --highlight-style=pygments"
+           "-c ~/.emacs.d/custom-el-scripts/github-pandoc.css"
+           "--standalone --mathjax --highlight-style=pygments"))
 
-    (setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
+    ;;(setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
 
     (use-package poly-markdown
       :ensure t)
