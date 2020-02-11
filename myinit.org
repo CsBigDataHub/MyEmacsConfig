@@ -1805,10 +1805,10 @@
     (setq markdown-command
           (concat
            "/usr/local/bin/pandoc"
-           "-f markdown+smart -t html5-smart"
-           "--self-contained --highlight-style=pygments"
-           "-c ~/.emacs.d/custom-el-scripts/github-pandoc.css"
-           "--standalone --mathjax --highlight-style=pygments"))
+           " -f markdown+smart -t html5-smart"
+           " --self-contained --highlight-style=pygments"
+           " -c ~/.emacs.d/custom-el-scripts/github-pandoc.css"
+           " --standalone --mathjax --highlight-style=pygments"))
 
     ;;(setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
 
