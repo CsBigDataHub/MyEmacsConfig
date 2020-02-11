@@ -4,8 +4,28 @@
 	:mode-hydra
 	(go-mode
 		(:title "Go Commands")
-		("Doc"
-			(("d" godoc-at-point "doc at point"))
+		(
+			"Buffer"
+			(("d" lsp-describe-thing-at-point)
+				("bf" lsp-format-buffer)
+				("i" lsp-info-under-point)
+				("m" lsp-ui-imenu)
+				("q" nil "quit"))
+			"Errors"
+			(("e" hydra-flycheck/body)
+				("lf" lsp-ui-flycheck-list))
+			"Refactor"
+			(("rs" lsp-rename))
+			"Find"
+			(("fd" lsp-ui-peek-find-definitions)
+				("fi" lsp-ui-peek-find-implementation)
+				("fr" lsp-ui-peek-find-references)
+				("fs" lsp-ui-peek-find-workspace-symbol))
+			"Go-to/Jump"
+			(("gi" lsp-goto-implementation)
+				("gt" lsp-goto-type-definition)
+				("jn" lsp-ui-peek-jump-forward)
+				("jp" lsp-ui-peek-jump-backward))
 			"Imports"
 			(("ia" go-import-add "add")
 				("ir" go-remove-unused-imports "cleanup"))))
@@ -27,10 +47,10 @@
 					(company-mode))))
 
 (lsp-register-custom-settings
- '(("gopls.completeUnimported" t t)
-   ("gopls.staticcheck" t t)
-   ("gopls.fuzzyMatching" t t)
-   ))
+	'(("gopls.completeUnimported" t t)
+		 ("gopls.staticcheck" t t)
+		 ("gopls.fuzzyMatching" t t)
+		 ))
 
 (use-package company-go
 	:ensure t

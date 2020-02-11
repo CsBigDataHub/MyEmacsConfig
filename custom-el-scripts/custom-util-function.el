@@ -1947,17 +1947,30 @@ _q_ cancel
 (global-set-key (kbd "C-c h @") 'hydra-hide-show/body)
 
 (global-set-key (kbd "C-c h t")
-                (defhydra hydra-transpose (:color red)
-                  "Transpose"
-                  ("c" transpose-chars "characters")
-                  ("w" transpose-words "words")
-                  ("o" org-transpose-words "Org mode words")
-                  ("l" transpose-lines "lines")
-                  ("s" transpose-sentences "sentences")
-                  ("e" org-transpose-elements "Org mode elements")
-                  ("p" transpose-paragraphs "paragraphs")
-                  ("t" org-table-transpose-table-at-point "Org mode table")
-                  ("q" nil "cancel" :color blue)))
+	(defhydra hydra-transpose (:color red)
+		"Transpose"
+		("c" transpose-chars "characters")
+		("w" transpose-words "words")
+		("o" org-transpose-words "Org mode words")
+		("l" transpose-lines "lines")
+		("s" transpose-sentences "sentences")
+		("e" org-transpose-elements "Org mode elements")
+		("p" transpose-paragraphs "paragraphs")
+		("t" org-table-transpose-table-at-point "Org mode table")
+		("q" nil "cancel" :color blue)))
+
+(defhydra hydra-flycheck
+	(:pre (progn (setq hydra-lv t) (flycheck-list-errors))
+		:post (progn (setq hydra-lv nil) (quit-windows-on "*Flycheck errors*"))
+		:hint nil)
+	"Errors"
+	("f"  flycheck-error-list-set-filter                            "Filter")
+	("j"  flycheck-next-error                                       "Next")
+	("k"  flycheck-previous-error                                   "Previous")
+	("gg" flycheck-first-error                                      "First")
+	("G"  (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
+	("q"  nil))
+
 
 (require 'iimage)
 (autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
