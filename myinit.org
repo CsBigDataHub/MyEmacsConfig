@@ -5012,12 +5012,12 @@ Select from xref candidates with ivy
     :hook ((after-init . global-color-identifiers-mode)))
 #+END_SRC
 
-* COMMENT Ranger
+* Ranger
 
 #+BEGIN_SRC emacs-lisp
-  ;;(use-package ranger
-  ;;  :ensure t
-  ;;  :config (setq ranger-width-preview 0.5))
+  (use-package ranger
+    :ensure t
+    :config (setq ranger-width-preview 0.5))
 #+END_SRC
 
 * Super-save
