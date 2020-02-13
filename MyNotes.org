@@ -595,6 +595,146 @@ Posted by Umar Ahmad Apr 11th, 2017   [[/blog/categories/emacs/][Emacs]]
 [[http://xenodium.com/][Álvaro Ramírez website]]
 [[https://thomashartmann.dev/][tech blog by Thomas Hartmann]]
 
+* Automatic gtags integration for Emacs using Git
+  :PROPERTIES:
+  :CUSTOM_ID: automatic-gtags-integration-for-emacs-using-git
+  :END:
+
+
+It's fairly common to see automatic ctags hooks setup for Vim, but until
+recently I haven't been able to get it working in Emacs. Here's how to
+do it.
+
+*** [[#git][🔗]]Git
+    :PROPERTIES:
+    :CUSTOM_ID: git
+    :END:
+
+First, create a directory to contain the git hooks to be added in all
+new repos.
+
+#+BEGIN_EXAMPLE
+  git config --global init.templatedir '~/.git_template'
+  mkdir -p ~/.git_template/hooks
+#+END_EXAMPLE
+
+Next, add the main script. Place this in =~/.git_template/hooks/gtags=
+and mark as executable:
+
+#+BEGIN_EXAMPLE
+  #!/bin/sh
+  set -o errexit -o nounset
+
+  PATH="/usr/local/bin:$PATH"
+
+  main() (
+      root_dir="$(git rev-parse --show-toplevel)"
+      git_dir="$(git rev-parse --git-dir)"
+
+      cd "$root_dir"
+      trap 'rm -f GPATH GRTAGS GTAGS gtags.files' EXIT
+      git grep --cached --files-with-matches "" > gtags.files
+      gtags --gtagslabel=pygments
+      rm gtags.files
+      mv GPATH GRTAGS GTAGS "$git_dir/"
+
+      echo "gtags index created at $git_dir/GTAGS"
+  )
+
+  main
+#+END_EXAMPLE
+
+Note that the generated tags file is in placed in the =.git= directory,
+to avoid cluttering up the directory tree and having to add another
+entry in =.gitignore=. This is the key feature for me --- it makes it
+feel truly automatic and seamless.
+
+Next, add hooks that wrap this script. The first three are
+=post-commit=, =post-merge=, and =post-checkout= and should contain the
+following:
+
+#+BEGIN_EXAMPLE
+  #!/bin/sh
+  .git/hooks/gtags >/dev/null 2>&1 &
+#+END_EXAMPLE
+
+Lastly, add one for =post-rewrite=:
+
+#+BEGIN_EXAMPLE
+  #!/bin/sh
+  case "$1" in
+      rebase) exec .git/hooks/post-merge ;;
+  esac
+#+END_EXAMPLE
+
+Once finished, use =git init= and =git gtags= in existing repositories
+to copy the hooks in and generate tags. New repositories will do this
+automatically.
+
+*** [[#emacs][🔗]]Emacs
+    :PROPERTIES:
+    :CUSTOM_ID: emacs
+    :END:
+
+To get this working in Emacs depends on which gtags package you have
+installed. Unfortunately, =global= does not have an option to directly
+change where the tags file is read from, and neither do any of the gtags
+packages I've seen. However, it is possible to set two environment
+variables to attain this functionality instead, =GTAGSROOT= and
+=GTAGSDBPATH=.
+
+#+BEGIN_EXAMPLE
+  (defun gtags-env-patch (orig &rest args)
+    (if-let* ((project-root (file-truename (locate-dominating-file "." ".git")))
+              (git-dir (expand-file-name ".git" project-root))
+              (process-environment (append
+                                    (list (format "GTAGSROOT=%s" project-root)
+                                          (format "GTAGSDBPATH=%s" git-dir))
+                                    process-environment)))
+        (apply orig args)
+      (apply orig args)))
+#+END_EXAMPLE
+
+Then, you can wrap the appropriate functions using
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][=advice=]].
+
+*** [[#counsel-ivy][🔗]]Counsel (Ivy)
+    :PROPERTIES:
+    :CUSTOM_ID: counsel-ivy
+    :END:
+
+For [[https://github.com/syohex/emacs-counsel-gtags][counsel-gtags]]
+(i.e., ivy completion):
+
+#+BEGIN_EXAMPLE
+  (advice-add #'counsel-gtags-find-reference :around #'gtags-env-patch)
+  (advice-add #'counsel-gtags-find-symbol :around #'gtags-env-patch)
+  (advice-add #'counsel-gtags-find-definition :around #'gtags-env-patch)
+  (advice-add #'counsel-gtags-dwim :around #'gtags-env-patch)
+#+END_EXAMPLE
+
+*** [[#helm][🔗]]Helm
+    :PROPERTIES:
+    :CUSTOM_ID: helm
+    :END:
+
+For [[https://github.com/syohex/emacs-helm-gtags][helm-gtags]]:
+
+#+BEGIN_EXAMPLE
+  (advice-add #'helm-gtags-find-tag :around #gtags-env-patch)
+  (advice-add #'helm-gtags-dwim :around #'gtags-env-patch)
+  (advice-add #'helm-gtags-find-tag-other-window #'gtags-env-patch)
+#+END_EXAMPLE
+
+That's it. Now any new repositories will be automatically indexed
+whenever they are checked out, committed, or rebased, and the tags file
+will be found seamlessly without any user input.
+
+If you have a better method or suggested fix, please shoot me an email
+or comment on the
+[[https://www.reddit.com/r/emacs/comments/f2yxts/automatic_gtags_integration_for_emacs_using_git][Reddit
+post]].
+
 * ORG-MODE FEATURES YOU MAY NOT KNOW
 
 Org-mode features You May Not Know

@@ -8,7 +8,7 @@
 			"Buffer"
 			(("d" lsp-describe-thing-at-point)
 				("bf" lsp-format-buffer)
-				("i" lsp-info-under-point)
+				("ip" lsp-info-under-point)
 				("m" lsp-ui-imenu)
 				("q" nil "quit"))
 			"Errors"
@@ -49,7 +49,8 @@
 (lsp-register-custom-settings
 	'(("gopls.completeUnimported" t t)
 		 ("gopls.staticcheck" t t)
-		 ("gopls.fuzzyMatching" t t)
+		 ;;("gopls.fuzzyMatching" t t) ;; commented due to - config fuzzyMatching is deprecated, use matcher instead
+
 		 ))
 
 (use-package company-go

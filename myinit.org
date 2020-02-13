@@ -622,6 +622,12 @@
     "ww7" 'eyebrowse-switch-to-window-config-7
     "ww8" 'eyebrowse-switch-to-window-config-8
     "ww9" 'eyebrowse-switch-to-window-config-9
+    "5o" 'other-frame
+    "5f" 'find-file-other-frame
+    "5b" 'switch-to-buffer-other-frame
+    "50" 'delete-frame
+    "51" 'delete-other-frame
+    "5d" 'dired-other-frame
     "gg" 'magit-status
     "zz" 'zop-to-char
     "za" 'zop-up-to-char
