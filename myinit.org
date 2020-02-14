@@ -785,20 +785,6 @@
 
   #+END_SRC
 
-* COMMENT PowerLine
-
-#+BEGIN_SRC emacs-lisp
-;;  ;; powerline
-;;  (use-package powerline
-;;    :ensure t
-;;    :init
-;;    (powerline-evil-center-color-theme))
-;;  (add-hook 'after-init-hook 'powerline-reset)
-;;
-;;  (use-package powerline-evil
-;;    :ensure t)
-#+END_SRC
-
 * Evil Mode For Vi
 
   #+BEGIN_SRC emacs-lisp
@@ -910,17 +896,6 @@
 
 (use-package format-all
   :ensure t)
-
-  #+END_SRC
-
-* COMMENT tabbar
-
-  #+BEGIN_SRC emacs-lisp
-
-    ;;(use-package tabbar
-    ;;  :ensure t
-    ;;  :config (tabbar-mode 1)
-    ;;  )
 
   #+END_SRC
 
@@ -5089,13 +5064,6 @@ Select from xref candidates with ivy
     :hook ((after-init . beginend-global-mode)))
 #+END_SRC
 
-* COMMENT CHT.SH
-
- #+BEGIN_SRC emacs-lisp
-   ;;(use-package cheat-sh
-   ;;  :ensure t)
- #+END_SRC
-
 * ANZU
 
 #+BEGIN_SRC emacs-lisp
@@ -5115,69 +5083,6 @@ Select from xref candidates with ivy
            ("M-s %" . anzu-query-replace-at-cursor)
            )
     )
-#+END_SRC
-
-* COMMENT Awesome-tabs
-
-#+BEGIN_SRC emacs-lisp
-  ;;(use-package awesome-tab
-  ;;  :straight (awesome-tab
-  ;;             :type git
-  ;;             :host github
-  ;;             :repo "manateelazycat/awesome-tab")
-  ;;  :config
-  ;;  (setq awesome-tab-style 'slant
-  ;;        awesome-tab-cycle-scope 'tabs)
-  ;;  (awesome-tab-mode t)
-  ;;  :bind* (("s-<left>"  . awesome-tab-backward)
-  ;;          ("s-<right>" . awesome-tab-forward)
-  ;;          ("s-<up>"    . awesome-tab-forward-group)
-  ;;          ("s-<down>"  . awesome-tab-backward-group)
-  ;;          ("s-1" . awesome-tab-select-visible-tab)
-  ;;          ("s-2" . awesome-tab-select-visible-tab)
-  ;;          ("s-3" . awesome-tab-select-visible-tab)
-  ;;          ("s-4" . awesome-tab-select-visible-tab)
-  ;;          ("s-5" . awesome-tab-select-visible-tab)
-  ;;          ("s-6" . awesome-tab-select-visible-tab)
-  ;;          ("s-7" . awesome-tab-select-visible-tab)
-  ;;          ("s-8" . awesome-tab-select-visible-tab)
-  ;;          ("s-9" . awesome-tab-select-visible-tab)
-  ;;          ("H-t t" . awesome-tab-counsel-switch-group)
-  ;;          )
-  ;;  )
-  ;;
-  ;;(defun my-awesome-tab-buffer-groups ()
-  ;;  "`awesome-tab-buffer-groups' control buffers' group rules.
-  ;;
-  ;;Group awesome-tab with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
-  ;;All buffer name start with * will group to \"Emacs\".
-  ;;Other buffer group by `awesome-tab-get-group-name' with project name."
-  ;;  (list
-  ;;   (cond
-  ;;    ((or (string-equal "*" (substring (buffer-name) 0 1))
-  ;;         (memq major-mode '(magit-process-mode
-  ;;                            magit-status-mode
-  ;;                            magit-diff-mode
-  ;;                            magit-log-mode
-  ;;                            magit-file-mode
-  ;;                            magit-blob-mode
-  ;;                            magit-blame-mode
-  ;;                            )))
-  ;;     "Emacs")
-  ;;    ((derived-mode-p 'eshell-mode)
-  ;;     "EShell")
-  ;;    ((derived-mode-p 'emacs-lisp-mode)
-  ;;     "Elisp")
-  ;;    ((derived-mode-p 'java-mode)
-  ;;     "Java")
-  ;;    ((derived-mode-p 'dired-mode)
-  ;;     "Dired")
-  ;;    ((memq major-mode '(org-mode org-agenda-mode diary-mode))
-  ;;     "OrgMode")
-  ;;    (t
-  ;;     (awesome-tab-get-group-name (current-buffer))))))
-  ;;
-  ;;(setq awesome-tab-buffer-groups-function 'my-awesome-tab-buffer-groups)
 #+END_SRC
 
 * Centaur-tabs
@@ -6073,21 +5978,6 @@ Select from xref candidates with ivy
     :ensure t
     :config
     (highlight2clipboard-mode 1))
-#+END_SRC
-
-* COMMENT Ellocate - a locate alternative -
-
-#+BEGIN_SRC emacs-lisp
- ;; (use-package ellocate
- ;;   :ensure t
- ;;   :config
- ;;   (setq ellocate-scan-dirs
- ;;         '(("/Users/ckoneru/GitRepos" "/Users/ckoneru/locate_dbs/GitReposDB")
- ;;           ("/Users/ckoneru/IdeaProjects" "/Users/ckoneru/locate_dbs/IdeaProjectsDB")
- ;;           ("/Users/ckoneru/.emacs.d" "/Users/ckoneru/locate_dbs/emacssDB")
- ;;           ;;("/Users/ckoneru/" "/Users/ckoneru/locate_dbs/ellocate-home-db")
- ;;           ("/Users/ckoneru/Downloads" "/Users/ckoneru/locate_dbs/DownloadsDB")))
- ;;   :commands (ellocate))
 #+END_SRC
 
 * page-break-line
