@@ -190,6 +190,10 @@
     ;;(setq ido-enable-flex-matching t)
     ;;(setq ido-everywhere t)
     ;;(ido-mode 1)
+
+    (add-to-list 'load-path "~/.emacs.d/custom-el-scripts/font-lock+.el")
+    (add-to-list 'load-path "~/.emacs.d/custom-el-scripts/icons-in-terminal.el")
+
     (add-to-list 'default-frame-alist '(font . "Fira Code-17"))
     ;;(windmove-default-keybindings) ;;uses shift + arrow keys to move around the windows.
     ;; For fira code - https://github.com/tonsky/FiraCode/wiki/Emacs-instructions#using-composition-mode-in-emacs-mac-port
@@ -724,12 +728,12 @@
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 #+END_SRC
 
-* Try
+* COMMENT Try
 
   #+BEGIN_SRC emacs-lisp
 
-(use-package try
-  :ensure t)
+;;(use-package try
+;;  :ensure t)
   #+END_SRC
 
 * PosFrame
@@ -1240,28 +1244,63 @@
 
   #+END_SRC
 
-* Auto-Complete
+* COMMENT Auto-Complete
 
   #+BEGIN_SRC emacs-lisp
 
-    (use-package auto-complete
-      :ensure t
-      :init
-      (progn
-        (ac-config-default)
-        (global-auto-complete-mode t)
-        (ac-fuzzy-complete)
-        (setq ac-auto-start t)
-        (setq ac-ignore-case 'smart)
-        (setq-default
-         ac-sources '(
-                      ac-source-words-in-all-buffer
-                      ac-source-words-in-buffer
-                      ac-source-files-in-current-dir
-                      )
-         )
-        ))
+    ;;(use-package auto-complete
+    ;;  :ensure t
+    ;;  :init
+    ;;  (progn
+    ;;    (ac-config-default)
+    ;;    (global-auto-complete-mode t)
+    ;;    (ac-fuzzy-complete)
+    ;;    (setq ac-auto-start t)
+    ;;    (setq ac-ignore-case 'smart)
+    ;;    (setq-default
+    ;;     ac-sources '(
+    ;;                  ac-source-words-in-all-buffer
+    ;;                  ac-source-words-in-buffer
+    ;;                  ac-source-files-in-current-dir
+    ;;                  )
+    ;;     )
+    ;;    ))
   #+END_SRC
+
+* Hippie-expand
+
+#+begin_src emacs-lisp
+  (use-package dabbrev
+    :commands (dabbrev-expand dabbrev-completion)
+    :config
+    (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
+    (setq dabbrev-abbrev-skip-leading-regexp "\\$\\|\\*\\|/\\|=")
+    (setq dabbrev-backward-only nil)
+    (setq dabbrev-case-distinction nil)
+    (setq dabbrev-case-fold-search t)
+    (setq dabbrev-case-replace nil)
+    (setq dabbrev-check-other-buffers t)
+    (setq dabbrev-eliminate-newlines nil)
+    (setq dabbrev-upcase-means-case-search t))
+
+  (use-package hippie-exp
+    :after dabbrev
+    :config
+    (setq hippie-expand-try-functions-list
+          '(try-expand-dabbrev-visible
+            try-expand-dabbrev
+            try-expand-dabbrev-all-buffers
+            try-expand-dabbrev-from-kill
+            try-expand-list-all-buffers
+            try-expand-list
+            try-expand-line-all-buffers
+            try-expand-line
+            try-complete-file-name-partially
+            try-complete-file-name
+            try-expand-all-abbrevs))
+    (setq hippie-expand-verbose nil)
+    :bind ("M-/" . hippie-expand))
+#+end_src
 
 * Company
 
@@ -1271,16 +1310,16 @@
     :defines
     (company-dabbrev-ignore-case company-dabbrev-downcase)
     :bind
-    (("M-/" . company-complete)
+    (("M-s-÷" . company-complete)
      (:map company-active-map
-	   ("C-n" . company-select-next)
-	   ("C-p" . company-select-previous)
-	   ("<tab>" . company-complete-common-or-cycle)
-	   ("TAB" . company-complete-common-or-cycle)
-	   ("M-i" . company-complete-common-or-cycle)
-	   :map company-search-map
-	   ("C-p" . company-select-previous)
-	   ("C-n" . company-select-next)))
+           ("C-n" . company-select-next)
+           ("C-p" . company-select-previous)
+           ("<tab>" . company-complete-common-or-cycle)
+           ("TAB" . company-complete-common-or-cycle)
+           ("M-i" . company-complete-common-or-cycle)
+           :map company-search-map
+           ("C-p" . company-select-previous)
+           ("C-n" . company-select-next)))
     :hook
     (after-init . global-company-mode)
     ;;(plantuml-mode . (lambda () (set (make-local-variable 'company-backends)
@@ -1305,7 +1344,6 @@
     ;;                         )))))
     :config
     (setq
-
      company-auto-complete nil
 
      company-echo-delay (if (display-graphic-p) nil 0)
@@ -1323,7 +1361,6 @@
 
      company-dabbrev-code-other-buffers 'all
 
-
      company-transformers
      '(company-sort-by-backend-importance
        company-sort-prefer-same-case-prefix
@@ -1338,7 +1375,7 @@
      company-tooltip-offset-display 'scrollbar
 
      company-frontends '(company-pseudo-tooltip-frontend
-			 company-echo-metadata-frontend)
+                         company-echo-metadata-frontend)
 
      company-require-match nil
 
@@ -1346,7 +1383,7 @@
      company-complete-number t
 
      ;; M-⟪num⟫ to select an option according to its number.
-     ;;company-show-numbers t
+     company-show-numbers t
 
      ;; Edge of the completion list cycles around.
      company-selection-wrap-around t
@@ -1360,13 +1397,14 @@
 
      ;;copied from oremacs
      company-backends '(company-capf
-			(company-dabbrev-code company-gtags company-etags
-					      company-keywords)
-			company-files
-			company-dabbrev)
+                        (company-dabbrev-code company-gtags company-etags
+                                              company-keywords)
+                        company-files
+                        company-dabbrev)
 
      ;; Immediately activate completion.
-     company-idle-delay 0.2)
+     company-idle-delay 0.2
+     )
 
     ;; TOPIC: How add company-dabbrev to the Company completion popup?
     ;; URL: https://emacs.stackexchange.com/questions/15246/how-add-company-dabbrev-to-the-company-completion-popup
@@ -1389,14 +1427,14 @@
       (setq company-fuzzy-sorting-backend 'flx)
       (setq company-fuzzy-prefix-ontop nil)
       (with-eval-after-load 'company
-	(global-company-fuzzy-mode t)))
+        (global-company-fuzzy-mode t)))
 
-    (use-package company-shell
-      :ensure t
-      :config
-      (add-to-list 'company-backends '(company-shell
-				       company-shell-env
-				       company-fish-shell)))
+    ;;(use-package company-shell
+    ;;  :ensure t
+    ;;  :config
+    ;;  (add-to-list 'company-backends '(company-shell
+    ;;                                   company-shell-env
+    ;;                                   company-fish-shell)))
 
     ;; Better sorting and filtering
     (use-package company-prescient
@@ -1407,63 +1445,76 @@
       :ensure t
       :diminish
       :hook (company-mode . company-box-mode)
-      :init (setq company-box-icons-alist 'company-box-icons-all-the-icons)
+      ;;:init (setq company-box-icons-alist 'company-box-icons-all-the-icons)
       :config
+      ;; Overright this method to get candidate numbers in company box
+      (defun company-box--render-buffer (string)
+        (let ((selection company-selection))
+          (with-current-buffer (company-box--get-buffer)
+            (erase-buffer)
+            (insert string "\n")
+            (setq mode-line-format nil
+                  display-line-numbers t
+                  truncate-lines t
+                  cursor-in-non-selected-windows nil)
+            (setq-local scroll-step 1)
+            (setq-local scroll-conservatively 10000)
+            (setq-local scroll-margin  0)
+            (setq-local scroll-preserve-screen-position t)
+            (add-hook 'window-configuration-change-hook 'company-box--prevent-changes t t)
+            (company-box--update-line selection))))
+
       (setq company-box-backends-colors nil)
       (setq company-box-show-single-candidate t)
       (setq company-box-max-candidates 50)
 
-      (defun company-box-icons--elisp (candidate)
-	(when (derived-mode-p 'emacs-lisp-mode)
-	  (let ((sym (intern candidate)))
-	    (cond ((fboundp sym) 'Function)
-		  ((featurep sym) 'Module)
-		  ((facep sym) 'Color)
-		  ((boundp sym) 'Variable)
-		  ((symbolp sym) 'Text)
-		  (t . nil)))))
+      (setq company-box-icons-unknown 'fa_question_circle)
 
-      (with-eval-after-load 'all-the-icons
-	(declare-function all-the-icons-faicon 'all-the-icons)
-	(declare-function all-the-icons-fileicon 'all-the-icons)
-	(declare-function all-the-icons-material 'all-the-icons)
-	(declare-function all-the-icons-octicon 'all-the-icons)
-	(setq company-box-icons-all-the-icons
-	      `((Unknown . ,(all-the-icons-material "find_in_page" :height 0.7 :v-adjust -0.15))
-		(Text . ,(all-the-icons-faicon "book" :height 0.68 :v-adjust -0.15))
-		(Method . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
-		(Function . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
-		(Constructor . ,(all-the-icons-faicon "cube" :height 0.7 :v-adjust -0.05 :face 'font-lock-constant-face))
-		(Field . ,(all-the-icons-faicon "tags" :height 0.65 :v-adjust -0.15 :face 'font-lock-warning-face))
-		(Variable . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face))
-		(Class . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
-		(Interface . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01))
-		(Module . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.15))
-		(Property . ,(all-the-icons-octicon "package" :height 0.7 :v-adjust -0.05 :face 'font-lock-warning-face)) ;; Golang module
-		(Unit . ,(all-the-icons-material "settings_system_daydream" :height 0.7 :v-adjust -0.15))
-		(Value . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'font-lock-constant-face))
-		(Enum . ,(all-the-icons-material "storage" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-orange))
-		(Keyword . ,(all-the-icons-material "filter_center_focus" :height 0.7 :v-adjust -0.15))
-		(Snippet . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))
-		(Color . ,(all-the-icons-material "palette" :height 0.7 :v-adjust -0.15))
-		(File . ,(all-the-icons-faicon "file-o" :height 0.7 :v-adjust -0.05))
-		(Reference . ,(all-the-icons-material "collections_bookmark" :height 0.7 :v-adjust -0.15))
-		(Folder . ,(all-the-icons-octicon "file-directory" :height 0.7 :v-adjust -0.05))
-		(EnumMember . ,(all-the-icons-material "format_align_right" :height 0.7 :v-adjust -0.15 :face 'all-the-icons-blueb))
-		(Constant . ,(all-the-icons-faicon "tag" :height 0.7 :v-adjust -0.05))
-		(Struct . ,(all-the-icons-faicon "clone" :height 0.65 :v-adjust 0.01 :face 'font-lock-constant-face))
-		(Event . ,(all-the-icons-faicon "bolt" :height 0.7 :v-adjust -0.05 :face 'all-the-icons-orange))
-		(Operator . ,(all-the-icons-fileicon "typedoc" :height 0.65 :v-adjust 0.05))
-		(TypeParameter . ,(all-the-icons-faicon "hashtag" :height 0.65 :v-adjust 0.07 :face 'font-lock-const-face))
-		(Template . ,(all-the-icons-faicon "code" :height 0.7 :v-adjust 0.02 :face 'font-lock-variable-name-face))))))
-    ;; Show quick tooltip
+      (setq company-box-icons-elisp
+            '((fa_tag :face font-lock-function-name-face) ;; Function
+              (fa_cog :face font-lock-variable-name-face) ;; Variable
+              (fa_cube :face font-lock-constant-face) ;; Feature
+              (md_color_lens :face font-lock-doc-face))) ;; Face
+
+      (setq company-box-icons-yasnippet 'fa_bookmark)
+
+      (setq company-box-icons-lsp
+            '((1 . fa_text_height) ;; Text
+              (2 . (fa_tags :face font-lock-function-name-face)) ;; Method
+              (3 . (fa_tag :face font-lock-function-name-face)) ;; Function
+              (4 . (fa_tag :face font-lock-function-name-face)) ;; Constructor
+              (5 . (fa_cog :foreground "#FF9800")) ;; Field
+              (6 . (fa_cog :foreground "#FF9800")) ;; Variable
+              (7 . (fa_cube :foreground "#7C4DFF")) ;; Class
+              (8 . (fa_cube :foreground "#7C4DFF")) ;; Interface
+              (9 . (fa_cube :foreground "#7C4DFF")) ;; Module
+              (10 . (fa_cog :foreground "#FF9800")) ;; Property
+              (11 . md_settings_system_daydream) ;; Unit
+              (12 . (fa_cog :foreground "#FF9800")) ;; Value
+              (13 . (md_storage :face font-lock-type-face)) ;; Enum
+              (14 . (md_closed_caption :foreground "#009688")) ;; Keyword
+              (15 . md_closed_caption) ;; Snippet
+              (16 . (md_color_lens :face font-lock-doc-face)) ;; Color
+              (17 . fa_file_text_o) ;; File
+              (18 . md_refresh) ;; Reference
+              (19 . fa_folder_open) ;; Folder
+              (20 . (md_closed_caption :foreground "#009688")) ;; EnumMember
+              (21 . (fa_square :face font-lock-constant-face)) ;; Constant
+              (22 . (fa_cube :face font-lock-type-face)) ;; Struct
+              (23 . fa_calendar) ;; Event
+              (24 . fa_square_o) ;; Operator
+              (25 . fa_arrows)) ;; TypeParameter
+            )
+      )
+    ;;Show quick tooltip
     (use-package company-quickhelp
       :ensure t
       :defines company-quickhelp-delay
       :bind (:map company-active-map
-		  ("M-h" . company-quickhelp-manual-begin))
+                  ("M-h" . company-quickhelp-manual-begin))
       :hook (global-company-mode . company-quickhelp-mode)
-      :custom (company-quickhelp-delay 0.8)))
+      :custom (company-quickhelp-delay 0.8))
+    )
 
   ;;(use-package company-jedi
   ;;  :ensure t
@@ -1478,6 +1529,7 @@
 
   ;; Had to comment this to get company mode working in org mode
   ;;(setq company-global-modes '(not org-mode))
+
   (require 'company)
   ;; http://oremacs.com/2017/12/27/company-numbers/
   (setq company-show-numbers t)
@@ -1487,32 +1539,26 @@
        (define-key map (format "%d" x) 'ora-company-number))
      (number-sequence 0 9))
     (define-key map " " (lambda ()
-			  (interactive)
-			  (company-abort)
-			  (self-insert-command 1)))
+                          (interactive)
+                          (company-abort)
+                          (self-insert-command 1)))
     (define-key map (kbd "<return>") nil))
 
   (defun ora-company-number ()
     "Forward to `company-complete-number'.
 
-  Unless the number is potentially part of the candidate.
-  In that case, insert the number."
+    Unless the number is potentially part of the candidate.
+    In that case, insert the number."
     (interactive)
     (let* ((k (this-command-keys))
-	   (re (concat "^" company-prefix k)))
+           (re (concat "^" company-prefix k)))
       (if (cl-find-if (lambda (s) (string-match re s))
-		      company-candidates)
-	  (self-insert-command 1)
-	(company-complete-number (string-to-number k)))))
-
-  ;; company box mode
-  ;;(use-package company-box
-  ;;:ensure t
-  ;;  :hook (company-mode . company-box-mode))
+                      company-candidates)
+          (self-insert-command 1)
+        (company-complete-number (string-to-number k)))))
 
   ;;(add-to-list 'company-backends '(company-capf company-dabbrev company-dabbrev-code company-files))
   (define-key global-map (kbd "C-c c f") 'company-files)
-
 
 #+END_SRC
 
@@ -5982,14 +6028,14 @@ Select from xref candidates with ivy
   ;;  :commands broadcast-mode)
 #+END_SRC
 
-* COMMENT Lsp-Ivy
+* Lsp-Ivy
 
 #+BEGIN_SRC emacs-lisp
- ;; (use-package lsp-ivy
- ;;   :quelpa (lsp-ivy :fetcher github :repo "emacs-lsp/lsp-ivy")
- ;;   ;;:ensure t
- ;;   :bind (("C-?" . lsp-ivy-workspace-symbol))
- ;;   )
+  (use-package lsp-ivy
+    ;;:quelpa (lsp-ivy :fetcher github :repo "emacs-lsp/lsp-ivy")
+    :ensure t
+    :bind (("C-?" . lsp-ivy-workspace-symbol))
+    )
 #+END_SRC
 
 * ADOC
