@@ -54,6 +54,7 @@
 		 ))
 
 (use-package company-go
+  :defer t
 	:ensure t
 	:after go-mode
 	:config
@@ -62,18 +63,24 @@
 		      ("M-." . godef-jump)))
 
 (use-package flymake-go
+  :defer t
 	:ensure t)
 
 (use-package go-eldoc
+  :defer t
 	:ensure t
 	:config
 	(add-hook 'go-mode-hook 'go-eldoc-setup))
 
 ;; integrate go-guru analysis tool to emacs
-(use-package go-guru)
+(use-package go-guru
+  :defer t
+  )
 
 ;; go-rename: extra refactoring commands for go
-(use-package go-rename)
+(use-package go-rename
+  :defer t
+  )
 
 
 (defun setup-go-mode-compile ()

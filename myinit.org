@@ -149,6 +149,22 @@
                     version-control t)))
 #+END_SRC
 
+* tuning start-up
+
+#+begin_src emacs-lisp
+  (use-package term
+    :ensure nil
+    :defer t)
+
+  (use-package xterm-color
+    :ensure nil
+    :defer t)
+
+  (use-package ehelp
+    :ensure nil
+    :defer t)
+#+end_src
+
 * interface tweaks
 
   #+BEGIN_SRC emacs-lisp
@@ -647,6 +663,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package hydra
+    :defer t
     :ensure hydra
     :init
     (global-set-key
@@ -822,6 +839,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-sticky-header
+    :defer t
     :hook (org-mode . org-sticky-header-mode)
     :config
     (setq-default
@@ -859,6 +877,7 @@
    ;;  (add-hook 'dired-mode-hook 'org-download-enable))
 
    (use-package org-download
+     :defer 3
      :ensure t
      :config
      (require 'org-download)
@@ -1544,14 +1563,16 @@
 
   #+BEGIN_SRC emacs-lisp
 
-  (use-package ox-reveal
-    :ensure ox-reveal)
+    (use-package ox-reveal
+      :defer 1
+      :ensure ox-reveal)
 
-  (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
-  (setq org-reveal-mathjax t)
+    (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+    (setq org-reveal-mathjax t)
 
-  (use-package htmlize
-    :ensure t)
+    (use-package htmlize
+      :defer 1
+      :ensure t)
   #+END_SRC
 
 * Org-Config-Easy-Template
@@ -1650,6 +1671,7 @@
 * FlyCheck
   #+BEGIN_SRC emacs-lisp
     (use-package flycheck
+      :defer 1
       :ensure t
       :init
       (global-flycheck-mode t)
@@ -1707,6 +1729,7 @@
 
 
     (use-package lsp-python-ms
+      :defer 1
       :ensure t
       :hook (python-mode . (lambda ()
                              (require 'lsp-python-ms)
@@ -1716,6 +1739,7 @@
     (setq lsp-python-ms-python-executable-cmd "python3")
 
     (use-package pyvenv
+      :defer 1
       :custom
       (pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
       :config
@@ -1737,6 +1761,7 @@
     ;;  (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
 
     (use-package virtualenvwrapper
+      :defer 1
       :ensure t
       ;; Automatically switch python venv
       :hook (projectile-after-switch-project . venv-projectile-auto-workon)
@@ -1762,10 +1787,12 @@
     ;;  (add-hook 'python-mode-hook #'auto-virtualenvwrapper-activate))
 
     (use-package pip-requirements
+      :defer 1
       :ensure t
       :mode ("/requirements.txt$" . pip-requirements-mode))
 
     (use-package blacken
+      :defer 1
       :ensure t
       :config
       ;; (add-hook 'python-mode-hook 'blacken-mode)
@@ -1792,15 +1819,19 @@
 
     ;; Enable (restructured) syntax highlighting for python docstrings
     (use-package python-docstring
+      :defer t
       :ensure t
       :hook (python-mode . python-docstring-mode))
 
     (use-package pydoc
+      :defer t
       :ensure t
       :bind (:map python-mode-map
                   ("M-?" . pydoc-at-point)))
 
-    (use-package counsel-pydoc :ensure t)
+    (use-package counsel-pydoc
+      :defer t
+      :ensure t)
   #+END_SRC
 
 * White Space and Blank Lines
@@ -1808,6 +1839,7 @@
   #+BEGIN_SRC emacs-lisp
     ;; whitespace cleanup
     (use-package whitespace-cleanup-mode
+      :defer 1
       :ensure t
       :diminish whitespace-cleanup-mode
       :init (global-whitespace-cleanup-mode))
@@ -1816,21 +1848,24 @@
 * MarkDown mode
   #+BEGIN_SRC emacs-lisp
     (use-package markdown-mode
+      ;;:defer t
       :ensure t
       :commands (markdown-mode gfm-mode)
       :mode (("README\\.md\\'" . gfm-mode)
              ("\\.md\\'" . markdown-mode)
              ("\\.markdown\\'" . markdown-mode))
-     ;; :init (setq markdown-command "/usr/local/bin/multimarkdown")
+      ;; :init (setq markdown-command "/usr/local/bin/multimarkdown")
       )
 
     (use-package markdownfmt
+      ;;:defer 2
       :ensure t)
 
     (use-package markdown-mode+
       :ensure t
       :after markdown-mode
-      :defer t)
+     ;;:defer t
+     )
 
     (setq markdown-command
           (concat
@@ -1843,29 +1878,36 @@
     ;;(setq markdown-command "/usr/local/bin/multimarkdown --smart --notes")
 
     (use-package poly-markdown
+      ;;:defer 2
       :ensure t)
 
     (use-package polymode
+      ;;:defer 2
       :ensure t
       )
 
     (use-package markdown-preview-mode
+      ;;:defer 2
       :ensure t)
 
     (use-package markdown-toc
+      ;;:defer 2
       :ensure t)
 
     ;; Automatic preview
     ;; Link: https://github.com/mola-T/flymd
     (use-package flymd
+      ;;:defer 2
       :ensure t)
 
     (use-package ox-gfm
+      ;;:defer 2
       :ensure t
       :after ox
       :config (require 'ox-gfm))
 
     (use-package grip-mode
+      ;;:defer 2
       :ensure t
       ;;:hook ((markdown-mode org-mode adoc-mode) . grip-mode)
       )
@@ -1921,11 +1963,12 @@
 
 * Hungy Delete Mode
   #+BEGIN_SRC emacs-lisp
-; deletes all the whitespace when you hit backspace or delete
-  (use-package hungry-delete
-    :ensure t
-    :config
-    (global-hungry-delete-mode))
+    ;;  deletes all the whitespace when you hit backspace or delete
+    (use-package hungry-delete
+      :defer 1
+      :ensure t
+      :config
+      (global-hungry-delete-mode))
   #+END_SRC
 
 * Smart-HUngry Delete
@@ -2036,13 +2079,14 @@
 
 * smart-forward
   #+BEGIN_SRC emacs-lisp
-  (use-package smart-forward
-    :ensure t
-    :config
-    (global-set-key (kbd "M-<up>") 'smart-up)
-    (global-set-key (kbd "M-<down>") 'smart-down)
-    (global-set-key (kbd "M-<left>") 'smart-backward)
-    (global-set-key (kbd "M-<right>") 'smart-forward))
+    (use-package smart-forward
+      :defer 1
+      :ensure t
+      :config
+      (global-set-key (kbd "M-<up>") 'smart-up)
+      (global-set-key (kbd "M-<down>") 'smart-down)
+      (global-set-key (kbd "M-<left>") 'smart-backward)
+      (global-set-key (kbd "M-<right>") 'smart-forward))
   #+END_SRC
 
 * Join Line
@@ -2092,20 +2136,21 @@
 
 * string-inflection for string manipulation
   #+BEGIN_SRC emacs-lisp
-  (use-package string-inflection
-    :ensure t
-    :bind (("C-c i" . string-inflection-all-cycle))
-    )
+    (use-package string-inflection
+      :defer 1
+      :ensure t
+      :bind (("C-c i" . string-inflection-all-cycle))
+      )
 
-  ;; for java
-  (add-hook 'java-mode-hook
-            '(lambda ()
-               (local-set-key (kbd "C-c i") 'string-inflection-java-style-cycle)))
+    ;; for java
+    (add-hook 'java-mode-hook
+              '(lambda ()
+                 (local-set-key (kbd "C-c i") 'string-inflection-java-style-cycle)))
 
-  ;; for python
-  (add-hook 'python-mode-hook
-            '(lambda ()
-               (local-set-key (kbd "C-c i") 'string-inflection-python-style-cycle)))
+    ;; for python
+    (add-hook 'python-mode-hook
+              '(lambda ()
+                 (local-set-key (kbd "C-c i") 'string-inflection-python-style-cycle)))
   #+END_SRC
 
 * iedit and narrow / widen dwim
@@ -2113,6 +2158,7 @@
     ; mark and edit all copies of the marked region simultaniously.
 
     (use-package iedit
+      :defer 1
       :ensure t)
 
   #+END_SRC
@@ -2124,18 +2170,19 @@
 
 * Web-Mode
   #+BEGIN_SRC emacs-lisp
-  (use-package web-mode
-    :ensure t
-    :config
-    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-    (setq web-mode-engines-alist
-          '(("django"    . "\\.html\\'")))
-    (setq web-mode-ac-sources-alist
-          '(("css" . (ac-source-css-property))
-            ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+    (use-package web-mode
+      :defer 1
+      :ensure t
+      :config
+      (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+      (setq web-mode-engines-alist
+            '(("django"    . "\\.html\\'")))
+      (setq web-mode-ac-sources-alist
+            '(("css" . (ac-source-css-property))
+              ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
 
-    (setq web-mode-enable-auto-closing t)
-    (setq web-mode-enable-auto-quoting t))
+      (setq web-mode-enable-auto-closing t)
+      (setq web-mode-enable-auto-quoting t))
   #+END_SRC
 
 * COMMENT Parrot
@@ -2588,6 +2635,7 @@
 #+BEGIN_SRC emacs-lisp
   ;; projectile
   (use-package projectile
+    :defer 1
     :ensure t
     :bind ("C-c p" . projectile-command-map)
     :custom
@@ -2678,6 +2726,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package transient
+    :defer t
     :ensure t)
 
   (use-package magit
@@ -2698,18 +2747,19 @@
 
 
   (use-package git-timemachine
+    :defer t
     :ensure t
     )
   (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
                                         :hint nil)
     "
-    Git gutter:
-      _j_: next hunk        _s_tage hunk     _q_uit
-      _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
-      ^ ^                   _p_opup hunk
-      _h_: first hunk
-      _l_: last hunk        set start _R_evision
-    "
+      Git gutter:
+        _j_: next hunk        _s_tage hunk     _q_uit
+        _k_: previous hunk    _r_evert hunk    _Q_uit and deactivate git-gutter
+        ^ ^                   _p_opup hunk
+        _h_: first hunk
+        _l_: last hunk        set start _R_evision
+      "
     ("j" git-gutter:next-hunk)
     ("k" git-gutter:previous-hunk)
     ("h" (progn (goto-char (point-min))
@@ -2729,21 +2779,25 @@
      :color blue))
 
   (use-package gitconfig-mode
+    :defer t
     :ensure t
     :mode "\\.gitconfig\\'"
     :mode "\\.git/config\\'"
     :mode "\\.gitmodules\\'")
 
   (use-package gitignore-mode
+    :defer t
     :ensure t
     :mode "\\.gitignore\\'"
     :mode "\\.dockerignore\\'"
     :mode "\\..elpaignore\\'")
 
   (use-package gitignore-templates
+    :defer t
     :ensure t)
 
   (use-package diffview
+    :defer t
     :ensure t
     :commands (diffview-region diffview-current)
     :preface
@@ -2762,14 +2816,14 @@
       (defhydra hydra-smerge
         (:color pink :hint nil :post (smerge-auto-leave))
         "
-  ^Move^       ^Keep^               ^Diff^                 ^Other^
-  ^^-----------^^-------------------^^---------------------^^-------
-  _n_ext       _b_ase               _<_: upper/base        _C_ombine
-  _p_rev       _u_pper              _=_: upper/lower       _r_esolve
-  ^^           _l_ower              _>_: base/lower        _k_ill current
-  ^^           _a_ll                _R_efine
-  ^^           _RET_: current       _E_diff
-  "
+    ^Move^       ^Keep^               ^Diff^                 ^Other^
+    ^^-----------^^-------------------^^---------------------^^-------
+    _n_ext       _b_ase               _<_: upper/base        _C_ombine
+    _p_rev       _u_pper              _=_: upper/lower       _r_esolve
+    ^^           _l_ower              _>_: base/lower        _k_ill current
+    ^^           _a_ll                _R_efine
+    ^^           _RET_: current       _E_diff
+    "
         ("n" smerge-next)
         ("p" smerge-prev)
         ("b" smerge-keep-base)
@@ -2803,10 +2857,12 @@
 
 
   (use-package magit-tbdiff
+    :defer t
     :ensure t
     :after magit)
 
   (use-package magit-todos
+    :defer t
     :ensure t
     :commands (magit-todos-mode)
     :hook (magit-mode . magit-todos-mode)
@@ -2817,7 +2873,8 @@
 
   (use-package git-commit
     :ensure t
-    :defer t)
+  ;;  :defer t
+    )
 
   (use-package gitattributes-mode
     :ensure t
@@ -2834,15 +2891,25 @@
     )
 
   ;; Github api
-  (use-package gh :ensure t)
-  (use-package gh-md :ensure t)
+  (use-package gh
+    :defer t
+    :ensure t)
+  (use-package gh-md
+    :defer t
+    :ensure t)
 
   ;; Search on github
-  (use-package github-search :ensure t)
+  (use-package github-search
+    :defer t
+    :ensure t)
 
   ;; Mapping github with magit
-  (use-package ghub :ensure t)
-  (use-package ghub+ :ensure t)
+  (use-package ghub
+    :defer t
+    :ensure t)
+  (use-package ghub+
+    :defer t
+    :ensure t)
 
   ;;(use-package magithub
   ;;  :ensure t
@@ -2850,7 +2917,9 @@
   ;;  :config (magithub-feature-autoinject t)
   ;;  (setq magithub-clone-default-directory "~/github"))
 
-  (use-package gist :ensure t)
+  (use-package gist
+    :defer t
+    :ensure t)
 
   ;; Display commit number that is associated with current line of code
   (use-package vc-msg
@@ -2871,7 +2940,7 @@
 
   (defun my/git-commit-search-message-history ()
     "Search and insert commit message from history.
-     http://xenodium.com/m-r-history-search-in-git-commit-mode/"
+       http://xenodium.com/m-r-history-search-in-git-commit-mode/"
     (interactive)
     (insert (completing-read "History: "
                              ;; Remove unnecessary newlines from beginning and end.
@@ -2957,6 +3026,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package dumb-jump
+    :defer 1
     :bind (("M-g o" . dumb-jump-go-other-window)
            ("M-g s" . dumb-jump-go)
            ("M-g x" . dumb-jump-go-prefer-external)
@@ -2971,6 +3041,7 @@
   ;;smart-Jump
 
   (use-package smart-jump
+    :defer 1
     :ensure t
     :config
     (smart-jump-setup-default-registers))
@@ -2980,6 +3051,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package origami
+    :defer t
     :ensure t
     ;;:ensure quelpa
     ;;:quelpa (origami :repo "seblemaguer/origami.el" :fetcher github)
@@ -3176,6 +3248,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package aggressive-indent
+    :defer t
     :ensure t
     :config
     (global-aggressive-indent-mode 1)
@@ -3186,13 +3259,16 @@
 * FZF
 
 #+BEGIN_SRC emacs-lisp
-(use-package fzf :ensure t)
+  (use-package fzf
+    :defer t
+    :ensure t)
 #+END_SRC
 
 * RipGrep
 
 #+BEGIN_SRC emacs-lisp
   (use-package deadgrep
+    :defer t
     :ensure t
     :bind (("C-c d g" . deadgrep))
     :config
@@ -3294,6 +3370,7 @@
     )
 
   (use-package rg
+    :defer t
     :ensure t
     :commands rg)
 #+END_SRC
@@ -3302,6 +3379,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package easy-kill
+    :defer 1
     :ensure t
     :config
     (global-set-key [remap kill-ring-save] #'easy-kill)
@@ -3366,9 +3444,11 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package wgrep
+    :defer t
     :ensure t
     )
   (use-package wgrep-ag
+    :defer t
     :ensure t
     )
   (require 'wgrep-ag)
@@ -3388,6 +3468,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package eyebrowse
+    :defer t
     :ensure t
     :config
     (eyebrowse-mode)
@@ -3398,6 +3479,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
+    :defer 3
     :ensure t
     :config
     (pdf-tools-install)
@@ -3494,6 +3576,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package editorconfig
+    :defer 3
     :ensure t
     :config
     (editorconfig-mode 1))
@@ -3503,6 +3586,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
+    :defer 1
     :ensure t
     :mode (("\\.yaml\\'" . yaml-mode)
            ("\\.yml\\'" . yaml-mode))
@@ -3510,7 +3594,7 @@
 
   (use-package flycheck-yamllint
     :ensure t
-    :defer t
+    :defer 3
     :init
     (progn
       (eval-after-load 'flycheck
@@ -3526,6 +3610,7 @@
   ;;(load-if-exists "/Users/ckoneru/.emacs.d/custom-el-scripts/init-lsp-yaml.el")
 
   (use-package yaml-imenu
+    :defer 1
     :ensure t
     :init
     (yaml-imenu-enable)
@@ -3536,17 +3621,21 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package docker
+    :defer t
     :ensure t)
 
   (use-package docker-tramp
+    :defer t
     :ensure t
     )
 
   (use-package dockerfile-mode
+    :defer t
     :ensure t
     :mode "Dockerfile[^/]*\\'")
 
   (use-package docker-compose-mode
+    :defer t
     :ensure t
     :mode "docker-compose[^/]*\\.yml\\'")
 #+END_SRC
@@ -3567,6 +3656,7 @@
     (setup-esh-help-eldoc))
 
   (use-package eshell-prompt-extras
+    :defer t
     :ensure t
     :after esh-opt
     :custom
@@ -3588,11 +3678,13 @@
     (eshell-git-prompt-use-theme 'robbyrussell))
 
   (use-package eshell-fringe-status
+    :defer t
     :ensure t
     :hook
     (eshell-mode . eshell-fringe-status-mode))
 
   (use-package eshell-did-you-mean
+    :defer t
     :ensure t)
 
   (add-to-list 'load-path (expand-file-name "~/.emacs.d/custom-el-scripts/aweshell"))
@@ -3602,10 +3694,12 @@
   (setq eshell-history-size 8192)
 
   (use-package eshell-z
+    :defer t
     :ensure t
     :after eshell)
 
   (use-package eshell-up
+    :defer t
     :ensure t
     :after eshell)
 
@@ -3616,14 +3710,17 @@
     :after pcomplete)
 
   (use-package pcmpl-pip
+    :defer t
     :ensure t
     :after pcomplete)
 
   (use-package pcmpl-args
+    :defer t
     :ensure t
     :after pcomplete)
 
   (use-package pcmpl-homebrew
+    :defer t
     :ensure t
     :after pcomplete)
 
@@ -3698,6 +3795,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package groovy-mode
+    :defer t
     :ensure t
     :config
     (add-to-list 'auto-mode-alist '("\\.g\\(?:ant\\|roovy\\)\\'" . groovy-mode))
@@ -3726,6 +3824,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package duplicate-thing
+    :defer t
     :bind ("H-C-e d" . duplicate-thing)
     :ensure t)
 #+END_SRC
@@ -3756,10 +3855,12 @@
 
   ;; Enable scala-mode and sbt-mode
   (use-package scala-mode
+    :defer 3
     :ensure t
     :mode "\\.s\\(cala\\|bt\\)$")
 
   (use-package sbt-mode
+    :defer 3
     :ensure t
     :commands sbt-start sbt-command
     :config
@@ -3771,9 +3872,10 @@
      minibuffer-local-completion-map))
 
   ;; Enable nice rendering of diagnostics like compile errors.
-  (use-package flycheck
-    :ensure t
-    :init (global-flycheck-mode))
+  ;;(use-package flycheck
+  ;;  :defer t
+  ;;  :ensure t
+  ;;  :init (global-flycheck-mode))
 
   ;;; Config for Eglot
 
@@ -3855,11 +3957,13 @@
 #+BEGIN_SRC emacs-lisp
   ;; History
   (use-package saveplace
+    :defer t
     :ensure nil
     :hook (after-init . save-place-mode))
 
   ;; Recent files
   (use-package recentf
+    :defer t
     :ensure nil
     :hook (after-init . recentf-mode)
     :custom
@@ -3890,6 +3994,7 @@
 
   (when (eq system-type 'darwin)            ; Better copy paste on mac
     (use-package pbcopy
+      :defer t
       :ensure t
       :config (turn-on-pbcopy)))
 #+END_SRC
@@ -3898,6 +4003,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package ag
+    :defer t
     :ensure t
     :custom
     (ag-highligh-search t)
@@ -3913,6 +4019,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package mwim
+    :defer t
     :ensure t
     :bind
     ("H-C-g a" . mwim-beginning-of-code-or-line)
@@ -3966,6 +4073,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package bicycle
+    :defer t
     :after outline
     :bind (:map outline-minor-mode-map
                 ([C-tab] . bicycle-cycle)
@@ -3982,6 +4090,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
+    :defer t
     :ensure t
     :hook
     (prog-mode . rainbow-delimiters-mode)
@@ -3996,15 +4105,18 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package kubernetes
+    :defer 3
     :ensure t
     :commands (kubernetes-overview))
 
   ;; If you want to pull in the Evil compatibility package.
   (use-package kubernetes-evil
+    :defer 3
     :ensure t
     :after kubernetes)
 
   (use-package k8s-mode
+    :defer 3
     :ensure t
     :hook (k8s-mode . yas-minor-mode)
     :config
@@ -4016,15 +4128,19 @@
   (add-hook 'k8s-mode-hook 'yas-minor-mode)
 
   (use-package kubernetes-tramp
+    :defer 3
     :ensure t)
 
   (use-package kubernetes-helm
+    :defer 3
     :ensure t)
 
   (use-package kubel
+    :defer 3
     :ensure t)
 
   (use-package kubel-evil
+    :defer 3
     :ensure t)
 #+END_SRC
 
@@ -4033,22 +4149,27 @@
 #+BEGIN_SRC emacs-lisp
   ;;; Languages
   (use-package js2-mode                   ; Javascript
+    :defer 3
     :ensure t
     :mode (("\\.jsx?\\'" . js2-mode))
     :commands (j2-mode))
 
   (use-package json-mode                  ; JSON
+    :defer 3
     :ensure t
     :mode (("\\.json\\'" . json-mode))
     :commands (json-mode))
 
   (use-package json-navigator
+    :defer 3
     :ensure t)
 
   (use-package web-beautify
+    :defer 3
     :ensure t)
 
   (use-package json-reformat
+    :defer 3
     :ensure t)
 #+END_SRC
 
@@ -4056,6 +4177,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package csv-mode
+    :defer 3
     :ensure t
     :mode "\\.[Cc][Ss][Vv]\\'"
     :init
@@ -4101,6 +4223,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package indent-tools
+    :defer t
     :ensure t
     :bind
     ("C-c h i" . indent-tools-hydra/body))
@@ -4110,6 +4233,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package move-text
+    :defer 1
     :ensure t
     :bind
     (("M-<up>" . move-text-up)
@@ -4120,6 +4244,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package quickrun
+    :defer 1
     :ensure t
     :bind
     (("<f7>r r" . quickrun)
@@ -4147,6 +4272,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package auto-package-update
+    :defer t
     :ensure t
     :config
     (setq auto-package-update-delete-old-versions t)
@@ -4158,6 +4284,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package evil-numbers
+    :defer 2
     :ensure t)
 
   (global-set-key (kbd "C-c C-i +") 'evil-numbers/inc-at-pt)
@@ -4253,6 +4380,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package ggtags
+    :defer 1
     :ensure t
     :diminish ggtags-mode
     :bind* (("M-m T"   . ggtags-find-tag-regexp)
@@ -4290,20 +4418,22 @@
 * Commenting
 
 #+BEGIN_SRC emacs-lisp
-(use-package comment-dwim-2
-  :ensure t
-  :bind* (("M-m g c" . comment-dwim-2)))
+  (use-package comment-dwim-2
+    :defer 1
+    :ensure t
+    :bind* (("M-m g c" . comment-dwim-2)))
 #+END_SRC
 
 * Cycle-quotes
 
 #+BEGIN_SRC emacs-lisp
-(use-package cycle-quotes
-  :ensure t
-  :bind* (("M-m s q" . cycle-quotes)))
+  (use-package cycle-quotes
+    :defer 1
+    :ensure t
+    :bind* (("M-m s q" . cycle-quotes)))
 
-(which-key-add-key-based-replacements
-  "s q" "switch quotes")
+  (which-key-add-key-based-replacements
+    "s q" "switch quotes")
 
 #+END_SRC
 
@@ -4311,6 +4441,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-indentation
+    :defer t
     :ensure t
     :commands (highlight-indentation-mode)
     :config
@@ -4320,6 +4451,7 @@
 
   ;; highlight indentations in python
   (use-package highlight-indent-guides
+    :defer t
     :ensure t
     :init (setq highlight-indent-guides-responsive 'stack)
     :hook
@@ -4358,16 +4490,18 @@
 * Region State
 
 #+BEGIN_SRC emacs-lisp
-(use-package region-state
-  :ensure t
-  :config
-  (region-state-mode))
+  (use-package region-state
+    :defer t
+    :ensure t
+    :config
+    (region-state-mode))
 #+END_SRC
 
 * Google This
 
 #+BEGIN_SRC emacs-lisp
   (use-package google-this
+    :defer 2
     :ensure t
     :commands (google-this-word
                google-this-region
@@ -4409,25 +4543,28 @@
 * browse-at-remote
 
 #+BEGIN_SRC emacs-lisp
-(use-package browse-at-remote
-  :ensure t
-  :bind* (("M-m g i" . browse-at-remote)
-          ("M-m g I" . browse-at-remote-kill)))
+  (use-package browse-at-remote
+    :defer 3
+    :ensure t
+    :bind* (("M-m g i" . browse-at-remote)
+            ("M-m g I" . browse-at-remote-kill)))
 #+END_SRC
 
 * discover-my-major
 
 #+BEGIN_SRC emacs-lisp
-(use-package discover-my-major
-  :ensure t
-  :bind (("C-h C-m" . discover-my-major)
-         ("C-h M-m" . discover-my-mode)))
+  (use-package discover-my-major
+    :defer t
+    :ensure t
+    :bind (("C-h C-m" . discover-my-major)
+           ("C-h M-m" . discover-my-mode)))
 #+END_SRC
 
 * Memory usage
 
 #+BEGIN_SRC emacs-lisp
   (use-package memory-usage               ; Analyse the memory usage of Emacs
+    :defer t
     :ensure t
     :commands (memory-usage))
 #+END_SRC
@@ -4455,6 +4592,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package logview
+    :defer t
     :ensure t
     :mode ("syslog\\(?:\\.[0-9]+\\)" "\\.log\\(?:\\.[0-9]+\\)?\\'")
     :config
@@ -4597,6 +4735,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package gradle-mode
+    :defer t
     :ensure t
     :config
     (setq gradle-gradlew-executable "./gradlew"
@@ -4604,6 +4743,7 @@
     (gradle-mode))
 
   (use-package flycheck-gradle
+    :defer t
     :ensure t
     :commands (flycheck-gradle-setup)
     :init
@@ -4616,17 +4756,19 @@
 * Winnow
 
 #+BEGIN_SRC emacs-lisp
-(use-package winnow
-  :ensure t
-  :init
-  (add-hook 'compilation-mode-hook 'winnow-mode)
-  (add-hook 'ag-mode-hook 'winnow-mode))
+  (use-package winnow
+    :defer t
+    :ensure t
+    :init
+    (add-hook 'compilation-mode-hook 'winnow-mode)
+    (add-hook 'ag-mode-hook 'winnow-mode))
 #+END_SRC
 
 * Images
 
 #+BEGIN_SRC emacs-lisp
   (use-package image+
+    :defer t
     :ensure t
     :init
     (add-hook 'image-mode-hook
@@ -4670,6 +4812,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package page-break-lines
+    :defer t
     :ensure t
     :diminish page-break-lines-mode
     :config
@@ -4681,6 +4824,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package bm
     :ensure t
+    :defer t
     :demand t
 
     :init
@@ -4793,31 +4937,32 @@
 * Hide-Show
 
 #+BEGIN_SRC emacs-lisp
-(use-package hideshow
-  :bind (("C-c TAB" . hs-toggle-hiding)
-         ("C-\\" . hs-toggle-hiding)
-         ("M-+" . hs-show-all))
-  :init (add-hook #'prog-mode-hook #'hs-minor-mode)
-  :diminish hs-minor-mode
-  :config
-  (setq hs-special-modes-alist
-        (mapcar 'purecopy
-                '((c-mode "{" "}" "/[*/]" nil nil)
-                  (c++-mode "{" "}" "/[*/]" nil nil)
-                  (java-mode "{" "}" "/[*/]" nil nil)
-                  (js-mode "{" "}" "/[*/]" nil)
-                  (json-mode "{" "}" "/[*/]" nil)
-                  (javascript-mode  "{" "}" "/[*/]" nil)))))
+  (use-package hideshow
+    :defer t
+    :bind (("C-c TAB" . hs-toggle-hiding)
+           ("C-\\" . hs-toggle-hiding)
+           ("M-+" . hs-show-all))
+    :init (add-hook #'prog-mode-hook #'hs-minor-mode)
+    :diminish hs-minor-mode
+    :config
+    (setq hs-special-modes-alist
+          (mapcar 'purecopy
+                  '((c-mode "{" "}" "/[*/]" nil nil)
+                    (c++-mode "{" "}" "/[*/]" nil nil)
+                    (java-mode "{" "}" "/[*/]" nil nil)
+                    (js-mode "{" "}" "/[*/]" nil)
+                    (json-mode "{" "}" "/[*/]" nil)
+                    (javascript-mode  "{" "}" "/[*/]" nil)))))
 #+END_SRC
 
 * HL-ANYTHING
 
 #+BEGIN_SRC emacs-lisp
   (use-package hl-anything
+    :defer t
     :ensure t
     :diminish hl-highlight-mode
     :commands hl-highlight-mode
-    :init
     )
 #+END_SRC
 
@@ -4842,9 +4987,10 @@
 * Subword: CamelCase aware editing operations
 
 #+BEGIN_SRC emacs-lisp
-(use-package subword
-  :ensure t
-  :hook ((python-mode yaml-mode go-mode clojure-mode cider-repl-mode java-mode cds-mode js2-mode) . subword-mode))
+  (use-package subword
+    :defer t
+    :ensure t
+    :hook ((python-mode yaml-mode go-mode clojure-mode cider-repl-mode java-mode cds-mode js2-mode) . subword-mode))
 #+END_SRC
 
 * EWW
@@ -4852,7 +4998,7 @@
 #+BEGIN_SRC emacs-lisp
   (use-package eww
     :ensure t
-    ;;:defer t
+    :defer t
     :config
     (add-hook 'eww-mode-hook 'visual-line-mode)
     (setq eww-header-line-format nil
@@ -4890,16 +5036,18 @@
 * Automatically remove trailing whitespace (only if I put them there)
 
 #+BEGIN_SRC emacs-lisp
-(use-package ws-butler
-  :ensure t
-  :hook ((text-mode prog-mode) . ws-butler-mode)
-  :config (setq ws-butler-keep-whitespace-before-point nil))
+  (use-package ws-butler
+    :defer 2
+    :ensure t
+    :hook ((text-mode prog-mode) . ws-butler-mode)
+    :config (setq ws-butler-keep-whitespace-before-point nil))
 #+END_SRC
 
 * CRUX
 
 #+BEGIN_SRC emacs-lisp
   (use-package crux
+    :defer t
     :ensure t
     :bind (("C-c o" . crux-open-with)
            ("C-a" . crux-move-beginning-of-line)))
@@ -4910,6 +5058,7 @@
 #+BEGIN_SRC emacs-lisp
   ;; Replace zap-to-char functionaity with the more powerful zop-to-char
   (use-package zop-to-char
+    :defer t
     :ensure t
     :bind (("M-z" . zop-up-to-char)
            ("M-Z" . zop-to-char)))
@@ -4919,6 +5068,7 @@
 
 #+BEGIN_SRC emacs-lisp
   (use-package visual-regexp
+    :defer t
     :ensure t
     :bind (:map mode-specific-map
                 :prefix-map visual-regexp-prefix-map
@@ -5008,6 +5158,7 @@ Select from xref candidates with ivy
   ;;  (setq xref-show-definitions-function #'ivy-xref-show-defs))
 
   (use-package ivy-xref
+    :defer 2
     :ensure t
     :init (if (< emacs-major-version 27)
               (setq xref-show-xrefs-function #'ivy-xref-show-xrefs)
@@ -5046,11 +5197,13 @@ Select from xref candidates with ivy
   ;;  (plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar")
   ;;  :mode "\\.uml\\'")
   (use-package plantuml-mode
+    :defer 3
     :ensure t
     :mode "\\.uml\\'"
     :init
     (setq plantuml-jar-path "/Users/ckoneru/GitRepos/plantuml.jar"))
   (use-package flycheck-plantuml
+    :defer 3
     :ensure t
     :commands (flycheck-plantuml-setup)
     :init
@@ -5062,11 +5215,13 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package mermaid-mode
+    :defer 2
     :ensure t
     :config
     (setq mermaid-mmdc-location "~/GitRepos/node_modules/.bin/mmdc"))
 
   (use-package ob-mermaid
+    :defer 2
     :ensure t
     :config
     (setq ob-mermaid-cli-path "~/GitRepos/node_modules/.bin/mmdc")
@@ -5077,6 +5232,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package color-identifiers-mode
+    :defer t
     :ensure t
     :hook ((after-init . global-color-identifiers-mode)))
 #+END_SRC
@@ -5085,6 +5241,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package ranger
+    :defer t
     :ensure t
     :config (setq ranger-width-preview 0.5))
 #+END_SRC
@@ -5108,6 +5265,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package beginend
+    :defer t
     :ensure t
     :hook ((after-init . beginend-global-mode)))
 #+END_SRC
@@ -5116,6 +5274,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package anzu
+    :defer t
     :ensure t
     :hook ((after-init . global-anzu-mode))
     :custom
@@ -5257,6 +5416,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package autoinsert
+    :defer t
     :ensure t
     :init
     (define-auto-insert
@@ -5287,10 +5447,12 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package hl-line
+    :defer t
     :ensure t
     :hook ((after-init . global-hl-line-mode)))
 
   (use-package highlight-numbers
+    :defer t
     :ensure t
     :hook '(after-init-hook prog-mode-hook text-mode-hook org-mode-hook))
 #+END_SRC
@@ -5299,6 +5461,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-mode
+    :defer t
     :ensure t
     :hook (((after-init
              text-mode
@@ -5313,11 +5476,13 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package popup :ensure t :defer t)
-  (use-package popwin :ensure t
-               :config
-               (popwin-mode 1)
-               (setq popwin:close-popup-window-timer-interval 0.1)
-               (setq popwin:close-popup-window-timer nil))
+  (use-package popwin
+    :ensure t
+    :defer t
+    :config
+    (popwin-mode 1)
+    (setq popwin:close-popup-window-timer-interval 0.1)
+    (setq popwin:close-popup-window-timer nil))
 #+END_SRC
 
 * Point History
@@ -5356,6 +5521,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package mmm-mode
+    :defer t
     :ensure t
     :commands mmm-mode
     :config
@@ -5378,6 +5544,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package shell-pop
+    :defer t
     :ensure t
     :bind (("H-x H-t" . shell-pop))
     :config
@@ -5391,6 +5558,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package clojure-mode
+    :defer t
     :ensure t
     :mode (("\\.clj\\'" . clojure-mode)
            ("\\.edn\\'" . clojure-mode))
@@ -5428,6 +5596,7 @@ Select from xref candidates with ivy
     :config (cljr-add-keybindings-with-prefix "C-c C-m"))
 
   (use-package clojure-snippets
+    :defer t
     :ensure t)
 #+END_SRC
 
@@ -5442,6 +5611,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package pandoc-mode
+    :defer t
     :ensure t
     :hook
     (markdown-mode . pandoc-mode)
@@ -5454,6 +5624,7 @@ Select from xref candidates with ivy
     :defer t)
 
   (use-package toc-org
+    :defer t
     :ensure t)
 #+END_SRC
 
@@ -5473,6 +5644,7 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   ;; persistent-scratch
   (use-package persistent-scratch
+    :defer t
     :ensure t
     :config
     (persistent-scratch-setup-default))
@@ -5510,6 +5682,7 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
 
   (use-package eterm-256color
+    :defer 2
     :ensure t)
   ;;(add-to-list 'load-path "~/.emacs.d/multi-libvterm")
   ;;(require 'multi-libvterm)
@@ -5569,6 +5742,7 @@ Select from xref candidates with ivy
        (setq ,sym (expand-file-name ,filename))))
 
   (use-package sane-term
+    :defer t
     :commands sane-term
     :bind (("H-t s" . sane-term))
     :config
@@ -5635,6 +5809,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package nyan-mode
+    :defer t
     :ensure t
     :init (setq nyan-animate-nyancat t
                 nyan-bar-length 16
@@ -5651,6 +5826,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package copyit
+    :defer t
     :ensure t)
 #+END_SRC
 
@@ -5705,6 +5881,7 @@ Select from xref candidates with ivy
 #+BEGIN_SRC emacs-lisp
   ;; Golden Ratio
   (use-package golden-ratio                 ; Auto resize windows
+    :defer t
     :ensure t
     :diminish golden-ratio-mode
     :init
@@ -5745,6 +5922,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package reveal-in-osx-finder
+    :defer 3
     :ensure t)
 #+END_SRC
 
@@ -5752,6 +5930,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package multifiles
+    :defer t
     :ensure t
     :bind ("C-!" . mf/mirror-region-in-multifile))
 #+END_SRC
@@ -5760,6 +5939,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package sort-words
+    :defer t
     :ensure t)
 #+END_SRC
 
@@ -5767,6 +5947,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package smart-forward
+    :defer t
     :ensure t
     :config
     (global-set-key (kbd "H-<up>") 'smart-up)
@@ -5786,6 +5967,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package isolate
+    :defer t
     :ensure t
     )
   (defun activate-mark-hook@set-transient-map ()
@@ -5807,6 +5989,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package terraform-mode
+    :defer t
     :ensure t
     :mode "\\.tf$"
     :config
@@ -5814,9 +5997,11 @@ Select from xref candidates with ivy
     )
 
   (use-package terraform-doc
+    :defer t
     :ensure t)
 
   (use-package company-terraform
+    :defer t
     :ensure t
     :after company
     :hook (terraform-mode . company-terraform-init))
@@ -5835,6 +6020,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package region-convert
+    :defer t
     :ensure t
     :bind
     ("C-c C" . region-convert)
@@ -5845,6 +6031,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package kotlin-mode
+    :defer 3
     :ensure t
     )
 #+END_SRC
@@ -5863,6 +6050,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package gherkin-mode
+    :defer 3
     :ensure t)
 #+END_SRC
 
@@ -5870,14 +6058,16 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package world-time-mode
+    :defer 5
     :ensure t)
 #+END_SRC
 
 * Swap region
 
 #+BEGIN_SRC emacs-lisp
-;;M-x swap-regions [select the first region] C-M-c [select the second region] C-M-c
+  ;;M-x swap-regions [select the first region] C-M-c [select the second region] C-M-c
   (use-package swap-regions
+    :defer t
     :ensure t)
 #+END_SRC
 
@@ -5885,58 +6075,60 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   ;; abbrev: expand abbreviations
-  (use-package abbrev :ensure nil
-               :hook
-               ((prog-mode org-mode text-mode erc-mode LaTeX-mode) . abbrev-mode)
-               (expand-load
-                . (lambda ()
-                    (add-hook 'expand-expand-hook 'indent-according-to-mode)
-                    (add-hook 'expand-jump-hook 'indent-according-to-mode)))
-               :bind*
-               ("C-;" . endless/ispell-word-then-abbrev)
-               :config
-               ;; Silently save abbrevs on quitting emacs
-               (setq save-abbrevs 'silently)
+  (use-package abbrev
+    :ensure nil
+    :defer t
+    :hook
+    ((prog-mode org-mode text-mode erc-mode LaTeX-mode) . abbrev-mode)
+    (expand-load
+     . (lambda ()
+         (add-hook 'expand-expand-hook 'indent-according-to-mode)
+         (add-hook 'expand-jump-hook 'indent-according-to-mode)))
+    :bind*
+    ("C-;" . endless/ispell-word-then-abbrev)
+    :config
+    ;; Silently save abbrevs on quitting emacs
+    (setq save-abbrevs 'silently)
 
-               ;;Read the abbreviations file on startup
-               (if (file-exists-p abbrev-file-name)
-                   (quietly-read-abbrev-file))
+    ;;Read the abbreviations file on startup
+    (if (file-exists-p abbrev-file-name)
+        (quietly-read-abbrev-file))
 
-               (defun endless/simple-get-word ()
-                 (car-safe (save-excursion (ispell-get-word nil))))
+    (defun endless/simple-get-word ()
+      (car-safe (save-excursion (ispell-get-word nil))))
 
-               (defun endless/ispell-word-then-abbrev (p)
-                 "Call `ispell-word', then create an abbrev for it.
+    (defun endless/ispell-word-then-abbrev (p)
+      "Call `ispell-word', then create an abbrev for it.
   With prefix P, create local abbrev. Otherwise it will
   be global.
   If there's nothing wrong with the word at point, keep
   looking for a typo until the beginning of buffer. You can
   skip typos you don't want to fix with `SPC', and you can
   abort completely with `C-g'."
-                 (interactive "P")
-                 (let (bef aft)
-                   (save-excursion
-                     (while (if (setq bef (endless/simple-get-word))
-                                ;; Word was corrected or used quit.
-                                (if (ispell-word nil 'quiet)
-                                    nil ; End the loop.
-                                  ;; Also end if we reach `bob'.
-                                  (not (bobp)))
-                              ;; If there's no word at point, keep looking
-                              ;; until `bob'.
-                              (not (bobp)))
-                       (backward-word)
-                       (backward-char))
-                     (setq aft (endless/simple-get-word)))
-                   (if (and aft bef (not (equal aft bef)))
-                       (let ((aft (downcase aft))
-                             (bef (downcase bef)))
-                         (define-abbrev
-                           (if p local-abbrev-table global-abbrev-table)
-                           bef aft)
-                         (message "\"%s\" now expands to \"%s\" %sally"
-                                  bef aft (if p "loc" "glob")))
-                     (user-error "No typo at or before point")))))
+      (interactive "P")
+      (let (bef aft)
+        (save-excursion
+          (while (if (setq bef (endless/simple-get-word))
+                     ;; Word was corrected or used quit.
+                     (if (ispell-word nil 'quiet)
+                         nil ; End the loop.
+                       ;; Also end if we reach `bob'.
+                       (not (bobp)))
+                   ;; If there's no word at point, keep looking
+                   ;; until `bob'.
+                   (not (bobp)))
+            (backward-word)
+            (backward-char))
+          (setq aft (endless/simple-get-word)))
+        (if (and aft bef (not (equal aft bef)))
+            (let ((aft (downcase aft))
+                  (bef (downcase bef)))
+              (define-abbrev
+                (if p local-abbrev-table global-abbrev-table)
+                bef aft)
+              (message "\"%s\" now expands to \"%s\" %sally"
+                       bef aft (if p "loc" "glob")))
+          (user-error "No typo at or before point")))))
 
   (use-package project-abbrev
     :ensure t
@@ -5951,6 +6143,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-symbol
+    :defer t
     :ensure t
     :bind
     (("M-g h" . highlight-symbol)
@@ -5970,6 +6163,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package downplay-mode
+    :defer t
     :ensure t)
 #+END_SRC
 
@@ -5985,8 +6179,10 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-ivy
+    :defer t
     ;;:quelpa (lsp-ivy :fetcher github :repo "emacs-lsp/lsp-ivy")
     :ensure t
+    :after lsp-mode
     :bind (("C-?" . lsp-ivy-workspace-symbol))
     )
 #+END_SRC
@@ -5995,6 +6191,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package adoc-mode
+    :defer t
     :ensure t
     :mode "\\.adoc\\'"
     :config
@@ -6009,6 +6206,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package smart-shift
+    :defer t
     :ensure t
     :config
     (global-smart-shift-mode 1)
@@ -6023,6 +6221,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package highlight2clipboard
+    :defer t
     :ensure t
     :config
     (highlight2clipboard-mode 1))
@@ -6031,7 +6230,9 @@ Select from xref candidates with ivy
 * page-break-line
 
 #+BEGIN_SRC emacs-lisp
-  (use-package page-break-lines)
+  (use-package page-break-lines
+    :defer t
+    )
 #+END_SRC
 
 * COMMENT Write good mode
@@ -6057,6 +6258,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package backup-walker
+    :defer 3
     :commands backup-walker-start)
 
   (require 'backup-walker)
@@ -6072,15 +6274,17 @@ Select from xref candidates with ivy
 * OX-clip
 
   #+BEGIN_SRC emacs-lisp
-  (use-package ox-clip
-    :after org
-    :bind ("C-x c c" . ox-clip-formatted-copy))
+    (use-package ox-clip
+      :defer t
+      :after org
+      :bind ("C-x c c" . ox-clip-formatted-copy))
   #+END_SRC
 
 * org-cliplink
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-cliplink
+    :defer t
     :ensure t
     :after org
     :bind
@@ -6092,6 +6296,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-brain
+    :defer 3
     :ensure t
     :after org
     :init
@@ -6108,6 +6313,7 @@ Select from xref candidates with ivy
           org-brain-file-entries-use-title nil))
 
   (use-package deft
+    :defer t
     :commands (deft)
     :init (setq deft-directory "~/GitRepos/my-org-notes/"
                 deft-recursive t
@@ -6134,13 +6340,14 @@ Select from xref candidates with ivy
        (org-cliplink-retrieve-title-synchronously url)
        t)))
 
-  (define-key org-brain-visualize-mode-map (kbd "L") #'org-brain-cliplink-resource)
+  ;;(define-key org-brain-visualize-mode-map (kbd "L") #'org-brain-cliplink-resource)
 #+END_SRC
 
 * Ox-hugo
 
 #+BEGIN_SRC emacs-lisp
   (use-package ox-hugo
+    :defer 2
     :ensure t            ;Auto-install the package from Melpa (optional)
     :after ox)
 #+END_SRC
@@ -6149,6 +6356,7 @@ Select from xref candidates with ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
+    :defer t
     :ensure t
     :commands (lsp lsp-deferred)
     :custom
@@ -6186,6 +6394,7 @@ Select from xref candidates with ivy
 
 
   (use-package lsp-ui
+    :defer t
     :after lsp-mode
     :diminish
     :commands lsp-ui-mode
@@ -6214,7 +6423,9 @@ Select from xref candidates with ivy
     (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
       (setq mode-line-format nil)))
 
-  (use-package lsp-treemacs :ensure t :commands lsp-treemacs-errors-list)
+  (use-package lsp-treemacs
+    :defer t
+    :ensure t :commands lsp-treemacs-errors-list)
 
   ;; Add company-lsp backend for metals
   ;;(use-package company-lsp
@@ -6223,6 +6434,7 @@ Select from xref candidates with ivy
   ;;(setq compnay-lsp-enable-snippet t)
   ;;(push 'company-lsp company-backends))
   (use-package company-lsp
+    :defer t
     :commands company-lsp
     :custom
     (company-lsp-cache-candidates 'auto)
@@ -6284,6 +6496,7 @@ Select from xref candidates with ivy
   ;;http://blog.binchen.org/posts/what-s-the-best-spell-check-set-up-in-emacs.html
   ;;https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-spelling.el
   (use-package flyspell
+    :defer t
     :commands (ispell-change-dictionary
                flyspell-buffer
                flyspell-mode
@@ -6306,6 +6519,7 @@ Select from xref candidates with ivy
 
 #+begin_src emacs-lisp
   (use-package toml-mode
+    :defer t
     :ensure t
     :config
     (add-to-list 'auto-mode-alist '("\\.t[o]ml\\'" . toml-mode)))
@@ -6325,6 +6539,7 @@ Select from xref candidates with ivy
   ;; nov: Epub reader for emacs
   ;; https://github.com/wasamasa/nov.el
   (use-package nov
+    :defer 3
     :mode ("\\.epub\\'" . nov-mode)
     :hook ((nov-mode . visual-line-mode)
            (nov-mode . visual-fill-column-mode))
@@ -6338,13 +6553,15 @@ Select from xref candidates with ivy
 #+begin_src emacs-lisp
   ;; realgud: Debugger interface for emacs
   ;; https://github.com/realgud/realgud/
-  (use-package realgud)
+  (use-package realgud
+    :defer 3)
 #+end_src
 
 * Selected
 
 #+begin_src emacs-lisp
   (use-package selected
+    :defer 5
     :bind (:map selected-keymap
                 ("w" . kill-region)
                 ("~" . hydra-change-case/body)
@@ -6363,27 +6580,28 @@ Select from xref candidates with ivy
 * Langtool
 
 #+begin_src emacs-lisp
-  (use-package langtool :defer 1
-               :config
-               ;; place the language-tool directory in $HOME
-               (setq langtool-language-tool-jar
-                     "/usr/local/Cellar/languagetool/4.8/libexec/languagetool-commandline.jar")
-               (setq langtool-default-language "en-US")
+  (use-package langtool
+    :defer 5
+    :config
+    ;; place the language-tool directory in $HOME
+    (setq langtool-language-tool-jar
+          "/usr/local/Cellar/languagetool/4.8/libexec/languagetool-commandline.jar")
+    (setq langtool-default-language "en-US")
 
-               ;; hydra for langtool check
-               (defhydra hydra-langtool (:color pink
-                                                :hint nil)
-                 "
+    ;; hydra for langtool check
+    (defhydra hydra-langtool (:color pink
+                                     :hint nil)
+      "
   _c_: check    _n_: next error
   _C_: correct  _p_: prev error _d_: done checking
   "
-                 ("n"  langtool-goto-next-error)
-                 ("p"  langtool-goto-previous-error)
-                 ("c"  langtool-check)
-                 ("C"  langtool-correct-buffer)
-                 ("d"  langtool-check-done :color blue)
-                 ("q" nil "quit" :color blue))
-               (bind-key "C-c h l l t" 'hydra-langtool/body))
+      ("n"  langtool-goto-next-error)
+      ("p"  langtool-goto-previous-error)
+      ("c"  langtool-check)
+      ("C"  langtool-correct-buffer)
+      ("d"  langtool-check-done :color blue)
+      ("q" nil "quit" :color blue))
+    (bind-key "C-c h l l t" 'hydra-langtool/body))
 #+end_src
 
 * region-occurrences-highlighter
@@ -6405,6 +6623,7 @@ Select from xref candidates with ivy
 
 #+begin_src emacs-lisp
   (use-package zoom-window
+    :defer 1
     :ensure t
     :bind ("C-x C-z" . zoom-window-zoom))
 #+end_src
@@ -6414,6 +6633,7 @@ Select from xref candidates with ivy
 #+begin_src emacs-lisp
   (use-package loccur
     :ensure t
+    :defer 3
     :bind
     (("M-s M-l" . loccur-current)
      ("M-s M-L" . loccur)
