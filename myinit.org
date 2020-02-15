@@ -4169,33 +4169,78 @@
 
 * Evil Lion mode
 #+BEGIN_SRC emacs-lisp
-(use-package evil-lion
-  :ensure t
-  :config
-  (evil-lion-mode))
-;; See Doc - https://github.com/edkolev/evil-lion
+  ;; See Doc - https://github.com/edkolev/evil-lion
+  (use-package evil-lion
+    :defer 1
+    :ensure t
+    :config
+    (evil-lion-mode)
+    :bind (:map evil-normal-state-map
+           ("g l " . evil-lion-left)
+           ("g L " . evil-lion-right)
+           :map evil-visual-state-map
+           ("g l " . evil-lion-left)
+           ("g L " . evil-lion-right)))
 #+END_SRC
 
 * Evil Exchange
 
 #+BEGIN_SRC emacs-lisp
   (use-package evil-exchange
+    :defer 1
     :ensure t)
 #+END_SRC
+
+* Evil-goggles
+
+#+begin_src emacs-lisp
+  (use-package evil-goggles
+    :defer t
+    :ensure t
+    :config
+    (evil-goggles-mode)
+
+    ;; optionally use diff-mode's faces; as a result, deleted text
+    ;; will be highlighed with `diff-removed` face which is typically
+    ;; some red color (as defined by the color theme)
+    ;; other faces such as `diff-added` will be used for other actions
+    (evil-goggles-use-diff-faces)
+    )
+#+end_src
+
+* Evil-org
+
+- https://github.com/Somelauw/evil-org-mode/blob/master/doc/keythemes.org
+
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :defer t
+    :ensure t
+    :after org
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+              (lambda ()
+                (evil-org-set-key-theme)))
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+#+end_src
 
 * Goto last change
 
 #+BEGIN_SRC emacs-lisp
-(use-package goto-chg
-  :ensure t
-  :bind* (("M-m g ;" . goto-last-change)
-          ("M-m g ," . goto-last-change-reverse)))
+  (use-package goto-chg
+    :defer 1
+    :ensure t
+    :bind* (("M-m g ;" . goto-last-change)
+            ("M-m g ," . goto-last-change-reverse)))
 #+END_SRC
 
 * Ztree
 
 #+BEGIN_SRC emacs-lisp
   (use-package ztree
+    :defer 1
     :ensure t
     :bind* (("M-m g v" . ztree-dir)
             ("M-m g V" . ztree-diff))
