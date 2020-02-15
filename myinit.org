@@ -1346,7 +1346,7 @@
 
      company-tooltip-align-annotations t
 
-     company-tooltip-limit 10
+     company-tooltip-limit 20
 
      company-tooltip-margin 1
 
@@ -1407,12 +1407,12 @@
       (with-eval-after-load 'company
         (global-company-fuzzy-mode t)))
 
-    ;;(use-package company-shell
-    ;;  :ensure t
-    ;;  :config
-    ;;  (add-to-list 'company-backends '(company-shell
-    ;;                                   company-shell-env
-    ;;                                   company-fish-shell)))
+    (use-package company-shell
+      :ensure t
+      :config
+      (add-to-list 'company-backends '(company-shell
+                                       company-shell-env
+                                       company-fish-shell)))
 
     ;; Better sorting and filtering
     (use-package company-prescient
