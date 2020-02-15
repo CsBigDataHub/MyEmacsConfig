@@ -143,6 +143,50 @@
 | M-o c   | copy file                          |
 | M-o d   | dired                              |
 
+** Unicode Insert
+
+To insert a vertical bar into a table field, use =\vert= or, inside a word =abc\vert{}def=.
+
+Source: Org-mode manual: The built-in table editor.
+
+If =\vert= is not automatically converted to |, call =org-toggle-pretty-entities=
+per:
+
+    =C-c C-x \=
+
+    Toggle display of entities as UTF-8 characters. This does not change the
+    buffer content which remains plain ASCII, but it overlays the UTF-8
+    character for display purposes only.
+
+Source: Org-mode manual: Special symbols
+
+The function =org-toggle-pretty-entities= was introduced in version 7.01. Call
+org-version and upgrade Org-mode if necessary.
+
+
+| Key       | Character | Key     | Character | Key     | Character | Key         | Character |
+|-----------+-----------+---------+-----------+---------+-----------+-------------+-----------|
+| C-q M-SPC | NBSP      | C-q M-8 | ¸         | C-q M-P | Ð         | C-q M-h     | è         |
+| C-q M-!   | ¡         | C-q M-9 | ¹         | C-q M-Q | Ñ         | C-q M-i     | é         |
+| C-q M-"   | ¢         | C-q M-: | º         | C-q M-R | ò         | C-q M-j     | ê         |
+| C-q M-#   | £         | C-q M-; | »         | C-q M-S | Ó         | C-q M-k     | ë         |
+| C-q M-%   | ¥         | C-q M-= | ½         | C-q M-U | Õ         | C-q M-m     | í         |
+| C-q M-’   | §         | C-q M-? | ¿         | C-q M-W | ×         | C-q M-o     | ï         |
+| C-q M-(   | ¨         | C-q M-@ | À         | C-q M-X | Ø         | C-q M-p     | ð         |
+| C-q M-)   | ©         | C-q M-A | Á         | C-q M-Y | Ù         | C-q M-q     | ñ         |
+| C-q M-*   | ª         | C-q M-B | Â         | C-q M-Z | Ú         | C-q M-r     | ò         |
+| C-q M-+   | «         | C-q M-C | Ã         | C-q M-[ | Û         | C-q M-s     | ó         |
+| C-q M--   |           | C-q M-E | Å         | C-q M-] | Ý         | C-q M-u     | õ         |
+| C-q M-.   | ®         | C-q M-F | Æ         | C-q M-^ | Þ         | C-q M-v     | ö         |
+| C-q M-/   | ¯         | C-q M-G | Ç         | C-q M-_ | ß         | C-q M-w     | ÷         |
+| C-q M-1   | ±         | C-q M-I | É         | C-q M-a | á         | C-q M-y     | ù         |
+| C-q M-2   | ²         | C-q M-J | Ê         | C-q M-b | â         | C-q M-z     | ú         |
+| C-q M-3   | ³         | C-q M-K | Ë         | C-q M-c | ã         | C-q M-}     | ý         |
+| C-q M-4   | ´         | C-q M-L | Ì         | C-q M-d | ä         | C-q M-\vert | ü         |
+| C-q M-5   | µ         | C-q M-M | Í         | C-q M-e | å         | C-q M-~     | þ         |
+| C-q M-6   | ¶         | C-q M-N | Î         | C-q M-f | æ         | C-q M-{     | û         |
+| C-q M-7   | ·         | C-q M-O | Ï         | C-q M-g | ç         |             |           |
+
 ** Org-Mode
 
 | Keys           | Desc                           |
@@ -170,24 +214,24 @@ Magit video tutorial - https://www.youtube.com/watch?v=vQO7F2Q9DwA
 These commands are for navigation and to change the visibility of
 sections.
 
-| Key                | Description                                                       |
-|--------------------+-------------------------------------------------------------------|
-| ~TAB~                | toggle body of current section                                    |
-| ~C-<tab>~            | cycle visibility of current section and its children              |
-| ~M-<tab>~            | cycle visibility of all diff sections                             |
-| ~s-<tab>~            | cycle visibility of all sections                                  |
+| Key                        | Description                                                       |
+|----------------------------+-------------------------------------------------------------------|
+| ~TAB~                      | toggle body of current section                                    |
+| ~C-<tab>~                  | cycle visibility of current section and its children              |
+| ~M-<tab>~                  | cycle visibility of all diff sections                             |
+| ~s-<tab>~                  | cycle visibility of all sections                                  |
 | ~1~, ~2~, ~3~, ~4~         | show surrounding sections up to level N, hide deeper levels       |
 | ~M-1~, ~M-2~, ~M-3~, ~M-4~ | globally show sections up to level N, hide deeper levels          |
-| ~^~                  | goto parent section                                               |
-| ~p~                  | goto beginning of section, from there to previous section         |
-| ~n~                  | goto next section                                                 |
-| ~M-p~                | goto beginning of section, from there to previous sibling section |
-| ~M-n~                | goto next sibling section                                         |
+| ~^~                        | goto parent section                                               |
+| ~p~                        | goto beginning of section, from there to previous section         |
+| ~n~                        | goto next section                                                 |
+| ~M-p~                      | goto beginning of section, from there to previous sibling section |
+| ~M-n~                      | goto next sibling section                                         |
 
 ***  Buffer commands
 
-| Key   | Description                                                                     |
-|-------+---------------------------------------------------------------------------------|
+| Key     | Description                                                                     |
+|---------+---------------------------------------------------------------------------------|
 | ~g~     | refresh current buffer and status buffer, possibly revert file-visiting buffers |
 | ~G~     | refresh all Magit buffers and revert all file-visiting buffers in repository    |
 | ~q~     | bury the current Magit buffer, restoring previous window configuration          |
@@ -195,8 +239,8 @@ sections.
 
 ***  Various common commands
 
-| Key | Description                                   |
-|-----+-----------------------------------------------|
+| Key   | Description                                   |
+|-------+-----------------------------------------------|
 | ~SPC~ | scroll up (1)                                 |
 | ~DEL~ | scroll down (1)                               |
 | ~RET~ | show the thing at point in another buffer (2) |
@@ -211,12 +255,12 @@ sections.
 
 ***  Various assorted commands
 
-| Key   | Description                   |
-|-------+-------------------------------|
+| Key     | Description                   |
+|---------+-------------------------------|
 | ~i~     | add a gitignore rule globally |
 | ~I~     | add a gitignore rule locally  |
-| ~x~     | reset using ~--mixed~           |
-| ~C-u x~ | reset using ~--hard~            |
+| ~x~     | reset using ~--mixed~         |
+| ~C-u x~ | reset using ~--hard~          |
 
 ***  Prefix commands
 

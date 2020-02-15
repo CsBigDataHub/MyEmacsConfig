@@ -6085,7 +6085,7 @@ Select from xref candidates with ivy
          (add-hook 'expand-expand-hook 'indent-according-to-mode)
          (add-hook 'expand-jump-hook 'indent-according-to-mode)))
     :bind*
-    ("C-;" . endless/ispell-word-then-abbrev)
+    ("H-;" . endless/ispell-word-then-abbrev)
     :config
     ;; Silently save abbrevs on quitting emacs
     (setq save-abbrevs 'silently)
