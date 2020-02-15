@@ -1321,6 +1321,9 @@
     (setq
      company-auto-complete nil
 
+     ;; start autocompletion only after typing
+     company-begin-commands '(self-insert-command)
+
      company-echo-delay (if (display-graphic-p) nil 0)
 
      company-dabbrev-code-everywhere t
