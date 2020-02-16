@@ -22,3 +22,6 @@
 [submodule "custom-el-scripts/fuz.el"]
 	path = custom-el-scripts/fuz.el
 	url = https://github.com/rustify-emacs/fuz.el.git
+[submodule "custom-el-scripts/buffer-expose"]
+	path = custom-el-scripts/buffer-expose
+	url = https://github.com/clemera/buffer-expose.git
