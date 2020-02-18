@@ -338,6 +338,7 @@
     ;;(savehist-mode)
     ;;(setq savehist-file "~/.emacs.d/var/savehist") ;; handled by no-littering package
     (savehist-mode 1)
+    (setq savehist-autosave-interval (* 60 100))
     (setq-default history-length 100)
     (setq history-delete-duplicates t)
     (setq savehist-save-minibuffer-history 1)
@@ -1037,7 +1038,7 @@
       :ensure t)
 
     ;;(load-if-exists "~/.emacs.d/custom-el-scripts/init-ivy-rich.el")
-    ;;(load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
+    (load-if-exists "~/.emacs.d/custom-el-scripts/counsel-fd.el")
 
     (use-package ivy-rich
       :ensure t
@@ -1374,6 +1375,10 @@
 
      company-tooltip-margin 1
 
+     company-tooltip-minimum 3
+
+     company-tooltip-idle-delay 0
+
      company-tooltip-offset-display 'scrollbar
 
      company-frontends '(company-pseudo-tooltip-frontend
@@ -1405,7 +1410,7 @@
                         company-dabbrev)
 
      ;; Immediately activate completion.
-     company-idle-delay 0.2
+     company-idle-delay 0.3
      )
 
     ;; TOPIC: How add company-dabbrev to the Company completion popup?
@@ -1447,6 +1452,10 @@
       :ensure t
       :diminish
       :hook (company-mode . company-box-mode)
+      ;;:init (setq company-box-doc-enable nil ; disable auto `company-box-doc' timer.
+      ;;            company-box-show-single-candidate t ; for still can use doc popup keybinding.
+      ;;            company-box-doc-delay 0.5
+      ;;            )
       ;;:init (setq company-box-icons-alist 'company-box-icons-all-the-icons)
       :config
       ;; Overright this method to get candidate numbers in company box
@@ -1509,13 +1518,13 @@
             )
       )
     ;;Show quick tooltip
-    (use-package company-quickhelp
-      :ensure t
-      :defines company-quickhelp-delay
-      :bind (:map company-active-map
-                  ("M-h" . company-quickhelp-manual-begin))
-      :hook (global-company-mode . company-quickhelp-mode)
-      :custom (company-quickhelp-delay 0.8))
+                                          ;(use-package company-quickhelp
+    ;;  :ensure t
+    ;;  :defines company-quickhelp-delay
+    ;;  :bind (:map company-active-map
+    ;;              ("M-h" . company-quickhelp-manual-begin))
+    ;;  :hook (global-company-mode . company-quickhelp-mode)
+    ;;  :custom (company-quickhelp-delay 0.15))
     )
 
   ;;(use-package company-jedi
@@ -1682,7 +1691,8 @@
       (global-flycheck-mode t)
       :config
       ;;(setq-default flycheck-highlighting-mode 'lines)
-      (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change))
+      ;;(setq flycheck-check-syntax-automatically '(mode-enabled save idle-change))
+      (setq flycheck-check-syntax-automatically '(save))
       (setq flycheck-highlighting-mode 'lines)
       (setq flycheck-indication-mode 'left-fringe)
       )
@@ -2668,34 +2678,38 @@
     :ensure t
     :demand t
     :bind* (("M-m m j" . sp-down-sexp)
-	    ("M-m m k" . sp-backward-up-sexp)
-	    ("M-m m h" . sp-backward-down-sexp)
-	    ("M-m m l" . sp-up-sexp)
-	    ("M-m m f" . sp-forward-sexp)
-	    ("M-m m b" . sp-backward-sexp)
-	    ("M-m m a" . sp-beginning-of-sexp)
-	    ("M-m m e" . sp-end-of-sexp)
-	    ("M-m m n" . sp-next-sexp)
-	    ("M-m m p" . sp-previous-sexp)
-	    ("M-m m >" . sp-forward-barf-sexp)
-	    ("M-m m <" . sp-backward-barf-sexp)
-	    ("M-m m )" . sp-forward-slurp-sexp)
-	    ("M-m m (" . sp-backward-slurp-sexp)
-	    ("M-m m x" . sp-transpose-sexp)
-	    ("M-m m d" . sp-kill-sexp)
-	    ("M-m m y" . sp-copy-sexp)
-	    ("M-m m u" . sp-unwrap-sexp)
-	    ("M-m m U" . sp-backward-unwrap-sexp)
-	    ("M-m m C" . sp-convolute-sexp)
-	    ("M-m m r" . sp-raise-sexp)
-	    ("M-m m s" . sp-split-sexp)
-	    ("M-m m S" . sp-splice-sexp)
-	    ("M-m m F" . sp-splice-sexp-killing-forward)
-	    ("M-m m B" . sp-splice-sexp-killing-backward)
-	    ("M-m m A" . sp-splice-sexp-killing-around))
+            ("M-m m k" . sp-backward-up-sexp)
+            ("M-m m h" . sp-backward-down-sexp)
+            ("M-m m l" . sp-up-sexp)
+            ("M-m m f" . sp-forward-sexp)
+            ("M-m m b" . sp-backward-sexp)
+            ("M-m m a" . sp-beginning-of-sexp)
+            ("M-m m e" . sp-end-of-sexp)
+            ("M-m m n" . sp-next-sexp)
+            ("M-m m p" . sp-previous-sexp)
+            ("M-m m >" . sp-forward-barf-sexp)
+            ("M-m m <" . sp-backward-barf-sexp)
+            ("M-m m )" . sp-forward-slurp-sexp)
+            ("M-m m (" . sp-backward-slurp-sexp)
+            ("M-m m x" . sp-transpose-sexp)
+            ("M-m m d" . sp-kill-sexp)
+            ("M-m m y" . sp-copy-sexp)
+            ("M-m m u" . sp-unwrap-sexp)
+            ("M-m m U" . sp-backward-unwrap-sexp)
+            ("M-m m C" . sp-convolute-sexp)
+            ("M-m m r" . sp-raise-sexp)
+            ("M-m m s" . sp-split-sexp)
+            ("M-m m S" . sp-splice-sexp)
+            ("M-m m F" . sp-splice-sexp-killing-forward)
+            ("M-m m B" . sp-splice-sexp-killing-backward)
+            ("M-m m A" . sp-splice-sexp-killing-around))
     :diminish smartparens-mode
     :diminish smartparens-strict-mode
     :config
+
+    ;; Diasble in org- mode as `smartparens' is heavy in `org-self-insert-command'.
+    (add-to-list 'sp-ignore-modes-list 'org-mode)
+
     ;;(require 'smartparens-config)
     (smartparens-global-mode)
     ;;(smartparens-global-strict-mode)
@@ -4663,8 +4677,8 @@
           kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
           kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
           auto-save-default t               ; auto-save every buffer that visits a file
-          auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
-          auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+          auto-save-timeout 60              ; number of seconds idle time before auto-save (default: 30)
+          auto-save-interval 600            ; number of keystrokes between auto-saves (default: 300)
           )
 
    ;; :config
@@ -5258,6 +5272,10 @@ Select from xref candidates with ivy
     :ensure t
     :config
     (super-save-mode +1))
+
+  ;; add integration with ace-window
+  (add-to-list 'super-save-triggers 'ace-window)
+
   (setq super-save-auto-save-when-idle t)
 
   ;; save on find-file
