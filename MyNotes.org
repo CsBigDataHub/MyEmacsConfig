@@ -196,10 +196,14 @@ org-version and upgrade Org-mode if necessary.
 | M-x org-agenda | filter through tags and todo's |
 |                |                                |
 |                |                                |
-|                |                                |
-|                |                                |
-|                |                                |
-|                |                                |
+
+** Convert tabs to space
+
+- To replace tabs with the appropriate number of spaces, use M-x untabify.
+
+- To do the reverse and convert multiple spaces to tabs, you can use M-x tabify.
+
+- Both commands work on a region. To run on the whole buffer use a prefix argument (i.e. C-u M-x untabify).
 
 ** Magit Cheatsheet
 You might also be interested in the [[https://magit.vc/manual/magit-refcard.pdf][Magit Reference Card]] (pdf).
