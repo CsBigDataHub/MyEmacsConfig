@@ -1,5 +1,8 @@
 * Emacs Notes
 
+** Symbola Font
+ https://web.archive.org/web/20191029215733/users.teilar.gr/~g1951d/Symbola.zip
+
 ** movement
 
 | keys                    | Movements                                                                                      |
