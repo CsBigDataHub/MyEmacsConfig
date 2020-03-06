@@ -143,6 +143,12 @@
 | M-o c   | copy file                          |
 | M-o d   | dired                              |
 
+** Ivy
+| Keys | Desc                                                  |
+|------+-------------------------------------------------------|
+| M-i  | This will insert select item to minibuffer completion |
+|      |                                                       |
+
 ** Unicode Insert
 
 To insert a vertical bar into a table field, use =\vert= or, inside a word =abc\vert{}def=.
