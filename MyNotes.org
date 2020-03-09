@@ -1026,6 +1026,103 @@ thought all this was overkill. Maybe you are right.
 [[http://xenodium.com/][Álvaro Ramírez website]]
 [[https://thomashartmann.dev/][tech blog by Thomas Hartmann]]
 
+* General nested menus
+I was after something similar to Spacemacs' nested menus when I started working on my own config as well.
+
+To start I created a global-definer with general's general-create-definer macro to set up the global SPC prefix:
+
+#+begin_src emacs-lisp
+(global-unset-key (kbd "C-SPC"))
+(general-create-definer global-definer
+  :keymaps 'override
+  :states '(insert emacs normal hybrid motion visual operator)
+  :prefix "SPC"
+  :non-normal-prefix "C-SPC")
+
+(global-definer
+  "!"   'shell-command
+  ":"   'eval-expression)
+#+end_src
+
+You'll notice I have very little in the way of keybindings declared directly within that definer. I create global menu entries with a macro that creates a keymap with the appropriate settings (wk-full-keys was the missing ingredient for getting which-key to show proper hints for nested menus.
+When it was non-nil which-key suggested "lambda" as the binding's description regardless of the command's name).
+
+#+begin_src emacs-lisp
+(defmacro general-global-menu-definer (def infix-key &rest body)
+  "Create a definer named general-global-DEF wrapping global-definer.
+The prefix map is named 'my-DEF-map'."
+  `(progn
+     (general-create-definer ,(intern (concat "general-global-" def))
+       :wrapping global-definer
+       :prefix-map (quote ,(intern (concat "my-" def "-map")))
+       :infix ,infix-key
+       :wk-full-keys nil
+       "" '(:ignore t :which-key ,def))
+     (,(intern (concat "general-global-" def))
+      ,@body)))
+#+end_src
+
+Then I define the global menus within general's use-package declaration. If the keybinding is package specific, I use the :general keyword within that package's use-package declaration to add key bindings. If it is not, the macro allows one to define them inline:
+
+;;within general's use-package declaration
+
+;;Just define top level here.
+;;Packages will extend these via the general keyword in their own declarations.
+#+begin_src emacs-lisp
+(general-global-menu-definer
+ "application" "a")
+#+end_src
+
+;;An example of key bindings that don't belong in other package declarations
+#+begin_src emacs-lisp
+(general-global-menu-definer
+ "buffer" "b"
+ "d"  'kill-current-buffer
+ "p"  'previous-buffer
+ "M" '((lambda () (interactive) (switch-to-buffer "*Messages*"))
+       :which-key "messages-buffer")
+ "n"  'next-buffer
+ "s" '((lambda () (interactive) (switch-to-buffer "*scratch*"))
+       :which-key "scratch-buffer")
+ "TAB" '((lambda () (interactive) (switch-to-buffer nil))
+         :which-key "other-buffer"))
+#+end_src
+
+;;Elfeed's use-package declaration extends the keymap created by the macro earlier.
+#+begin_src emacs-lisp
+(use-package elfeed
+  :commands (elfeed)
+  :general
+  (general-global-application
+    "e"    'elfeed))
+;;elfeed command is now bound to SPC-a-e
+#+end_src
+
+This is the cleanest solution I could manage at the time and it works fine for me, but I admit it's the first macro I've ever written. One shortcoming is that I don't think it works if you want to wrap a definer that's already been wrapped. In those cases I just specify the full keybinding with the
+nested map's prefix key. I'm not sure if this is a limitation of general's 'wrapping' keyword or not.
+
+#+BEGIN_SRC emacs-lisp
+;;within Org's use-package declaration
+  (general-global-application
+    "o"    '(:ignore t :which-key "org")
+    "oc"   'org-capture
+    "oi"   'org-insert-link
+    "oj"   '(:ignore t :which-key "journal")
+    ;;just manually specify the prefix key for deeper menus
+    "ok"   '(:ignore t :which-key "clock")
+    "okg"  'org-clock-goto
+    "oki"  'org-clock-in-last
+    "okj"  'org-clock-jump-to-current-clock
+    "oko"  'org-clock-out
+    "okr"  'org-resolve-clocks
+    "ol"   'org-store-link
+    "om"   'org-tags-view
+    "os"   'org-search-view
+    "ot"   'org-todo-list)
+#+END_SRC
+
+If anyone can suggest any improvements or cleaner solutions, I'd love to hear them. Best of luck.
+
 * Automatic gtags integration for Emacs using Git
   :PROPERTIES:
   :CUSTOM_ID: automatic-gtags-integration-for-emacs-using-git
