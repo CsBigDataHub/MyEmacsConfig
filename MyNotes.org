@@ -38,9 +38,13 @@
 
 ** Mark
 
-| keys  | description |
-|-------+-------------|
-| C-SPC | set mark    |
+| keys              | description |
+|-------------------+-------------|
+| C-SPC             | set mark    |
+| mark-paragraph    | M-h         |
+| mark-sexp         | C-M-SPC     |
+| mark-whole-buffer | C-x h       |
+| mark-word         | M-@         |
 
 ** Copy/Paste
 
@@ -622,7 +626,6 @@ References
 1 https://www.emacswiki.org/emacs/TrampMode
 2 https://www.emacswiki.org/emacs/TrampAndDocker
 3 https://media.emacsconf.org/2019/23.html
-
 
 * Editing Remote Code With Emacs
   :PROPERTIES:
