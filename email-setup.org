@@ -3,6 +3,7 @@
     - https://abhixec.com/posts/passwordmanagement.html
     - https://cestlaz.github.io/posts/using-emacs-39-mu4e/ (Very useful)
     - http://www.macs.hw.ac.uk/~rs46/posts/2014-01-13-mu4e-email-client.html
+    - https://www.djcbsoftware.nl/code/mu/mu4e/Installation.html#Building-from-git-1
     - https://blog.danielgempesaw.com/post/43467552978/installing-mu-and-mu4e-with-homebrew-with-emacs
     - http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
     - http://pragmaticemacs.com/mu4e-tutorials/
