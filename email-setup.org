@@ -23,6 +23,7 @@
     - http://www.johnborwick.com/2019/02/09/notmuch-gmailieer.html
     - https://kkatsuyuki.github.io/notmuch-conf/
     - https://wwwtech.de/articles/2016/jul/my-personal-mail-setup
+    - http://xenodium.com/trying-out-mu4e-and-offlineimap/ (secure pwd)
 
 ** Step 1
    1. Install mu4e and mu
