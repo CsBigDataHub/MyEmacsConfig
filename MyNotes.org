@@ -2939,3 +2939,49 @@ like to see documented next; I can always do another installment of the
 Emergency Elisp series if there's enough interest.
 
 Good luck!
+
+* [[https://unix.stackexchange.com/a/151046][x11 - CapsLock as modifier key for application keymaps - Unix & Linux Stack Exchange]] :website:
+
+[2020-04-24 Fri 16:58]
+
+** Article
+
+
+*** 2 Answers 2
+
+
+There are a bajillion answers on the internet, most of them confusing.
+
+The key is you need to map 'keycode 66' to your hyper key, remove the mapping of that key from other mod{1,2,4,5}'s (only if present), and then set mod3.
+
+Open ~/.Xmodmap and put the following:
+
+#+BEGIN_EXAMPLE
+  ! Unmap capslock
+  clear Lock
+  keycode 66 = Hyper_L
+
+  ! Leave mod4 as windows key _only_
+  remove mod4 = Hyper_L
+
+  ! Set mod3 to capslock
+  add mod3 = Hyper_L
+#+END_EXAMPLE
+
+Run this
+
+#+BEGIN_EXAMPLE
+   xmodmap ~/.Xmodmap
+#+END_EXAMPLE
+
+If something goes wrong, you can reset your keyboard with:
+
+#+BEGIN_EXAMPLE
+   setxkbmap -layout us
+#+END_EXAMPLE
+
+Likely causes of something exploding are that Hyper_L is mapped someplace else. Fix this by running xmodmap without args to figure out what else is bound to Hyper_L. When you know what you need to remove, chuck a 'remove BINDING = Hyper_L' in your .Xmodmap file.
+
+The .Xmodmap file will be loaded in when you open X11 sessions, you should have this mapping in place next time you login or reboot.
+
+This configuration works for my ubuntu 14.04 setup. If you have a different *nix and this doesn't work, please post what you did to get around it here and I'll incorporate it into the answer.
