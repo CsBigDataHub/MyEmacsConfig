@@ -2985,3 +2985,100 @@ Likely causes of something exploding are that Hyper_L is mapped someplace else. 
 The .Xmodmap file will be loaded in when you open X11 sessions, you should have this mapping in place next time you login or reboot.
 
 This configuration works for my ubuntu 14.04 setup. If you have a different *nix and this doesn't work, please post what you did to get around it here and I'll incorporate it into the answer.
+* [[https://stackoverflow.com/a/21007117][emacs - Export org-mode code block and result with different styles - Stack Overflow]] :website:
+
+
+*** 1 Answer 1
+
+You could use the =minted= LaTeX package to syntax highlight the source code:
+
+=C-h v org-latex-listings=
+
+#+BEGIN_EXAMPLE
+   ...
+
+    (setq org-latex-listings 'minted)
+
+  causes source code to be exported using the minted package as
+  opposed to listings.  If you want to use minted, you need to add
+  the minted package to `org-latex-packages-alist', for example
+  using customize, or with
+
+    (require 'ox-latex)
+    (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+  In addition, it is necessary to install pygments
+  (http://pygments.org), and to configure the variable
+  `org-latex-pdf-process' so that the -shell-escape option is
+  passed to pdflatex.
+
+  The minted choice has possible repercussions on the preview of
+  latex fragments (see `org-preview-latex-fragment').  If you run
+  into previewing problems, please consult
+
+    http://orgmode.org/worg/org-tutorials/org-latex-preview.html
+#+END_EXAMPLE
+
+I have this in my init file:
+
+#+BEGIN_EXAMPLE
+   (require 'ox-latex)
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings 'minted)
+
+  (setq org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+END_EXAMPLE
+
+There are different color-themes you can use with minted, for example you could put this option into your org file to use "monokai":
+
+#+BEGIN_EXAMPLE
+   #+LaTeX_HEADER: \usemintedstyle{monokai}
+#+END_EXAMPLE
+
+to get a list of the supported styles from pygmentize:
+
+pygmentize -L styles
+
+*** [[https://emacs.stackexchange.com/a/20841][org mode - Exporting code blocks to pdf via LaTeX - Emacs Stack Exchange]] :website:
+
+***** 1 Answer 1
+
+You have to tell org-mode to actually /use/ the =listings= or =listingsutf8= package in your =.emacs=:
+
+#+BEGIN_EXAMPLE
+   (add-to-list 'org-latex-packages-alist '("" "listingsutf8"))
+#+END_EXAMPLE
+
+Then you'll have a line
+
+#+BEGIN_EXAMPLE
+   \usepackage{listings}
+#+END_EXAMPLE
+
+in the exported TeX file and the pdfLaTeX run will give you the result you want to have.
+
+Addition: For minted, I get a satisfying result when using the following =.emacs= (using information from [[https://stackoverflow.com/a/21007117/6024971]]):
+
+#+BEGIN_EXAMPLE
+   (require 'org)
+  (require 'ox-latex)
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings 'minted)
+
+  (setq org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+  (setq org-src-fontify-natively t)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((R . t)
+     (latex . t)))
+#+END_EXAMPLE
+
+Note, the triple call to pdflatex is to get all the references (including TOC) in the document right.
