@@ -1,11 +1,23 @@
-clear mod1
+!!clear mod1
 clear mod3
-clear mod4
-keycode 108 =
-keycode 108 = Hyper_L
-! remove mod4 = Super_L Super_R Super_L Hyper_L
-add mod1 = Alt_L Meta_L
-add mod3 =  Hyper_L
-add mod4 = Super_L Super_R Super_L
-! keycode 108 =
-! keycode 108 = Hyper_L Hyper_L Hyper_L Hyper_L
+!!clear mod4
+!!keycode 108 =
+!!keycode 108 = Hyper_L
+!!! remove mod4 = Super_L Super_R Super_L Hyper_L
+!!add mod1 = Alt_L Meta_L
+!!add mod3 =  Hyper_L
+!!add mod4 = Super_L Super_R Super_L
+!!! keycode 108 =
+!!! keycode 108 = Hyper_L Hyper_L Hyper_L Hyper_L
+
+
+! Unmap capslock
+clear Lock
+keycode 66 = Hyper_L
+
+! Leave mod4 as windows key _only_
+remove mod4 = Hyper_L
+
+! Set mod3 to capslock
+add mod3 = Hyper_L
+
