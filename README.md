@@ -7,8 +7,8 @@
 - in `${HOME}/.config/xkb/symbols/local`
   
   ```
-default  partial modifier_keys
-xkb_symbols "superhyper" {
+  default  partial modifier_keys
+  xkb_symbols "superhyper" {
 
     modifier_map Mod3 { Super_L, Super_R };
 
@@ -17,9 +17,10 @@ xkb_symbols "superhyper" {
 
     key <HYPR> {    [ NoSymbol, Hyper_L ]   };
     modifier_map Mod4   { <HYPR> };
-};
+  };
 
   ```
+  
 - add this to auto login as a script - `setxkbmap -print | sed -e '/xkb_symbols/s/"[[:space:]]/+local&/' | xkbcomp -I${HOME}/.config/xkb - ${DISPLAY}`
 
 ## Remapping keys
