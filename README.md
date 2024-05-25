@@ -1,5 +1,27 @@
 # Emacs CheatSheet
 
+## Only this is working for KDE -
+- got to keyboard settings
+- enable "CAPS lock as CTRL and CTRL as HYPER"
+- then run this https://askubuntu.com/a/794087
+- in `${HOME}/.config/xkb/symbols/local`
+  
+  ```
+default  partial modifier_keys
+xkb_symbols "superhyper" {
+
+    modifier_map Mod3 { Super_L, Super_R };
+
+    key <SUPR> {    [ NoSymbol, Super_L ]   };
+    modifier_map Mod3   { <SUPR> };
+
+    key <HYPR> {    [ NoSymbol, Hyper_L ]   };
+    modifier_map Mod4   { <HYPR> };
+};
+
+  ```
+- add this to auto login as a script - `setxkbmap -print | sed -e '/xkb_symbols/s/"[[:space:]]/+local&/' | xkbcomp -I${HOME}/.config/xkb - ${DISPLAY}`
+
 ## Remapping keys
 
     Here I am remapping right ALT to Hyper key oin linux
