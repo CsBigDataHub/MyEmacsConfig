@@ -1,6 +1,6 @@
 # Emacs CheatSheet
 
-## This sort of works for GNOME [wayland]
+## This sort of works for GNOME [wayland], hyper is bound to `H-s` hyper super.
 
 - https://stackoverflow.com/questions/72450298/use-hyper-key-in-gnome-shortcuts
 
