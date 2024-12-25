@@ -1,6 +1,54 @@
 # Emacs CheatSheet
 
-## Only this is working for KDE -
+## This sort of works for GNOME [wayland]
+
+- https://stackoverflow.com/questions/72450298/use-hyper-key-in-gnome-shortcuts
+
+*Step 1*
+
+Use the tweaks app to set keyboard options, under ctrl position check `"caps lock as ctrl, ctrl as hyper"`.
+
+This can be confirmed in the Terminal if you wish, with the command
+
+`dconf read /org/gnome/desktop/input-sources/xkb-options`
+
+that should print
+
+`['ctrl:hyper_capscontrol']`
+
+*Step 2*
+
+Change mod4 to mod3 for this option.
+
+The above setting will have `/usr/share/X11/xkb/symbols/ctrl` set left control as hyper and as mod 4. If you create the file `~/.config/xkb/symbols/ctrl` that file will be loaded instead of the system one.
+
+Thus, I copied from the former to the latter, changing Mod4 to Mod3:
+
+```
+// Make the left Ctrl key a left Hyper,
+// and the CapsLock key a left Control.
+partial modifier_keys
+xkb_symbols "hyper_capscontrol" {
+    replace key <CAPS> { [ Control_L ], type[group1] = "ONE_LEVEL" };
+    replace key <LCTL> { [ Hyper_L ] };
+    modifier_map Control { <CAPS> };
+    modifier_map Mod3    { <LCTL> };
+};
+```
+
+Store that as `~/.config/xkb/symbols/ctrl`. Now log out and back in and it should be working.
+
+Also add this file `$HOME/.config/autostart/xmodmap.desktop`
+
+```
+[Desktop Entry]
+Name=Xmodmap
+Exec=xmodmap -e "remove mod4 = Hyper_L" -e "add mod3 = Hyper_L" -e "remove mod3 = ISO_Level5_Shift"
+Terminal=false
+Type=Application
+```
+
+## Only this is working for KDE [not working as of 202412] -
 - got to keyboard settings
 - enable "CAPS lock as CTRL and CTRL as HYPER"
 - then run this https://askubuntu.com/a/794087
