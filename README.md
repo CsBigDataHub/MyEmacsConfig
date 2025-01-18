@@ -1,3 +1,44 @@
+# uv basedpyright, pyprject.toml
+
+```toml
+[project]
+name = "kafka-management"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "confluent-kafka==2.6.0",
+    "kubernetes==31.0.0",
+]
+
+[tool.basedpyright]
+venv = ".venv"
+venvPath = "."
+reportAny = "none"
+reportMissingParameterType = "none"
+reportUnknownArgumentType = "none"
+reportUnknownParameterType = "none"
+reportUnknownVariableType = "none"
+reportMissingImports = "error"
+reportMissingTypeStubs = false
+reportAttributeAccessIssue = "none"
+reportOptionalMemberAccess = "none"
+reportUnusedCallResult = "none"
+reportUnknownMemberType = "none"
+reportOptionalSubscript = "none"
+
+[dependency-groups]
+dev = [
+    "confluent-kafka-stubs>=0.0.3",
+    "pigar>=2.1.6",
+]
+
+
+```
+
+
+
 # Emacs CheatSheet
 
 ## Emacs plus for mac os is Installed With
