@@ -1,5 +1,32 @@
 # Emacs CheatSheet
 
+### ubuntu network issues at reboot
+
+```sh
+sudo lshw -C network  # find ethernet logical name
+sudo ip link show
+sudo ip link show eno1 # eno1 is ethernet logical name
+sudo dhclient eno1
+sudo ip link set eno1 up
+ping google.com # check if connection is working
+sudo netplan generate
+sudo netplan apply
+```
+#### not sure if this worked, I tried t
+
+```sh
+sudo cat 00-installer-config.yaml
+```
+
+```yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eno1:
+      dhcp4: true
+```
+
 ## This sort of works for GNOME [wayland], hyper is bound to `H-s` hyper super.
 
 - https://stackoverflow.com/questions/72450298/use-hyper-key-in-gnome-shortcuts
