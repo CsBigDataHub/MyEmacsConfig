@@ -1,3 +1,116 @@
+# Make Snapshot
+
+```sh
+#!/bin/bash
+
+# Script to create a directory snapshot using tar and pigz
+set -o pipefail
+set -x # Debugging
+
+# Default values
+source_dir=""
+exclude_pattern=""
+output_dir="" # Optional: Directory to save the snapshot
+compression_level="" # Compression level is now empty by default
+
+# Function to print usage instructions
+usage() {
+    echo "Usage: make-snapshot [-s <source_dir>] [-e <exclude_pattern>] [-o <output_dir] [-l <compression_level>]"
+    echo "  -s <source_dir>:  The directory to create a snapshot of (required)."
+    echo "  -e <exclude_pattern>:  Exclude files/directories matching this pattern (optional)."
+    echo "  -o <output_dir>: Directory to save the snapshot. Defaults to current directory (optional)."
+    echo "  -l <compression_level>: Compression level for pigz (1-9, default is 9)"
+    echo "Examples:"
+    echo "  make-snapshot -s /home/user/Documents"
+    echo "  make-snapshot -s /var/www -e '/var/www/cache' -o /backup"
+    exit 1
+}
+
+# Parse command-line arguments
+while getopts "s:e:o:l:" opt; do
+    case "$opt" in
+        s)
+            source_dir="$OPTARG"
+            ;;
+        e)
+            exclude_pattern="$OPTARG"
+            ;;
+        o)
+            output_dir="$OPTARG"
+            ;;
+        l)
+            compression_level=$(echo "$OPTARG" | tr -d ' ') #Remove Spaces
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            usage
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            usage
+            ;;
+    esac
+done
+
+# Check if source directory is provided
+if [ -z "$source_dir" ]; then
+    echo "Error: Source directory (-s) is required." >&2
+    usage
+fi
+
+# Check if source directory exists and is a directory
+if [ ! -d "$source_dir" ]; then
+    echo "Error: Source directory '$source_dir' does not exist or is not a directory." >&2
+    exit 1
+fi
+
+# Default output directory if not provided
+if [ -z "$output_dir" ]; then
+    output_dir="."
+fi
+
+# Check if compression level is valid
+
+if [ -z "$compression_level" ]; then
+    compression_level="9"
+fi
+
+if ! [[ "$compression_level" =~ ^[1-9]$ ]]; then
+    echo "Error: Invalid compression level. Must be a number between 1 and 9." >&2
+    usage
+fi
+
+# Create output directory if it doesn't exist
+mkdir -p "$output_dir"
+
+# Create the snapshot filename
+timestamp=$(date +%Y%m%d%H%M%S)
+output_file="$output_dir/snapshot-$timestamp.tar.gz"
+
+#Debugging output (added)
+echo "Source Directory: $source_dir"
+echo "Exclude Pattern: $exclude_pattern"
+echo "Output Directory: $output_dir"
+echo "Output File: $output_file"
+
+# Create tar archive and compress with pigz
+# Create tar archive and compress with pigz
+if [ -z "$exclude_pattern" ]; then
+    tar -C "$(dirname "$source_dir")" --use-compress-program="pigz -$compression_level -k" -cf "$output_file" "$(basename "$source_dir")"
+else
+    tar -C "$(dirname "$source_dir")" --use-compress-program="pigz -$compression_level -k" -cf "$output_file" --exclude="$exclude_pattern" "$(basename "$source_dir")"
+fi || {
+    echo "Error creating snapshot!" >&2
+    exit 1
+}
+
+echo "Snapshot created: $output_file"
+exit 0
+
+```
+
+
+
 # uv basedpyright, pyprject.toml
 
 ```toml
